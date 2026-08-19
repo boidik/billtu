@@ -545,7 +545,7 @@
         // Visually Sticking & Professional Templates
         const defaultTpls = {
             base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 40px; background: #fff; width: 800px; box-sizing: border-box;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px;">
+            <div class="pdf-page-break" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
                 <div style="width: 50%;">
                     <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700; line-height: 1.2;">{{pro_name}}</h1>
                     <p style="margin: 2px 0; color: #64748b; font-size: 13px;">{{pro_phone}} | {{pro_email}}</p>
@@ -559,7 +559,7 @@
                     </table>
                 </div>
             </div>
-            <div style="margin-bottom: 40px; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%;">
+            <div class="pdf-page-break" style="margin-bottom: 40px; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%; page-break-inside: avoid; break-inside: avoid;">
                 <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">Billed To</p>
                 <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
                 <p style="margin: 0; color: #475569; font-size: 13px;">Period: {{period_str}}</p>
@@ -577,35 +577,37 @@
                     {{table_rows}}
                 </tbody>
             </table>
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px;">
-                <div style="width: 50%; padding-right: 20px;">
-                    <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
-                    <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-                        <tr><td style="color: #64748b; padding: 2px 0; width: 80px;">Bank:</td><td style="font-weight: 600;">{{bank}}</td></tr>
-                        <tr><td style="color: #64748b; padding: 2px 0;">Account:</td><td style="font-weight: 600;">{{ac}}</td></tr>
-                        <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
-                    </table>
-                    <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px; display: inline-block;">
-                        <img src="{{qr}}" style="width: 90px; height: 90px; display: block;" alt="UPI QR">
+            <div class="pdf-page-break" style="page-break-inside: avoid; break-inside: avoid;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px;">
+                    <div style="width: 50%; padding-right: 20px;">
+                        <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
+                        <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
+                            <tr><td style="color: #64748b; padding: 2px 0; width: 80px;">Bank:</td><td style="font-weight: 600;">{{bank}}</td></tr>
+                            <tr><td style="color: #64748b; padding: 2px 0;">Account:</td><td style="font-weight: 600;">{{ac}}</td></tr>
+                            <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
+                        </table>
+                        <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px; display: inline-block;">
+                            <img src="{{qr}}" style="width: 90px; height: 90px; display: block;" alt="UPI QR">
+                        </div>
                     </div>
-                </div>
-                <div style="width: 40%;">
-                    <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 40px; text-align: right;">
-                        <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">Total Amount Due</p>
-                        <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800; color: #1e3a8a;">{{total}}</p>
-                    </div>
-                    <div style="text-align: right; {{sig_display}}">
-                        <img src="{{sig}}" style="max-height: 50px; display: inline-block; margin-bottom: 5px;">
-                        <div style="border-top: 1px solid #cbd5e1; width: 200px; margin-left: auto; padding-top: 8px;">
-                            <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 12px;">Authorized Signatory</p>
-                            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px;">{{pro_name}}</p>
+                    <div style="width: 40%;">
+                        <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 40px; text-align: right;">
+                            <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">Total Amount Due</p>
+                            <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800; color: #1e3a8a;">{{total}}</p>
+                        </div>
+                        <div style="text-align: right; {{sig_display}}">
+                            <img src="{{sig}}" style="max-height: 50px; display: inline-block; margin-bottom: 5px;">
+                            <div style="border-top: 1px solid #cbd5e1; width: 200px; margin-left: auto; padding-top: 8px;">
+                                <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 12px;">Authorized Signatory</p>
+                                <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px;">{{pro_name}}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>`,
-            rowInv: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</td></tr>`,
-            rowSt: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; background: {{r_bg}};"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;" colspan="2">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</td></tr>`
+            rowInv: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</td></tr>`,
+            rowSt: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; page-break-inside: avoid; break-inside: avoid;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;" colspan="2">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</td></tr>`
         };
 
         // --- UI & Helper Functions ---
@@ -1234,7 +1236,7 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    rows = `<tr><td colspan="4" style="padding:40px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
+                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
