@@ -1359,7 +1359,7 @@
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
                     hidePaymentInfo = 'display: none;';
-                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><div style="background:#f8fafc; border:1px solid #f1f5f9; border-radius:16px; padding:30px;"><h2 style="font-family:'Playfair Display', serif; font-size:26px; color:#1e3a8a; margin:0 0 10px 0;">Payment Received with Thanks</h2><p style="font-size:22px; margin: 10px 0; font-weight:800; color:#0f172a;">${window.ui.fmtMoney(inv.total)}</p><p style="color:#64748b; margin:0; font-size:14px;">Reference: ${inv.payment_ref||'N/A'}</p></div></td></tr>`;
+                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:20px; text-align:center;"><div style="background:#f8fafc; border:1px solid #f1f5f9; border-radius:16px; padding:25px;"><h2 style="font-family:'Playfair Display', serif; font-size:26px; color:#1e3a8a; margin:0 0 10px 0;">Payment Received with Thanks</h2><p style="font-size:22px; margin: 10px 0; font-weight:800; color:#0f172a;">${window.ui.fmtMoney(inv.total)}</p><p style="color:#64748b; margin:0; font-size:14px;">Reference: ${inv.payment_ref||'N/A'}</p></div></td></tr>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
@@ -1415,10 +1415,9 @@
                 
                 await new Promise(r => setTimeout(r, 400)); // allow DOM to paint and web fonts to process
 
-                // INCREASED TOP & BOTTOM MARGINS to 25mm to prevent overlapping on new pages.
-                // Right/Left remain 0 to ensure the perfect 800px edge-to-edge centering.
+                // OPTIMIZED MARGINS: 15mm top (so page 1 isn't too low), 20mm bottom. 0mm sides for perfect centering.
                 const opt = {
-                    margin: [25, 0, 25, 0], 
+                    margin: [15, 0, 20, 0], 
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
@@ -1448,12 +1447,12 @@
                             pdf.setTextColor(150);
                             pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 20, pdf.internal.pageSize.getHeight() - 10, { align: 'right' });
                             
-                            // Top Left Continued Header (Now safely inside the 25mm margin!)
+                            // Top Left Continued Header (Safely placed at y=10, inside the 15mm top margin)
                             if (i > 1) {
                                 const cName = state.clients.find(c=>c.id===inv.client_id)?.name || '';
                                 pdf.setFontSize(10);
                                 pdf.setTextColor(100);
-                                pdf.text(`Document: ${inv.invoice_no} — ${cName} (Continued)`, 15, 15);
+                                pdf.text(`Document: ${inv.invoice_no} — ${cName} (Continued)`, 15, 10);
                             }
                         }
                     }).output('blob').then((blob) => {
