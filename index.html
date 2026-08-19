@@ -270,8 +270,8 @@
                     <p class="text-slate-500 text-sm font-medium mt-1">Invoices, statements, and receipts.</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                    <button onclick="window.ui.openModal('modal-pay')" class="w-full sm:w-auto py-3 px-5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-cash-register mr-2"></i> Record Pay</button>
-                    <button onclick="window.ui.openModal('modal-bill')" class="w-full sm:w-auto py-3 px-5 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generate Bill</button>
+                    <button onclick="window.ui.openStandalonePay()" class="flex-1 md:flex-none py-3 px-5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-cash-register mr-2"></i> Record Pay</button>
+                    <button onclick="window.ui.openModal('modal-bill')" class="flex-1 md:flex-none py-3 px-5 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generate Bill</button>
                 </div>
             </header>
 
@@ -504,8 +504,8 @@
 
     <!-- Direct Pay Modal -->
     <div id="modal-pay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm p-8 transform animate-fade-in-up">
-            <h3 class="text-xl font-serif font-bold text-slate-800 mb-4">Record Payment Receipt</h3>
+        <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm p-8 transform animate-fade-in-up max-h-[90vh] overflow-y-auto hide-scrollbar flex flex-col">
+            <h3 class="text-xl font-serif font-bold text-slate-800 mb-4 shrink-0">Record Payment Receipt</h3>
             <input type="hidden" id="pay-inv-id">
             <div class="flex flex-col gap-4">
                 <div>
@@ -524,7 +524,12 @@
                     <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Ref / Mode</label>
                     <input type="text" id="pay-ref" placeholder="e.g. NEFT/UPI Ref" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
                 </div>
-                <div class="flex flex-col sm:flex-row gap-2 mt-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Payment Proof (Optional)</label>
+                    <input type="file" id="pay-screenshot" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    <img id="pay-screenshot-preview" src="" class="max-h-24 w-full object-contain hidden border border-slate-100 rounded-xl p-1 bg-slate-50 mt-2">
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 mt-2 shrink-0">
                     <button onclick="window.ui.closeModal('modal-pay')" class="w-full flex-1 py-3 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">Cancel</button>
                     <button onclick="window.api.savePayment()" class="w-full flex-1 py-3 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm">Save</button>
                 </div>
@@ -813,7 +818,7 @@
                         <td class="py-3 pr-4 text-right font-bold ${isRec ? 'text-emerald-600' : 'text-slate-800'}">${window.ui.fmtMoney(i.total)}</td>
                         <td class="py-3 pr-4 text-center"><span class="text-xs font-bold px-2 py-1 rounded-md ${statColor}">${isRec ? 'Completed' : i.status}</span></td>
                         <td class="py-3 text-center flex justify-center gap-2">
-                            ${!isRec ? `<button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition"><i class="fa-solid fa-eye"></i></button>` : ''}
+                            <button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition"><i class="fa-solid fa-eye"></i></button>
                             ${!isRec && i.status !== 'Paid' ? `<button onclick="window.ui.openPayForInv('${i.id}')" title="Record Payment" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"><i class="fa-solid fa-check"></i></button>` : ''}
                             <button onclick="window.ui.confirm('Delete this document? If it is a Receipt, the linked invoice will be marked Unpaid.', ()=>window.api.voidDoc('${i.id}'))" title="Void / Delete" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition"><i class="fa-solid fa-trash"></i></button>
                         </td>
@@ -994,6 +999,17 @@
                 document.querySelectorAll('.gb-item-chk:checked').forEach(cb => { tot += parseFloat(cb.dataset.amt); });
                 document.getElementById('gb-live-total').innerText = window.ui.fmtMoney(tot);
             },
+            openStandalonePay: () => {
+                document.getElementById('pay-inv-id').value = '';
+                document.getElementById('pay-client').value = '';
+                document.getElementById('pay-amt').value = '';
+                document.getElementById('pay-date').valueAsDate = new Date();
+                document.getElementById('pay-ref').value = '';
+                document.getElementById('pay-screenshot').value = '';
+                document.getElementById('pay-screenshot-preview').src = '';
+                document.getElementById('pay-screenshot-preview').classList.add('hidden');
+                window.ui.openModal('modal-pay');
+            },
             openPayForInv: (invId) => {
                 const inv = state.invoices.find(i=>i.id===invId);
                 if(!inv) return;
@@ -1002,9 +1018,23 @@
                 document.getElementById('pay-amt').value = inv.total;
                 document.getElementById('pay-date').valueAsDate = new Date();
                 document.getElementById('pay-ref').value = '';
+                document.getElementById('pay-screenshot').value = '';
+                document.getElementById('pay-screenshot-preview').src = '';
+                document.getElementById('pay-screenshot-preview').classList.add('hidden');
                 window.ui.openModal('modal-pay');
             }
         };
+
+        // UI Event Listeners for file upload preview
+        document.getElementById('pay-screenshot').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const preview = document.getElementById('pay-screenshot-preview');
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => { preview.src = ev.target.result; preview.classList.remove('hidden'); };
+                reader.readAsDataURL(file);
+            } else { preview.classList.add('hidden'); }
+        });
 
         // --- Core API / Firebase ---
         window.api = {
@@ -1154,6 +1184,32 @@
                     const amt = parseFloat(document.getElementById('pay-amt').value);
                     if(!cId || isNaN(amt)) return window.ui.showToast('Invalid data', 'error');
 
+                    // Process optional screenshot (Compress and resize before saving to DB)
+                    let screenshotData = null;
+                    const fileInput = document.getElementById('pay-screenshot');
+                    if (fileInput.files && fileInput.files[0]) {
+                        screenshotData = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const img = new Image();
+                                img.onload = () => {
+                                    const canvas = document.createElement('canvas');
+                                    const maxW = 800; // max width
+                                    let w = img.width, h = img.height;
+                                    if(w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
+                                    canvas.width = w; canvas.height = h;
+                                    const ctx = canvas.getContext('2d');
+                                    ctx.drawImage(img, 0, 0, w, h);
+                                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // compress to 70% quality jpeg
+                                };
+                                img.src = e.target.result;
+                            };
+                            reader.readAsDataURL(fileInput.files[0]);
+                        });
+                    }
+
+                    window.ui.showToast('Saving receipt...', 'info');
+
                     const seq = state.settings.seq || 1;
                     const pfx = state.settings.pfx?.REC || 'BOI-RE-';
                     const docNo = `${pfx}${seq.toString().padStart(4,'0')}`;
@@ -1161,7 +1217,8 @@
                     const pDoc = {
                         date: document.getElementById('pay-date').value,
                         type: 'REC', client_id: cId, total: amt, invoice_no: docNo, status: 'Paid',
-                        payment_ref: document.getElementById('pay-ref').value, linked_invoice_id: invId || null
+                        payment_ref: document.getElementById('pay-ref').value, linked_invoice_id: invId || null,
+                        payment_screenshot: screenshotData
                     };
 
                     const batch = writeBatch(db);
@@ -1292,7 +1349,8 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
+                    let screenshotHtml = inv.payment_screenshot ? `<div style="margin-top: 25px;"><p style="color:#64748b; font-size:11px; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:10px;">Payment Proof</p><img src="${inv.payment_screenshot}" style="max-width: 100%; max-height: 400px; border-radius: 12px; border: 1px solid #e2e8f0; display: inline-block;"></div>` : '';
+                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><div style="background:#f8fafc; border:1px solid #f1f5f9; border-radius:16px; padding:30px;"><h2 style="font-family:'Playfair Display', serif; font-size:26px; color:#1e3a8a; margin:0 0 10px 0;">Payment Received with Thanks</h2><p style="font-size:22px; margin: 10px 0; font-weight:800; color:#0f172a;">${window.ui.fmtMoney(inv.total)}</p><p style="color:#64748b; margin:0; font-size:14px;">Reference: ${inv.payment_ref||'N/A'}</p></div>${screenshotHtml}</td></tr>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
