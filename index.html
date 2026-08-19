@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Boidik Legal Cloud</title>
     
-    <!-- Favicon (Properly URL-encoded SVG for broad browser support) -->
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230f172a' /%3E%3Cstop offset='100%25' stop-color='%233b82f6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cpath d='M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="shortcut icon" href="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230f172a' /%3E%3Cstop offset='100%25' stop-color='%233b82f6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cpath d='M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
@@ -22,7 +22,7 @@
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
                     colors: { brand: '#FDFBF7', primary: '#3b82f6' },
                     animation: {
-                        'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
+                        'fade-in-up': 'fadeInUp 0.3s ease-out forwards',
                         'slide-in-right': 'slideInRight 0.3s ease-out forwards',
                     },
                     keyframes: {
@@ -43,11 +43,17 @@
         body { background-color: #FDFBF7; color: #0f172a; overflow: hidden; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass-panel { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.5); }
-        .animate-fade-in-up-delay { animation-delay: 0.1s; opacity: 0; }
         
-        /* PDF specific resets to prevent main app styles from bleeding into the pdf */
-        #pdf-wrapper * { box-sizing: border-box !important; }
+        /* Strict PDF CSS Isolation */
+        #pdf-wrapper { 
+            position: fixed; top: 0; left: 0; z-index: -9999; opacity: 0.001; 
+            margin: 0; padding: 0; box-sizing: border-box; background: white; pointer-events: none;
+        }
+        #pdf-root-container { 
+            width: 800px; max-width: 800px; min-width: 800px;
+            margin: 0; padding: 0; box-sizing: border-box; background: white; text-align: left;
+        }
+        #pdf-root-container * { box-sizing: border-box !important; }
         .pdf-page-break { page-break-inside: avoid !important; break-inside: avoid !important; }
     </style>
 </head>
@@ -152,7 +158,7 @@
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
                 <h4 class="font-bold text-slate-800 mb-4">Top 5 Unbilled Clients</h4>
                 <div class="w-full overflow-x-auto hide-scrollbar">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse min-w-[500px]">
                         <thead><tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100"><th class="pb-3 pr-4">Client</th><th class="pb-3 text-right">Unbilled Amount</th></tr></thead>
                         <tbody id="dash-top-clients" class="text-sm"></tbody>
                     </table>
@@ -200,7 +206,7 @@
                             <input type="checkbox" id="work-prepaid" class="w-5 h-5 rounded text-blue-500 border-none focus:ring-0 cursor-pointer">
                             <span class="text-sm font-bold text-slate-700">Prepaid (Zero Bill)</span>
                         </label>
-                        <div class="flex gap-2 mt-2">
+                        <div class="flex flex-col sm:flex-row gap-2 mt-2">
                             <button type="button" onclick="window.ui.resetWorkForm()" class="flex-1 py-3 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 transition">Clear</button>
                             <button type="submit" class="flex-[2] py-3 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm">Save Entry</button>
                         </div>
@@ -212,8 +218,8 @@
                         <h3 class="text-lg font-bold text-slate-800">Unbilled Work</h3>
                     </div>
                     <div class="w-full overflow-x-auto hide-scrollbar">
-                        <table class="w-full text-left whitespace-nowrap">
-                            <thead><tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100"><th class="pb-3 pr-4">Date</th><th class="pb-3 pr-4">Client/Case</th><th class="pb-3 pr-4">Details</th><th class="pb-3 pr-4 text-right">Amount</th><th class="pb-3 text-center">Action</th></tr></thead>
+                        <table class="w-full text-left min-w-[600px]">
+                            <thead><tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100"><th class="pb-3 pr-4 w-24">Date</th><th class="pb-3 pr-4 w-48">Client/Case</th><th class="pb-3 pr-4">Details</th><th class="pb-3 pr-4 text-right w-24">Amount</th><th class="pb-3 text-center w-24">Action</th></tr></thead>
                             <tbody id="table-unbilled" class="text-sm"></tbody>
                         </table>
                     </div>
@@ -240,10 +246,10 @@
                     <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-blue-500"></i> Clients</h3>
                     <form id="form-client" class="flex flex-wrap gap-2 mb-4 shrink-0">
                         <input type="hidden" id="client-id">
-                        <input type="text" id="client-name" required placeholder="Name" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="text" id="client-name" required placeholder="Full Name" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
                         <input type="email" id="client-email" placeholder="Email (Optional)" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <input type="tel" id="client-phone" placeholder="Phone (Optional)" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <button type="submit" class="flex-1 sm:flex-none min-w-[60px] bg-slate-800 text-white p-3 px-5 rounded-2xl font-bold hover:bg-slate-900 transition flex items-center justify-center shrink-0"><i class="fa-solid fa-plus"></i> <span class="sm:hidden ml-2">Add</span></button>
+                        <input type="text" id="client-phone" placeholder="Phone (Optional)" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <button type="submit" class="bg-slate-800 text-white p-3 rounded-2xl font-bold hover:bg-slate-900 transition"><i class="fa-solid fa-plus"></i></button>
                     </form>
                     <div id="list-clients" class="flex-1 overflow-y-auto hide-scrollbar flex flex-col gap-3"></div>
                 </div>
@@ -253,9 +259,9 @@
                     <form id="form-case" class="flex flex-wrap gap-2 mb-4 shrink-0">
                         <input type="hidden" id="case-id">
                         <select id="case-client" required class="flex-[1.2] min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></select>
-                        <input type="text" id="case-name" required placeholder="Case Name" class="flex-[1.5] min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <input type="text" id="case-no" placeholder="Case No. (Optional)" class="flex-1 min-w-[120px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <button type="submit" class="flex-1 sm:flex-none min-w-[60px] bg-slate-800 text-white p-3 px-5 rounded-2xl font-bold hover:bg-slate-900 transition flex items-center justify-center shrink-0"><i class="fa-solid fa-plus"></i> <span class="sm:hidden ml-2">Add</span></button>
+                        <input type="text" id="case-name" required placeholder="Case Name / Subject" class="flex-[2] min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="text" id="case-ref" placeholder="Case No. / Ref (Optional)" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <button type="submit" class="bg-slate-800 text-white p-3 rounded-2xl font-bold hover:bg-slate-900 transition"><i class="fa-solid fa-plus"></i></button>
                     </form>
                     <div id="list-cases" class="flex-1 overflow-y-auto hide-scrollbar flex flex-col gap-3"></div>
                 </div>
@@ -270,8 +276,8 @@
                     <p class="text-slate-500 text-sm font-medium mt-1">Invoices, statements, and receipts.</p>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                    <button onclick="window.ui.openStandalonePay()" class="flex-1 md:flex-none py-3 px-5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-cash-register mr-2"></i> Record Pay</button>
-                    <button onclick="window.ui.openModal('modal-bill')" class="flex-1 md:flex-none py-3 px-5 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generate Bill</button>
+                    <button onclick="window.ui.openStandalonePay()" class="flex-1 sm:flex-none py-3 px-5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm"><i class="fa-solid fa-cash-register mr-2"></i> Record Pay</button>
+                    <button onclick="window.ui.openModal('modal-bill')" class="flex-1 sm:flex-none py-3 px-5 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generate Bill</button>
                 </div>
             </header>
 
@@ -285,7 +291,7 @@
 
             <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
                 <div class="w-full overflow-x-auto hide-scrollbar">
-                    <table class="w-full text-left whitespace-nowrap">
+                    <table class="w-full text-left whitespace-nowrap min-w-[700px]">
                         <thead><tr class="text-xs font-bold text-slate-400 uppercase border-b border-slate-100"><th class="pb-3 pr-4">Doc No.</th><th class="pb-3 pr-4">Date</th><th class="pb-3 pr-4">Client</th><th class="pb-3 pr-4">Type</th><th class="pb-3 pr-4 text-right">Amount</th><th class="pb-3 pr-4 text-center">Status</th><th class="pb-3 text-center">Actions</th></tr></thead>
                         <tbody id="table-docs" class="text-sm"></tbody>
                     </table>
@@ -348,7 +354,7 @@
                         Work Categories 
                         <span class="text-xs font-normal text-slate-400 bg-slate-100 px-2 py-1 rounded-md">Live Sync</span>
                     </h3>
-                    <div class="flex gap-2 mb-4">
+                    <div class="flex flex-col sm:flex-row gap-2 mb-4">
                         <input type="text" id="new-cat-input" placeholder="E.g., Drafting, Hearing..." class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
                         <button type="button" onclick="window.ui.addCategory()" class="bg-emerald-500 text-white px-5 py-3 rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm">Add</button>
                     </div>
@@ -389,9 +395,9 @@
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-95 transition-transform animate-fade-in-up">
             <h3 class="text-2xl font-serif font-bold text-slate-800 mb-3">Are you sure?</h3>
             <p id="confirm-msg" class="text-slate-500 text-sm mb-8 font-medium leading-relaxed"></p>
-            <div class="flex flex-col sm:flex-row gap-3 justify-end w-full mt-4">
+            <div class="flex flex-col sm:flex-row gap-3 justify-end">
                 <button onclick="window.ui.closeConfirm()" class="w-full sm:w-auto px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
-                <button id="confirm-btn-yes" onclick="window.ui.executeConfirm()" class="w-full sm:w-auto px-5 py-2.5 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-sm">Yes, Proceed</button>
+                <button onclick="window.ui.executeConfirm()" class="w-full sm:w-auto px-5 py-2.5 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-sm">Yes, Proceed</button>
             </div>
         </div>
     </div>
@@ -403,41 +409,27 @@
             <p class="text-slate-500 text-xs mb-4">Past work logs using this category will be automatically updated.</p>
             <input type="hidden" id="edit-cat-old">
             <input type="text" id="edit-cat-new" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none mb-6">
-            <div class="flex flex-col sm:flex-row gap-3 justify-end w-full mt-4">
-                <button onclick="document.getElementById('modal-cat-edit').classList.add('hidden')" class="w-full sm:w-auto px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
+            <div class="flex flex-col sm:flex-row gap-3 justify-end">
+                <button onclick="window.ui.closeModal('modal-cat-edit')" class="w-full sm:w-auto px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
                 <button onclick="window.ui.saveEditedCategory()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition shadow-sm">Update</button>
             </div>
         </div>
     </div>
 
-    <!-- Category Edit Modal -->
-    <div id="modal-cat-edit" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-95 transition-transform animate-fade-in-up">
-            <h3 class="text-xl font-serif font-bold text-slate-800 mb-2">Edit Category</h3>
-            <p class="text-slate-500 text-xs mb-4">Past work logs using this category will be automatically updated.</p>
-            <input type="hidden" id="edit-cat-old">
-            <input type="text" id="edit-cat-new" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none mb-6">
-            <div class="flex gap-3 justify-end">
-                <button onclick="document.getElementById('modal-cat-edit').classList.add('hidden')" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
-                <button onclick="window.ui.saveEditedCategory()" class="px-5 py-2.5 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition shadow-sm">Update</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PDF Generation Root: Fixed width, positioned mathematically perfectly inside view but hidden by z-index -->
-    <div id="pdf-wrapper" style="position: fixed; top: 0; left: 0; width: 800px; height: auto; z-index: -9999; opacity: 0.001; pointer-events: none; margin: 0; padding: 0; overflow: hidden; background: white; box-sizing: border-box;">
-        <div id="pdf-root-container" style="width: 800px; max-width: 800px; box-sizing: border-box; background: white; margin: 0; padding: 0; text-align: left;"></div>
+    <!-- PDF Generation Root (Hidden correctly for html2pdf scale locking) -->
+    <div id="pdf-wrapper">
+        <div id="pdf-root-container"></div>
     </div>
 
     <!-- PDF Preview Modal -->
     <div id="modal-pdf" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[1000] hidden flex flex-col items-center justify-center p-4 md:p-8">
         <div class="bg-white rounded-[2rem] w-full max-w-5xl h-full flex flex-col overflow-hidden animate-fade-in-up shadow-2xl relative">
-            <div class="flex flex-wrap justify-between items-center p-4 border-b border-slate-100 bg-slate-50 shrink-0 gap-3">
-                <h3 id="pdf-preview-title" class="font-bold text-slate-800 text-lg ml-2 truncate min-w-0">Document Preview</h3>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="window.docsHelper.downloadPDF()" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-2 sm:px-4 rounded-xl font-bold text-sm transition flex items-center justify-center"><i class="fa-solid fa-download"></i> <span class="hidden sm:inline ml-2">Download</span></button>
-                    <button onclick="window.docsHelper.sharePDF()" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-3 py-2 sm:px-4 rounded-xl font-bold text-sm transition flex items-center justify-center"><i class="fa-solid fa-share-nodes"></i> <span class="hidden sm:inline ml-2">Share</span></button>
-                    <button onclick="window.ui.closeModal('modal-pdf')" class="bg-slate-200 text-slate-700 hover:bg-slate-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0"><i class="fa-solid fa-times"></i></button>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border-b border-slate-100 bg-slate-50 shrink-0 gap-3">
+                <h3 id="pdf-preview-title" class="font-bold text-slate-800 text-lg ml-2 truncate w-full">Document Preview</h3>
+                <div class="flex gap-2 w-full sm:w-auto justify-end">
+                    <button onclick="window.docsHelper.downloadPDF()" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 rounded-xl font-bold text-sm transition shrink-0"><i class="fa-solid fa-download mr-1"></i> Download</button>
+                    <button onclick="window.docsHelper.sharePDF()" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-4 py-2 rounded-xl font-bold text-sm transition shrink-0"><i class="fa-solid fa-share-nodes"></i> <span class="hidden sm:inline ml-1">Share</span></button>
+                    <button onclick="window.ui.closeModal('modal-pdf')" class="bg-slate-200 text-slate-700 hover:bg-slate-300 w-9 h-9 rounded-full flex items-center justify-center transition shrink-0"><i class="fa-solid fa-times"></i></button>
                 </div>
             </div>
             <div class="flex-1 bg-slate-200 relative">
@@ -454,7 +446,7 @@
                     <h3 class="text-2xl font-serif font-bold text-slate-800">Generate Bill</h3>
                     <p class="text-slate-500 text-sm mt-1">Select items to invoice.</p>
                 </div>
-                <button onclick="window.ui.closeModal('modal-bill')" class="w-10 h-10 bg-slate-100 text-slate-500 rounded-full hover:bg-slate-200 transition"><i class="fa-solid fa-times"></i></button>
+                <button onclick="window.ui.closeModal('modal-bill')" class="w-10 h-10 bg-slate-100 text-slate-500 rounded-full hover:bg-slate-200 transition shrink-0"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="p-6 md:p-8 overflow-y-auto flex-1 hide-scrollbar">
                 <form id="form-gen-bill" class="flex flex-col gap-5">
@@ -488,7 +480,7 @@
                         <div class="bg-slate-50 px-4 py-3 border-b border-slate-100 flex justify-between items-center">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" id="gb-check-all" onchange="window.ui.gbToggleAll()" class="w-4 h-4 rounded text-blue-500 border-none focus:ring-0">
-                                <span class="text-xs font-bold text-slate-600 uppercase">Select All / None</span>
+                                <span class="text-xs font-bold text-slate-600 uppercase">Select All</span>
                             </label>
                             <span class="text-xs font-bold text-slate-500">Live Total: <span id="gb-live-total" class="text-blue-600 text-base">₹0.00</span></span>
                         </div>
@@ -537,13 +529,25 @@
         </div>
     </div>
 
+    <!-- View Screenshot Modal -->
+    <div id="modal-screenshot" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[1050] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2rem] shadow-2xl p-6 max-w-2xl w-full flex flex-col relative animate-fade-in-up">
+            <div class="flex justify-between items-center mb-4 shrink-0">
+                <h3 class="text-xl font-serif font-bold text-slate-800">Payment Proof</h3>
+                <button onclick="window.ui.closeModal('modal-screenshot')" class="w-10 h-10 bg-slate-100 text-slate-500 rounded-full hover:bg-slate-200 transition"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="flex-1 overflow-auto hide-scrollbar flex justify-center items-center bg-slate-50 rounded-xl p-2 border border-slate-100">
+                <img id="view-screenshot-img" src="" class="w-full h-auto max-h-[70vh] object-contain">
+            </div>
+        </div>
+    </div>
+
     <!-- Javascript Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc, getDocs, writeBatch, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration provided by user
         const firebaseConfig = {
             apiKey: "AIzaSyCAJUoKTzaVpMsOeYW0Ewdnk33K_1HuJhk",
             authDomain: "legallyboidik.firebaseapp.com",
@@ -558,7 +562,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Global State
         const state = {
             user: null, uid: null,
             settings: { categories: ['Drafting', 'Hearing', 'Consultation', 'Filing', 'Miscellaneous'], pfx: {MI:'BOI-MI-', IND:'BOI-IN-', ST:'BOI-ST-', REC:'BOI-RE-'}, seq: 1 },
@@ -567,76 +570,77 @@
             pdfBlobUrl: null, currentPdfInv: null
         };
 
-        // Visually Sticking & Professional Templates
         const defaultTpls = {
-            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 40px 50px; background: #fff; width: 800px; margin: 0 auto; box-sizing: border-box;">
-            <div class="pdf-page-break" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
+            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; color: #334155; padding: 40px 50px; background: #fff; width: 100%; box-sizing: border-box;">
+            <div class="pdf-page-break" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px;">
                 <div style="width: 50%;">
-                    <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700; line-height: 1.2;">{{pro_name}}</h1>
-                    <p style="margin: 2px 0; color: #64748b; font-size: 13px;">{{pro_phone}} | {{pro_email}}</p>
-                    <p style="margin: 2px 0; color: #64748b; font-size: 13px;">PAN: {{pro_pan}}</p>
+                    <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 800; line-height: 1.1;">{{pro_name}}</h1>
+                    <p style="margin: 2px 0; color: #64748b; font-size: 12px; font-weight: 500;">{{pro_phone}} | {{pro_email}}</p>
+                    <p style="margin: 2px 0; color: #64748b; font-size: 12px; font-weight: 500;">PAN: {{pro_pan}}</p>
                 </div>
-                <div style="text-align: right; width: 40%;">
-                    <h2 style="font-size: 28px; margin: 0 0 5px 0; color: #3b82f6; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">{{doc_title}}</h2>
-                    <table style="width: 100%; text-align: right; font-size: 13px; border-collapse: collapse;">
-                        <tr><td style="padding: 3px 0; color: #64748b;">Ref No:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{inv_no}}</td></tr>
+                <div style="text-align: right; width: 45%;">
+                    <h2 style="font-size: 24px; margin: 0 0 8px 0; color: #3b82f6; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px;">{{doc_title}}</h2>
+                    <table style="width: 100%; text-align: right; font-size: 12px; border-collapse: collapse;">
+                        <tr><td style="padding: 3px 0; color: #64748b;">Doc Ref:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{inv_no}}</td></tr>
                         <tr><td style="padding: 3px 0; color: #64748b;">Date:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{date}}</td></tr>
                     </table>
                 </div>
             </div>
-            <div class="pdf-page-break" style="margin-bottom: 40px; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%; page-break-inside: avoid; break-inside: avoid;">
-                <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">Billed To</p>
-                <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
-                <div style="{{client_contact_display}} margin: 0 0 5px 0; color: #475569; font-size: 12px;">{{client_contact}}</div>
-                <p style="margin: 0; color: #475569; font-size: 13px;">Period: {{period_str}}</p>
+            
+            <div class="pdf-page-break" style="margin-bottom: 30px; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 16px; width: 55%;">
+                <p style="margin: 0 0 5px 0; font-weight: 800; text-transform: uppercase; font-size: 10px; color: #94a3b8; letter-spacing: 1px;">Billed To</p>
+                <h3 style="margin: 0 0 3px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif; font-weight: 700;">{{client_name}}</h3>
+                <p style="margin: 0 0 6px 0; color: #475569; font-size: 12px; font-weight: 500;">{{client_contact}}</p>
+                <p style="margin: 0; color: #64748b; font-size: 11px;">Period: {{period_str}}</p>
             </div>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; table-layout: fixed; page-break-inside: auto;">
-                <thead style="display: table-header-group; page-break-inside: avoid; break-inside: avoid; page-break-after: avoid;">
-                    <tr class="pdf-page-break" style="background: #3b82f6; color: white; text-align: left; page-break-inside: avoid; break-inside: avoid;">
-                        <th style="padding: 12px 15px; border-top-left-radius: 8px; border-bottom-left-radius: 8px; width: 15%; font-weight: 600;">Date</th>
-                        <th style="padding: 12px 15px; width: 25%; font-weight: 600;">Case / Ref</th>
-                        <th style="padding: 12px 15px; width: 40%; font-weight: 600;">Description</th>
-                        <th style="padding: 12px 15px; text-align: right; border-top-right-radius: 8px; border-bottom-right-radius: 8px; width: 20%; font-weight: 600;">Amount</th>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; table-layout: fixed; page-break-inside: auto;">
+                <thead style="display: table-header-group;">
+                    <tr style="background: #3b82f6; color: white; text-align: left; font-size: 12px;">
+                        <th style="padding: 12px 15px; border-top-left-radius: 12px; border-bottom-left-radius: 12px; width: 15%; font-weight: 700;">Date</th>
+                        <th style="padding: 12px 15px; width: 28%; font-weight: 700;">Case / Ref</th>
+                        <th style="padding: 12px 15px; width: 37%; font-weight: 700;">Description</th>
+                        <th style="padding: 12px 15px; text-align: right; border-top-right-radius: 12px; border-bottom-right-radius: 12px; width: 20%; font-weight: 700;">Amount</th>
                     </tr>
                 </thead>
-                <tbody style="color: #334155; page-break-inside: auto;">
+                <tbody style="color: #334155; font-size: 11px;">
                     {{table_rows}}
                 </tbody>
             </table>
-            <div class="pdf-page-break" style="page-break-inside: avoid; break-inside: avoid; page-break-before: auto;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px;">
-                    <div style="width: 50%; padding-right: 20px;">
-                        <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
-                        <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-                            <tr><td style="color: #64748b; padding: 2px 0; width: 80px;">Bank:</td><td style="font-weight: 600;">{{bank}}</td></tr>
-                            <tr><td style="color: #64748b; padding: 2px 0;">Account:</td><td style="font-weight: 600;">{{ac}}</td></tr>
-                            <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
-                        </table>
-                        <div style="border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px; {{qr_display}}">
-                            <img src="{{qr}}" style="width: 90px; height: 90px; display: block;" alt="UPI QR">
-                        </div>
+            
+            <div class="pdf-page-break" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 30px;">
+                <div style="width: 45%; padding-right: 15px; {{hide_payment_info}}">
+                    <p style="margin: 0 0 10px 0; font-weight: 800; color: #0f172a; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
+                    <table style="width: 100%; font-size: 11px; margin-bottom: 12px; color:#475569;">
+                        <tr><td style="padding: 2px 0; width: 80px;">Bank:</td><td style="font-weight: 700; color:#0f172a;">{{bank}}</td></tr>
+                        <tr><td style="padding: 2px 0;">Account:</td><td style="font-weight: 700; color:#0f172a;">{{ac}}</td></tr>
+                        <tr><td style="padding: 2px 0;">IFSC:</td><td style="font-weight: 700; color:#0f172a;">{{ifsc}}</td></tr>
+                    </table>
+                    <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 6px; border-radius: 12px; display: inline-block; background: #fff;">
+                        <img src="{{qr}}" style="width: 80px; height: 80px; display: block;" alt="UPI QR">
                     </div>
-                    <div style="width: 40%;">
-                        <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 40px; text-align: right;">
-                            <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">Total Amount Due</p>
-                            <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800; color: #1e3a8a;">{{total}}</p>
-                        </div>
-                        <div style="text-align: right; {{sig_display}}">
-                            <img src="{{sig}}" style="max-height: 50px; display: inline-block; margin-bottom: 5px;">
-                            <div style="border-top: 1px solid #cbd5e1; width: 200px; margin-left: auto; padding-top: 8px;">
-                                <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 12px;">Authorized Signatory</p>
-                                <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px;">{{pro_name}}</p>
-                            </div>
+                </div>
+                
+                <div style="width: 45%; text-align: right;">
+                    <div style="background: #eff6ff; padding: 20px; border-radius: 16px; margin-bottom: 30px; display: inline-block; min-width: 100%;">
+                        <p style="margin: 0; font-size: 12px; color: #1e3a8a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Total Amount Due</p>
+                        <p style="margin: 4px 0 0 0; font-size: 26px; font-weight: 800; color: #1e3a8a;">{{total}}</p>
+                    </div>
+                    
+                    <div style="{{sig_display}} margin-top: 10px;">
+                        <img src="{{sig}}" style="max-height: 45px; display: inline-block; margin-bottom: 4px;">
+                        <div style="border-top: 2px solid #cbd5e1; width: 220px; margin-left: auto; padding-top: 8px;">
+                            <p style="margin: 0; font-weight: 800; color: #0f172a; font-size: 11px;">Authorized Signatory</p>
+                            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px; font-weight: 500;">{{pro_name}}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>`,
-            rowInv: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</td></tr>`,
-            rowSt: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; page-break-inside: avoid; break-inside: avoid;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;" colspan="2">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</td></tr>`
+            rowInv: `<tr style="border-bottom: 1px solid #f1f5f9; page-break-inside: avoid;"><td style="padding: 14px 15px; vertical-align: top; font-weight: 500;">{{r_date}}</td><td style="padding: 14px 15px; vertical-align: top; font-weight: 700; color: #0f172a; word-wrap: break-word;">{{r_case}}</td><td style="padding: 14px 15px; vertical-align: top; color: #475569; word-wrap: break-word;">{{r_desc}}</td><td style="padding: 14px 15px; vertical-align: top; text-align: right; font-weight: 800; color: #0f172a;">{{r_amt}}</td></tr>`,
+            rowSt: `<tr style="border-bottom: 1px solid #f1f5f9; background: {{r_bg}}; page-break-inside: avoid;"><td style="padding: 14px 15px; vertical-align: top; font-weight: 500;">{{r_date}}</td><td style="padding: 14px 15px; vertical-align: top; color: #475569; word-wrap: break-word;" colspan="2">{{r_desc}}</td><td style="padding: 14px 15px; vertical-align: top; text-align: right; font-weight: 800; color: {{r_color}};">{{r_amt}}</td></tr>`
         };
 
-        // --- UI & Helper Functions ---
         window.ui = {
             showToast: (msg, type = 'success') => {
                 const colors = type === 'success' ? 'bg-emerald-500 text-white' : type === 'error' ? 'bg-rose-500 text-white' : 'bg-slate-800 text-white';
@@ -680,24 +684,29 @@
             populateSelects: (preserveWorkCat = false) => {
                 const cOpts = `<option value="">Select Client...</option>` + state.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                 ['work-client', 'case-client', 'doc-filter-client', 'gb-client', 'pay-client'].forEach(id => {
-                    if (id === 'doc-filter-client') { document.getElementById(id).innerHTML = `<option value="ALL">All Clients</option>` + cOpts; }
-                    else { document.getElementById(id).innerHTML = cOpts; }
+                    if(document.getElementById(id)) {
+                        if (id === 'doc-filter-client') document.getElementById(id).innerHTML = `<option value="ALL">All Clients</option>` + cOpts;
+                        else document.getElementById(id).innerHTML = cOpts;
+                    }
                 });
                 
-                const curCat = document.getElementById('work-cat').value;
-                const cats = state.settings.categories || defaultTpls.categories;
-                document.getElementById('work-cat').innerHTML = `<option value="">Select...</option>` + cats.map(c => `<option value="${c}">${c}</option>`).join('');
-                if (preserveWorkCat && curCat && cats.includes(curCat)) document.getElementById('work-cat').value = curCat;
-                
+                const wCat = document.getElementById('work-cat');
+                if(wCat) {
+                    const curCat = wCat.value;
+                    const cats = state.settings.categories || defaultTpls.categories;
+                    wCat.innerHTML = `<option value="">Select...</option>` + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+                    if (preserveWorkCat && curCat && cats.includes(curCat)) wCat.value = curCat;
+                }
                 window.ui.renderCatList();
             },
             filterCasesForWork: () => {
                 const cId = document.getElementById('work-client').value;
-                const opts = `<option value="">Select Case...</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.case_no ? `${c.name} (${c.case_no})` : c.name}</option>`).join('');
+                const opts = `<option value="">Select Case...</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                 document.getElementById('work-case').innerHTML = opts;
             },
 
             renderDash: () => {
+                if(!document.getElementById('dash-unbilled')) return;
                 let uTot = 0, pTot = 0, wTot = 0;
                 state.work.forEach(w => { wTot += w.amount; if(!w.invoice_id) uTot += w.amount; });
                 state.invoices.filter(i => i.type === 'REC').forEach(r => pTot += r.total);
@@ -711,7 +720,7 @@
                 const uByC = {};
                 state.work.filter(w=>!w.invoice_id).forEach(w => { uByC[w.client_id] = (uByC[w.client_id]||0) + w.amount; });
                 const tops = Object.entries(uByC).map(([id, amt]) => ({ name: state.clients.find(c=>c.id===id)?.name||'Unknown', amt })).sort((a,b)=>b.amt-a.amt).slice(0,5);
-                document.getElementById('dash-top-clients').innerHTML = tops.length ? tops.map(t => `<tr class="border-b border-slate-50"><td class="py-3 font-medium">${t.name}</td><td class="py-3 text-right font-bold text-amber-600">${window.ui.fmtMoney(t.amt)}</td></tr>`).join('') : `<tr><td colspan="2" class="py-4 text-center text-slate-400">No unbilled work.</td></tr>`;
+                document.getElementById('dash-top-clients').innerHTML = tops.length ? tops.map(t => `<tr class="border-b border-slate-50"><td class="py-3 font-medium truncate max-w-[200px]">${t.name}</td><td class="py-3 text-right font-bold text-amber-600">${window.ui.fmtMoney(t.amt)}</td></tr>`).join('') : `<tr><td colspan="2" class="py-4 text-center text-slate-400">No unbilled work.</td></tr>`;
 
                 // Charts
                 if(state.charts.rev) state.charts.rev.destroy();
@@ -737,16 +746,16 @@
             },
             
             renderWork: () => {
+                if(!document.getElementById('table-unbilled')) return;
                 const html = state.work.filter(w=>!w.invoice_id).sort((a,b)=>new Date(b.date)-new Date(a.date)).map(w => {
                     const cl = state.clients.find(c=>c.id===w.client_id)?.name||'Unknown';
-                    const caObj = state.cases.find(c=>c.id===w.case_id);
-                    const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
+                    const ca = state.cases.find(c=>c.id===w.case_id)?.name||'General';
                     return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition group">
-                        <td class="py-3 pr-4 whitespace-nowrap">${window.ui.fmtDate(w.date)}</td>
-                        <td class="py-3 pr-4 min-w-[150px]"><div class="font-bold text-slate-800 break-words">${cl}</div><div class="text-xs text-slate-500 break-words">${ca}</div></td>
-                        <td class="py-3 pr-4"><span class="bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-md font-bold mb-1 inline-block whitespace-nowrap">${w.category}</span><div class="text-xs text-slate-600 break-words min-w-[150px] max-w-sm">${w.desc}</div></td>
-                        <td class="py-3 pr-4 text-right font-bold whitespace-nowrap ${w.amount===0 ? 'text-slate-400':'text-slate-800'}">${w.amount===0 ? 'Prepaid': window.ui.fmtMoney(w.amount)}</td>
-                        <td class="py-3 text-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition whitespace-nowrap"><button onclick="window.api.editWork('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1 w-8 h-8 rounded-lg bg-blue-50 lg:bg-transparent"><i class="fa-solid fa-pen"></i></button><button onclick="window.ui.confirm('Delete this work entry forever?', ()=>window.api.delWork('${w.id}'))" class="text-rose-500 hover:text-rose-700 mx-1 w-8 h-8 rounded-lg bg-rose-50 lg:bg-transparent"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="py-3 pr-4">${window.ui.fmtDate(w.date)}</td>
+                        <td class="py-3 pr-4"><div class="font-bold text-slate-800 truncate max-w-[200px]">${cl}</div><div class="text-xs text-slate-500 truncate max-w-[200px]">${ca}</div></td>
+                        <td class="py-3 pr-4"><span class="bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-md font-bold mb-1 inline-block">${w.category}</span><div class="text-xs text-slate-600 truncate max-w-xs">${w.desc}</div></td>
+                        <td class="py-3 pr-4 text-right font-bold ${w.amount===0 ? 'text-slate-400':'text-slate-800'}">${w.amount===0 ? 'Prepaid': window.ui.fmtMoney(w.amount)}</td>
+                        <td class="py-3 text-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition"><button onclick="window.api.editWork('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1 p-2"><i class="fa-solid fa-pen"></i></button><button onclick="window.ui.confirm('Delete this work entry forever?', ()=>window.api.delWork('${w.id}'))" class="text-rose-500 hover:text-rose-700 mx-1 p-2"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>`;
                 }).join('');
                 document.getElementById('table-unbilled').innerHTML = html || '<tr><td colspan="5" class="py-8 text-center text-slate-400 font-medium">No unbilled work logs found.</td></tr>';
@@ -761,32 +770,31 @@
             },
 
             renderDirectory: () => {
+                if(!document.getElementById('dir-search')) return;
                 const q = document.getElementById('dir-search').value.toLowerCase();
                 
                 const cHtml = state.clients.filter(c => c.name.toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q) || (c.phone||'').includes(q)).map(c => {
                     const unb = state.work.filter(w=>w.client_id===c.id && !w.invoice_id).reduce((s,w)=>s+w.amount,0);
-                    const contact = [c.email, c.phone].filter(Boolean).join(' | ') || 'No contact info';
-                    return `<div class="p-4 bg-slate-50 rounded-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 group">
-                        <div class="min-w-0 flex-1"><div class="font-bold text-slate-800 truncate">${c.name}</div><div class="text-xs text-slate-500 truncate">${contact}</div></div>
-                        <div class="flex flex-row items-center justify-between sm:justify-end gap-3 w-full sm:w-auto shrink-0">
-                            ${unb > 0 ? `<span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-lg shrink-0">Unbilled: ${window.ui.fmtMoney(unb)}</span>` : '<span class="hidden sm:inline"></span>'}
-                            <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex gap-2 shrink-0">
-                                <button onclick="window.api.editClient('${c.id}')" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="window.ui.confirm('Delete client? This does not delete their work logs.', ()=>window.api.delClient('${c.id}'))" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
+                    return `<div class="p-4 bg-slate-50 rounded-2xl flex justify-between items-center group flex-wrap gap-2">
+                        <div class="min-w-0 flex-1"><div class="font-bold text-slate-800 truncate">${c.name}</div><div class="text-xs text-slate-500 truncate">${c.phone?c.phone+' | ':''}${c.email||'No email'}</div></div>
+                        <div class="flex items-center gap-3 shrink-0">
+                            ${unb > 0 ? `<span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-lg">Unbilled: ${window.ui.fmtMoney(unb)}</span>` : ''}
+                            <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex gap-1">
+                                <button onclick="window.api.editClient('${c.id}')" class="text-slate-400 hover:text-blue-500 p-2"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="window.ui.confirm('Delete client? This does not delete their work logs.', ()=>window.api.delClient('${c.id}'))" class="text-slate-400 hover:text-rose-500 p-2"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     </div>`;
                 }).join('');
                 document.getElementById('list-clients').innerHTML = cHtml || '<p class="text-sm text-slate-400 text-center py-4">No clients found.</p>';
 
-                const caHtml = state.cases.filter(c => c.name.toLowerCase().includes(q) || (c.case_no||'').toLowerCase().includes(q)).map(c => {
+                const caHtml = state.cases.filter(c => c.name.toLowerCase().includes(q) || (c.ref||'').toLowerCase().includes(q)).map(c => {
                     const cl = state.clients.find(x=>x.id===c.client_id)?.name||'Unknown';
-                    const caseRef = c.case_no ? `${c.name} (${c.case_no})` : c.name;
-                    return `<div class="p-4 bg-slate-50 rounded-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 group">
-                        <div class="min-w-0 flex-1"><div class="font-bold text-slate-800 truncate">${caseRef}</div><div class="text-xs text-slate-500 truncate">${cl}</div></div>
-                        <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex justify-end gap-2 w-full sm:w-auto mt-2 sm:mt-0 shrink-0">
-                            <button onclick="window.api.editCase('${c.id}')" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="window.ui.confirm('Delete case?', ()=>window.api.delCase('${c.id}'))" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
+                    return `<div class="p-4 bg-slate-50 rounded-2xl flex justify-between items-center group flex-wrap gap-2">
+                        <div class="min-w-0 flex-1"><div class="font-bold text-slate-800 truncate">${c.name}</div><div class="text-xs text-slate-500 truncate">${cl} ${c.ref?` (Ref: ${c.ref})`:''}</div></div>
+                        <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex gap-1 shrink-0">
+                            <button onclick="window.api.editCase('${c.id}')" class="text-slate-400 hover:text-blue-500 p-2"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="window.ui.confirm('Delete case?', ()=>window.api.delCase('${c.id}'))" class="text-slate-400 hover:text-rose-500 p-2"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>`;
                 }).join('');
@@ -794,6 +802,7 @@
             },
 
             renderDocs: () => {
+                if(!document.getElementById('doc-search')) return;
                 const q = document.getElementById('doc-search').value.toLowerCase();
                 const cFilt = document.getElementById('doc-filter-client').value;
                 const tFilt = document.getElementById('doc-filter-type').value;
@@ -813,12 +822,13 @@
                     return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition">
                         <td class="py-3 pr-4 font-bold text-slate-700">${i.invoice_no}</td>
                         <td class="py-3 pr-4">${window.ui.fmtDate(i.date)}</td>
-                        <td class="py-3 pr-4">${cl}</td>
+                        <td class="py-3 pr-4 truncate max-w-[200px]">${cl}</td>
                         <td class="py-3 pr-4"><span class="text-xs font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded-md">${i.type}</span></td>
                         <td class="py-3 pr-4 text-right font-bold ${isRec ? 'text-emerald-600' : 'text-slate-800'}">${window.ui.fmtMoney(i.total)}</td>
                         <td class="py-3 pr-4 text-center"><span class="text-xs font-bold px-2 py-1 rounded-md ${statColor}">${isRec ? 'Completed' : i.status}</span></td>
                         <td class="py-3 text-center flex justify-center gap-2">
                             <button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition"><i class="fa-solid fa-eye"></i></button>
+                            ${isRec && i.payment_screenshot ? `<button onclick="window.ui.viewScreenshot('${i.id}')" title="View Proof" class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition"><i class="fa-solid fa-image"></i></button>` : ''}
                             ${!isRec && i.status !== 'Paid' ? `<button onclick="window.ui.openPayForInv('${i.id}')" title="Record Payment" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"><i class="fa-solid fa-check"></i></button>` : ''}
                             <button onclick="window.ui.confirm('Delete this document? If it is a Receipt, the linked invoice will be marked Unpaid.', ()=>window.api.voidDoc('${i.id}'))" title="Void / Delete" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition"><i class="fa-solid fa-trash"></i></button>
                         </td>
@@ -829,6 +839,7 @@
 
             // Settings Sync
             populateSettingsForm: () => {
+                if(!document.getElementById('set-name')) return;
                 const s = state.settings;
                 ['name','phone','email','pan','bank','ac','ifsc','upi'].forEach(k => { if(document.getElementById(`set-${k}`)) document.getElementById(`set-${k}`).value = s[k] || ''; });
                 ['mi','ind','st','rec'].forEach(k => { if(document.getElementById(`set-pfx-${k}`) && s.pfx) document.getElementById(`set-pfx-${k}`).value = s.pfx[k.toUpperCase()] || ''; });
@@ -850,6 +861,7 @@
             },
             
             renderCatList: () => {
+                if(!document.getElementById('cat-list')) return;
                 const cats = state.settings.categories || [];
                 const html = cats.map(c => `<div class="flex justify-between items-center bg-slate-50 p-2 px-3 rounded-xl border border-slate-100">
                     <span class="text-sm font-bold text-slate-700">${c}</span>
@@ -948,7 +960,7 @@
                 
                 if(t === 'IND') {
                     const cId = document.getElementById('gb-client').value;
-                    const opts = `<option value="ALL">All Cases</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.case_no ? `${c.name} (${c.case_no})` : c.name}</option>`).join('');
+                    const opts = `<option value="ALL">All Cases</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                     document.getElementById('gb-case').innerHTML = opts;
                 }
                 window.ui.gbFetchItems();
@@ -973,17 +985,13 @@
                 items.sort((a,b) => new Date(a.date) - new Date(b.date));
 
                 const html = items.map(w => {
-                    const caObj = state.cases.find(c=>c.id===w.case_id);
-                    const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
-                    return `<label class="flex justify-between items-center p-3 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl cursor-pointer transition gap-3">
-                        <div class="flex items-start gap-3 flex-1 min-w-0">
-                            <input type="checkbox" value="${w.id}" data-amt="${w.amount}" onchange="window.ui.gbCalcLive()" class="gb-item-chk w-4 h-4 rounded text-blue-500 border-slate-300 focus:ring-0 mt-0.5 shrink-0">
-                            <div class="min-w-0 flex-1">
-                                <div class="text-xs font-bold text-slate-800 break-words">${window.ui.fmtDate(w.date)} <span class="text-slate-400 font-normal ml-1 sm:ml-2 break-words inline-block">${ca}</span></div>
-                                <div class="text-xs text-slate-500 break-words mt-1 line-clamp-2">${w.desc}</div>
-                            </div>
+                    const ca = state.cases.find(c=>c.id===w.case_id)?.name||'General';
+                    return `<label class="flex justify-between items-center p-2 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl cursor-pointer transition">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <input type="checkbox" value="${w.id}" data-amt="${w.amount}" onchange="window.ui.gbCalcLive()" class="gb-item-chk w-4 h-4 rounded text-blue-500 border-slate-300 focus:ring-0 shrink-0">
+                            <div class="min-w-0"><div class="text-xs font-bold text-slate-800 truncate">${window.ui.fmtDate(w.date)} <span class="text-slate-400 font-normal ml-2">${ca}</span></div><div class="text-xs text-slate-500 truncate w-48 sm:w-64">${w.desc}</div></div>
                         </div>
-                        <div class="text-sm font-bold text-slate-800 shrink-0 whitespace-nowrap mt-0.5">${window.ui.fmtMoney(w.amount)}</div>
+                        <div class="text-sm font-bold text-slate-800 shrink-0 ml-2">${window.ui.fmtMoney(w.amount)}</div>
                     </label>`;
                 }).join('');
                 document.getElementById('gb-items-list').innerHTML = html || '<p class="text-center text-xs text-slate-400 py-4">No matching work items found.</p>';
@@ -999,6 +1007,13 @@
                 document.querySelectorAll('.gb-item-chk:checked').forEach(cb => { tot += parseFloat(cb.dataset.amt); });
                 document.getElementById('gb-live-total').innerText = window.ui.fmtMoney(tot);
             },
+            viewScreenshot: (id) => {
+                const inv = state.invoices.find(i=>i.id===id);
+                if(inv && inv.payment_screenshot) {
+                    document.getElementById('view-screenshot-img').src = inv.payment_screenshot;
+                    window.ui.openModal('modal-screenshot');
+                }
+            },
             openStandalonePay: () => {
                 document.getElementById('pay-inv-id').value = '';
                 document.getElementById('pay-client').value = '';
@@ -1006,34 +1021,35 @@
                 document.getElementById('pay-date').valueAsDate = new Date();
                 document.getElementById('pay-ref').value = '';
                 document.getElementById('pay-screenshot').value = '';
-                document.getElementById('pay-screenshot-preview').src = '';
                 document.getElementById('pay-screenshot-preview').classList.add('hidden');
+                document.getElementById('pay-screenshot-preview').src = '';
                 window.ui.openModal('modal-pay');
             },
             openPayForInv: (invId) => {
                 const inv = state.invoices.find(i=>i.id===invId);
                 if(!inv) return;
+                window.ui.openStandalonePay();
                 document.getElementById('pay-inv-id').value = inv.id;
                 document.getElementById('pay-client').value = inv.client_id;
                 document.getElementById('pay-amt').value = inv.total;
-                document.getElementById('pay-date').valueAsDate = new Date();
-                document.getElementById('pay-ref').value = '';
-                document.getElementById('pay-screenshot').value = '';
-                document.getElementById('pay-screenshot-preview').src = '';
-                document.getElementById('pay-screenshot-preview').classList.add('hidden');
-                window.ui.openModal('modal-pay');
             }
         };
 
-        // UI Event Listeners for file upload preview
-        document.getElementById('pay-screenshot').addEventListener('change', (e) => {
+        // File input preview logic
+        document.getElementById('pay-screenshot').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const preview = document.getElementById('pay-screenshot-preview');
             if(file) {
                 const reader = new FileReader();
-                reader.onload = (ev) => { preview.src = ev.target.result; preview.classList.remove('hidden'); };
+                reader.onload = function(evt) {
+                    preview.src = evt.target.result;
+                    preview.classList.remove('hidden');
+                };
                 reader.readAsDataURL(file);
-            } else { preview.classList.add('hidden'); }
+            } else {
+                preview.classList.add('hidden');
+                preview.src = '';
+            }
         });
 
         // --- Core API / Firebase ---
@@ -1087,7 +1103,7 @@
             saveSettingsCore: async (data, silent = false) => {
                 try {
                     const r = doc(db, `saas_tenants/${state.uid}/settings`, 'global');
-                    await setDoc(r, data, { merge: true }); // using merge so it never crashes if doc is fresh
+                    await setDoc(r, data, { merge: true });
                     if(!silent) window.ui.showToast('Settings saved successfully!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
@@ -1107,15 +1123,7 @@
                     window.ui.showToast('Client saved!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
-            editClient: (id) => { 
-                const c = state.clients.find(x=>x.id===id); 
-                if(c) { 
-                    document.getElementById('client-id').value = c.id; 
-                    document.getElementById('client-name').value = c.name || ''; 
-                    document.getElementById('client-email').value = c.email || ''; 
-                    document.getElementById('client-phone').value = c.phone || ''; 
-                } 
-            },
+            editClient: (id) => { const c = state.clients.find(x=>x.id===id); if(c) { document.getElementById('client-id').value = c.id; document.getElementById('client-name').value = c.name; document.getElementById('client-email').value = c.email||''; document.getElementById('client-phone').value = c.phone||''; } },
             delClient: async (id) => { await deleteDoc(doc(db, `saas_tenants/${state.uid}/clients`, id)); window.ui.showToast('Client deleted.'); },
 
             saveCase: async (e) => {
@@ -1125,7 +1133,7 @@
                     const d = { 
                         client_id: document.getElementById('case-client').value, 
                         name: document.getElementById('case-name').value,
-                        case_no: document.getElementById('case-no').value
+                        ref: document.getElementById('case-ref').value
                     };
                     if(id) await setDoc(doc(db, `saas_tenants/${state.uid}/cases`, id), d);
                     else await addDoc(collection(db, `saas_tenants/${state.uid}/cases`), d);
@@ -1133,15 +1141,7 @@
                     window.ui.showToast('Case saved!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
-            editCase: (id) => { 
-                const c = state.cases.find(x=>x.id===id); 
-                if(c) { 
-                    document.getElementById('case-id').value = c.id; 
-                    document.getElementById('case-client').value = c.client_id; 
-                    document.getElementById('case-name').value = c.name || ''; 
-                    document.getElementById('case-no').value = c.case_no || ''; 
-                } 
-            },
+            editCase: (id) => { const c = state.cases.find(x=>x.id===id); if(c) { document.getElementById('case-id').value = c.id; document.getElementById('case-client').value = c.client_id; document.getElementById('case-name').value = c.name; document.getElementById('case-ref').value = c.ref||''; } },
             delCase: async (id) => { await deleteDoc(doc(db, `saas_tenants/${state.uid}/cases`, id)); window.ui.showToast('Case deleted.'); },
 
             saveWork: async (e) => {
@@ -1179,36 +1179,36 @@
 
             savePayment: async () => {
                 try {
+                    window.ui.showToast('Processing payment...', 'info');
                     const invId = document.getElementById('pay-inv-id').value;
                     const cId = document.getElementById('pay-client').value;
                     const amt = parseFloat(document.getElementById('pay-amt').value);
                     if(!cId || isNaN(amt)) return window.ui.showToast('Invalid data', 'error');
 
-                    // Process optional screenshot (Compress and resize before saving to DB)
-                    let screenshotData = null;
+                    // Image Compression Logic
                     const fileInput = document.getElementById('pay-screenshot');
+                    let compressedBase64 = null;
                     if (fileInput.files && fileInput.files[0]) {
-                        screenshotData = await new Promise((resolve) => {
+                        compressedBase64 = await new Promise((resolve) => {
                             const reader = new FileReader();
                             reader.onload = (e) => {
                                 const img = new Image();
                                 img.onload = () => {
                                     const canvas = document.createElement('canvas');
-                                    const maxW = 800; // max width
-                                    let w = img.width, h = img.height;
-                                    if(w > maxW) { h = Math.round(h * maxW / w); w = maxW; }
-                                    canvas.width = w; canvas.height = h;
+                                    const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+                                    let width = img.width; let height = img.height;
+                                    if (width > height && width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } 
+                                    else if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                                    canvas.width = width; canvas.height = height;
                                     const ctx = canvas.getContext('2d');
-                                    ctx.drawImage(img, 0, 0, w, h);
-                                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // compress to 70% quality jpeg
+                                    ctx.drawImage(img, 0, 0, width, height);
+                                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compress to 70% quality JPEG
                                 };
                                 img.src = e.target.result;
                             };
                             reader.readAsDataURL(fileInput.files[0]);
                         });
                     }
-
-                    window.ui.showToast('Saving receipt...', 'info');
 
                     const seq = state.settings.seq || 1;
                     const pfx = state.settings.pfx?.REC || 'BOI-RE-';
@@ -1218,7 +1218,7 @@
                         date: document.getElementById('pay-date').value,
                         type: 'REC', client_id: cId, total: amt, invoice_no: docNo, status: 'Paid',
                         payment_ref: document.getElementById('pay-ref').value, linked_invoice_id: invId || null,
-                        payment_screenshot: screenshotData
+                        payment_screenshot: compressedBase64
                     };
 
                     const batch = writeBatch(db);
@@ -1230,7 +1230,7 @@
                     
                     await batch.commit();
                     window.ui.closeModal('modal-pay');
-                    window.ui.showToast('Payment recorded!');
+                    window.ui.showToast('Payment recorded successfully!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
 
@@ -1295,7 +1295,7 @@
             exportCSV: (type) => {
                 let data = [], keys = [], fname = '';
                 if(type==='clients'){ data=state.clients; keys=['name','email','phone']; fname='Clients'; }
-                if(type==='cases'){ data=state.cases.map(c=>({name:c.name, case_no:c.case_no||'', client:state.clients.find(x=>x.id===c.client_id)?.name})); keys=['name','case_no','client']; fname='Cases'; }
+                if(type==='cases'){ data=state.cases.map(c=>({name:c.name, ref:c.ref, client:state.clients.find(x=>x.id===c.client_id)?.name})); keys=['name','ref','client']; fname='Cases'; }
                 if(type==='work'){ data=state.work.map(w=>({...w, client:state.clients.find(x=>x.id===w.client_id)?.name})); keys=['date','client','category','desc','amount','prepaid']; fname='WorkLogs'; }
                 if(type==='docs'){ data=state.invoices.map(i=>({...i, client:state.clients.find(x=>x.id===i.client_id)?.name})); keys=['invoice_no','date','client','type','total','status']; fname='Documents'; }
                 
@@ -1321,7 +1321,16 @@
                 if(inv.type === 'ST') docTitle = 'Statement of Account';
                 if(inv.type === 'REC') docTitle = 'Payment Receipt';
 
+                // Client Contact Formatting
+                let cContact = [];
+                if(c.phone) cContact.push(c.phone);
+                if(c.email) cContact.push(c.email);
+                let contactStr = cContact.length > 0 ? cContact.join(' | ') : '';
+
+                let hidePaymentInfo = '';
+
                 if(inv.type === 'ST') {
+                    hidePaymentInfo = 'display: none;'; // Hide bank info/QR for Statements
                     const pStart = inv.period_start ? new Date(inv.period_start) : new Date(0);
                     const pEnd = inv.period_end ? new Date(inv.period_end) : new Date(inv.date);
                     
@@ -1335,9 +1344,9 @@
 
                     let events = [];
                     state.work.filter(w => w.client_id === c.id && new Date(w.date) >= pStart && new Date(w.date) <= pEnd).forEach(w => {
-                        const caObj = state.cases.find(x=>x.id===w.case_id);
-                        const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
-                        events.push({type:'W', date:w.date, desc:`<span style="color:#0f172a; font-weight:600;">[${ca}]</span> ${w.desc}`, amt:w.amount});
+                        const ca = state.cases.find(x=>x.id===w.case_id);
+                        const caName = ca ? `${ca.name}${ca.ref? ` (${ca.ref})`:''}` : 'General';
+                        events.push({type:'W', date:w.date, desc:`<b>[${caName}]</b> ${w.desc}`, amt:w.amount});
                     });
                     state.invoices.filter(i => i.type === 'REC' && i.client_id === c.id && new Date(i.date) >= pStart && new Date(i.date) <= pEnd).forEach(r => events.push({type:'P', date:r.date, desc:`Payment Received (${r.payment_ref||'N/A'})`, amt:r.total}));
                     
@@ -1349,44 +1358,42 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    let screenshotHtml = inv.payment_screenshot ? `<div style="margin-top: 25px;"><p style="color:#64748b; font-size:11px; text-transform:uppercase; font-weight:700; letter-spacing:0.5px; margin-bottom:10px;">Payment Proof</p><img src="${inv.payment_screenshot}" style="max-width: 100%; max-height: 400px; border-radius: 12px; border: 1px solid #e2e8f0; display: inline-block;"></div>` : '';
-                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><div style="background:#f8fafc; border:1px solid #f1f5f9; border-radius:16px; padding:30px;"><h2 style="font-family:'Playfair Display', serif; font-size:26px; color:#1e3a8a; margin:0 0 10px 0;">Payment Received with Thanks</h2><p style="font-size:22px; margin: 10px 0; font-weight:800; color:#0f172a;">${window.ui.fmtMoney(inv.total)}</p><p style="color:#64748b; margin:0; font-size:14px;">Reference: ${inv.payment_ref||'N/A'}</p></div>${screenshotHtml}</td></tr>`;
+                    hidePaymentInfo = 'display: none;';
+                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><div style="background:#f8fafc; border:1px solid #f1f5f9; border-radius:16px; padding:30px;"><h2 style="font-family:'Playfair Display', serif; font-size:26px; color:#1e3a8a; margin:0 0 10px 0;">Payment Received with Thanks</h2><p style="font-size:22px; margin: 10px 0; font-weight:800; color:#0f172a;">${window.ui.fmtMoney(inv.total)}</p><p style="color:#64748b; margin:0; font-size:14px;">Reference: ${inv.payment_ref||'N/A'}</p></div></td></tr>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
                     wItems.sort((a,b) => new Date(a.date) - new Date(b.date));
                     wItems.forEach(w => {
-                        const caObj = state.cases.find(x=>x.id===w.case_id);
-                        const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
-                        rows += invTpl.replace('{{r_date}}',window.ui.fmtDate(w.date)).replace('{{r_case}}',ca).replace('{{r_desc}}',w.desc).replace('{{r_amt}}',window.ui.fmtMoney(w.amount));
+                        const ca = state.cases.find(x=>x.id===w.case_id);
+                        const caName = ca ? `${ca.name}${ca.ref? `\nRef: ${ca.ref}`:''}` : 'General';
+                        rows += invTpl.replace('{{r_date}}',window.ui.fmtDate(w.date)).replace('{{r_case}}',caName.replace('\n','<br>')).replace('{{r_desc}}',w.desc).replace('{{r_amt}}',window.ui.fmtMoney(w.amount));
                     });
                 }
 
                 let qrUri = '';
                 if(s.upi && inv.type !== 'ST' && inv.type !== 'REC') {
-                    const tNote = encodeURIComponent(`Invoice ${inv.invoice_no}`);
-                    const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tr=${inv.invoice_no}&tn=${tNote}&am=${inv.total}&cu=INR`;
+                    const tNote = encodeURIComponent(`Payment for Doc ${inv.invoice_no}`);
+                    const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tn=${tNote}&am=${inv.total}&cu=INR`;
                     const qD = document.createElement('div');
-                    qD.style.display = 'none';
-                    document.body.appendChild(qD); // Temporarily attach to DOM for safe canvas rendering
+                    qD.style.position = 'fixed'; qD.style.top = '-9999px';
+                    document.body.appendChild(qD);
                     new QRCode(qD, { text: str, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.L });
                     await new Promise(res => setTimeout(res, 250)); 
                     const cNode = qD.querySelector('canvas');
                     if(cNode) qrUri = cNode.toDataURL();
-                    document.body.removeChild(qD); // Clean up
+                    document.body.removeChild(qD);
                 }
-
-                const contactArr = [c.email, c.phone].filter(Boolean);
-                const clientContact = contactArr.join(' | ');
 
                 const map = {
                     '{{pro_name}}': s.name || 'Legal Professional', '{{pro_phone}}': s.phone || '', '{{pro_email}}': s.email || '', '{{pro_pan}}': s.pan || 'N/A',
                     '{{doc_title}}': docTitle, '{{inv_no}}': inv.invoice_no, '{{date}}': window.ui.fmtDate(inv.date), '{{client_name}}': c.name || 'Unknown Client',
-                    '{{client_contact}}': clientContact, '{{client_contact_display}}': clientContact ? 'display:block;' : 'display:none;',
+                    '{{client_contact}}': contactStr,
                     '{{period_str}}': inv.period_start ? `${window.ui.fmtDate(inv.period_start)} to ${window.ui.fmtDate(inv.period_end)}` : `Upto ${window.ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
                     '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
-                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:inline-block !important;' : 'display:none !important;',
+                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:block;' : 'display:none;',
+                    '{{hide_payment_info}}': hidePaymentInfo,
                     '{{sig}}': s.sig||'', '{{sig_display}}': s.sig ? 'display:block;' : 'display:none;',
                     '{{total}}': inv.type==='ST' ? (runBal<0?window.ui.fmtMoney(Math.abs(runBal))+' (Cr)':window.ui.fmtMoney(runBal)) : window.ui.fmtMoney(inv.total)
                 };
@@ -1396,14 +1403,6 @@
                 return h;
             },
             
-            downloadPDF: () => {
-                if(!state.pdfBlobUrl || !state.currentPdfInv) return;
-                const link = document.createElement('a');
-                link.href = state.pdfBlobUrl;
-                link.download = `${state.currentPdfInv.invoice_no}.pdf`;
-                link.click();
-            },
-
             processPDF: async (id, action) => {
                 const inv = state.invoices.find(i => i.id === id);
                 if(!inv) return;
@@ -1416,9 +1415,9 @@
                 
                 await new Promise(r => setTimeout(r, 400)); // allow DOM to paint and web fonts to process
 
-                // Ensure absolute strictness for the PDF boundary to prevent cutoff.
+                // Strict coordinates and margin zeroes for perfect fit. Margin is handled via html padding.
                 const opt = {
-                    margin: [15, 0, 15, 0], // mm (Top, Right, Bottom, Left). Zero side margins force perfect edge-to-edge centering.
+                    margin: 0,
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
@@ -1433,7 +1432,7 @@
                         backgroundColor: '#ffffff'
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.pdf-page-break'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['.pdf-page-break'] }
                 };
 
                 try {
@@ -1444,10 +1443,10 @@
                             pdf.setPage(i);
                             pdf.setFontSize(8);
                             pdf.setTextColor(150);
-                            pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 20, pdf.internal.pageSize.getHeight() - 10, { align: 'right' });
+                            pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 15, pdf.internal.pageSize.getHeight() - 10, { align: 'right' });
                             if (i > 1) {
                                 const cName = state.clients.find(c=>c.id===inv.client_id)?.name || '';
-                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 10, 8);
+                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 15, 10);
                             }
                         }
                     }).output('blob').then((blob) => {
@@ -1459,13 +1458,18 @@
                             document.getElementById('pdf-iframe').src = state.pdfBlobUrl;
                             window.ui.openModal('modal-pdf');
                         } else {
-                            const link = document.createElement('a');
-                            link.href = state.pdfBlobUrl;
-                            link.download = opt.filename;
-                            link.click();
+                            window.docsHelper.downloadPDF();
                         }
                     });
                 } catch(e) { window.ui.showToast('PDF Engine Error: ' + e.message, 'error'); window.api.logError(e.message); }
+            },
+
+            downloadPDF: () => {
+                if(!state.pdfBlobUrl || !state.currentPdfInv) return;
+                const link = document.createElement('a');
+                link.href = state.pdfBlobUrl;
+                link.download = `${state.currentPdfInv.invoice_no}.pdf`;
+                link.click();
             },
 
             sharePDF: async () => {
@@ -1483,10 +1487,7 @@
                         });
                     } else {
                         window.ui.showToast('Native share not supported on this browser. Downloading instead.', 'info');
-                        const link = document.createElement('a');
-                        link.href = state.pdfBlobUrl;
-                        link.download = file.name;
-                        link.click();
+                        window.docsHelper.downloadPDF();
                     }
                 } catch(e) { window.ui.showToast('Sharing failed/cancelled', 'info'); }
             }
