@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Boidik Legal Cloud</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230f172a' /%3E%3Cstop offset='100%25' stop-color='%233b82f6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cpath d='M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,16 +73,6 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        
-        /* PDF Detached Container */
-        #pdf-render-container {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 800px;
-            z-index: -9999;
-            background: white;
         }
     </style>
 </head>
@@ -578,8 +571,27 @@
         </div>
     </div>
 
-    <!-- Detached PDF Container (Never visible) -->
-    <div id="pdf-render-container"></div>
+    <!-- Custom Confirm Modal -->
+    <div id="modal-confirm" class="fixed inset-0 z-[110] hidden flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-hyper p-6 w-full max-w-sm shadow-2xl text-center animate-fade-in-up">
+            <div class="text-rose-500 mb-4 text-4xl"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <h3 class="font-serif text-xl font-bold text-slate-800 mb-2">Are you sure?</h3>
+            <p id="confirm-msg" class="text-sm text-slate-600 mb-6"></p>
+            <div class="flex gap-2">
+                <button onclick="ui.closeModal('modal-confirm')" class="flex-1 bg-slate-200 text-slate-700 py-3 rounded-xl font-semibold hover:bg-slate-300 transition-colors">Cancel</button>
+                <button id="btn-confirm-yes" class="flex-1 bg-rose-500 text-white py-3 rounded-xl font-semibold hover:bg-rose-600 transition-colors">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[120] flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Detached PDF Container Wrapper (Prevents blank PDFs by keeping it in standard flow but hidden via dimensions) -->
+    <div style="position: absolute; top: 0; left: 0; width: 0; height: 0; overflow: hidden; z-index: -9999;">
+        <div id="pdf-render-container" style="width: 800px; background: white; color: black;"></div>
+    </div>
+    
     <!-- Hidden element for QR code generation -->
     <div id="qr-temp" style="display:none;"></div>
 
@@ -723,6 +735,26 @@
                 document.getElementById('bill-items-container').innerHTML = '<p class="text-sm text-slate-400 text-center mt-4">Select criteria above to load work items.</p>';
                 document.getElementById('bill-total-display').innerText = '₹0';
                 ui.openModal('modal-bill');
+            },
+            showToast: (msg, type = 'info') => {
+                const colors = { success: 'bg-emerald-500', error: 'bg-rose-500', info: 'bg-blue-500' };
+                const icon = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+                const t = document.createElement('div');
+                t.className = `${colors[type]} text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-fade-in-up transition-opacity duration-300 pointer-events-auto`;
+                t.innerHTML = `<i class="fa-solid ${icon[type]}"></i><span class="text-sm font-semibold">${msg}</span>`;
+                document.getElementById('toast-container').appendChild(t);
+                setTimeout(() => {
+                    t.classList.add('opacity-0');
+                    setTimeout(() => t.remove(), 300);
+                }, 3000);
+            },
+            showConfirm: (msg, onConfirm) => {
+                document.getElementById('confirm-msg').innerText = msg;
+                ui.openModal('modal-confirm');
+                document.getElementById('btn-confirm-yes').onclick = () => {
+                    ui.closeModal('modal-confirm');
+                    onConfirm();
+                };
             }
         };
         window.nav = ui.nav; // global mapping
@@ -779,6 +811,7 @@
                 if (d.exists()) {
                     state.settings = d.data();
                     window.settingsHelper.populateForm();
+                    ui.populateSelects(); // Sync categories immediately across app
                 } else {
                     // Create default settings
                     const def = {
@@ -827,10 +860,10 @@
             const id = document.getElementById('client-id').value;
             const refCol = collection(db, ui.getTenantPath('clients'));
             try {
-                if(id) await updateDoc(doc(refCol, id), data);
-                else await addDoc(refCol, data);
+                if(id) { await updateDoc(doc(refCol, id), data); ui.showToast('Client updated', 'success'); }
+                else { await addDoc(refCol, data); ui.showToast('Client added', 'success'); }
                 e.target.reset(); document.getElementById('client-id').value = '';
-            } catch(err) { alert(err); }
+            } catch(err) { ui.showToast(err.message || err, 'error'); }
         });
 
         document.getElementById('form-case').addEventListener('submit', async (e) => {
@@ -843,10 +876,10 @@
             const id = document.getElementById('case-id').value;
             const refCol = collection(db, ui.getTenantPath('cases'));
             try {
-                if(id) await updateDoc(doc(refCol, id), data);
-                else await addDoc(refCol, data);
+                if(id) { await updateDoc(doc(refCol, id), data); ui.showToast('Case updated', 'success'); }
+                else { await addDoc(refCol, data); ui.showToast('Case added', 'success'); }
                 e.target.reset(); document.getElementById('case-id').value = '';
-            } catch(err) { alert(err); }
+            } catch(err) { ui.showToast(err.message || err, 'error'); }
         });
 
         ui.renderDirectory = () => {
@@ -892,12 +925,26 @@
                 const c = state.clients.find(x => x.id === id);
                 if(c) { document.getElementById('client-id').value = c.id; document.getElementById('client-name').value = c.name; document.getElementById('client-email').value = c.email; }
             },
-            delClient: async (id) => { if(confirm("Delete client? Cases/Logs will remain orphaned.")) await deleteDoc(doc(db, ui.getTenantPath('clients'), id)); },
+            delClient: (id) => { 
+                ui.showConfirm("Delete client? Cases/Logs will remain orphaned.", async () => {
+                    try {
+                        await deleteDoc(doc(db, ui.getTenantPath('clients'), id));
+                        ui.showToast('Client deleted', 'success');
+                    } catch(err) { ui.showToast(err.message || err, 'error'); }
+                }); 
+            },
             editCase: (id) => {
                 const c = state.cases.find(x => x.id === id);
                 if(c) { document.getElementById('case-id').value = c.id; document.getElementById('case-client').value = c.client_id; document.getElementById('case-name').value = c.name; document.getElementById('case-ref').value = c.ref; }
             },
-            delCase: async (id) => { if(confirm("Delete case? Logs will remain orphaned.")) await deleteDoc(doc(db, ui.getTenantPath('cases'), id)); }
+            delCase: (id) => { 
+                ui.showConfirm("Delete case? Logs will remain orphaned.", async () => {
+                    try {
+                        await deleteDoc(doc(db, ui.getTenantPath('cases'), id));
+                        ui.showToast('Case deleted', 'success');
+                    } catch(err) { ui.showToast(err.message || err, 'error'); }
+                }); 
+            }
         };
 
         // --- MODULE: TIME & WORK LOGS ---
@@ -927,14 +974,18 @@
             try {
                 if(id) {
                     const existing = state.works.find(w=>w.id===id);
-                    if(existing && existing.invoice_id) return alert("Cannot edit billed item here.");
+                    if(existing && existing.invoice_id) return ui.showToast("Cannot edit billed item here.", "error");
                     await updateDoc(doc(refCol, id), data);
-                } else { await addDoc(refCol, data); }
+                    ui.showToast('Log updated', 'success');
+                } else { 
+                    await addDoc(refCol, data); 
+                    ui.showToast('Log added', 'success');
+                }
                 
                 // Reset form
                 e.target.reset(); document.getElementById('log-id').value = ''; document.getElementById('log-date').valueAsDate = new Date();
                 document.getElementById('btn-log-cancel').classList.add('hidden'); document.getElementById('log-form-title').innerText = "Quick Log";
-            } catch(err) { alert(err); }
+            } catch(err) { ui.showToast(err.message || err, 'error'); }
         });
 
         document.getElementById('btn-log-cancel').addEventListener('click', () => {
@@ -987,11 +1038,22 @@
                     document.getElementById('btn-log-cancel').classList.remove('hidden'); document.getElementById('log-form-title').innerText = "Edit Log";
                 }
             },
-            del: async (id) => { if(confirm("Delete this log?")) await deleteDoc(doc(db, ui.getTenantPath('workItems'), id)); }
+            del: (id) => { 
+                ui.showConfirm("Delete this log?", async () => {
+                    try {
+                        await deleteDoc(doc(db, ui.getTenantPath('workItems'), id));
+                        ui.showToast('Log deleted', 'success');
+                    } catch(err) { ui.showToast(err.message || err, 'error'); }
+                }); 
+            }
         };
 
         // --- MODULE: DOCUMENTS & BILLS (GENERATION LOGIC) ---
         ui.populateSelects = () => {
+            // Persist current selections if they exist
+            const curClient = document.getElementById('log-client').value;
+            const curCat = document.getElementById('log-category').value;
+
             const cOpts = '<option value="">Select Client...</option>' + state.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
             document.getElementById('log-client').innerHTML = cOpts;
             document.getElementById('bill-client').innerHTML = cOpts;
@@ -1003,6 +1065,10 @@
             
             // Filter dropdowns
             document.getElementById('filter-doc-client').innerHTML = '<option value="">All Clients</option>' + state.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+            // Restore
+            if (curClient) document.getElementById('log-client').value = curClient;
+            if (curCat && cats.includes(curCat)) document.getElementById('log-category').value = curCat;
         };
 
         // Bill Generator Dynamic UI
@@ -1103,7 +1169,7 @@
                     docData.total = 0; // Total calculated on render
                 } else {
                     const selectedCb = Array.from(document.querySelectorAll('.bill-item-cb:checked'));
-                    if(selectedCb.length === 0) return alert("Select at least one item.");
+                    if(selectedCb.length === 0) return ui.showToast("Select at least one item.", "error");
                     
                     selectedCb.forEach(cb => {
                         docData.items.push(cb.value);
@@ -1119,8 +1185,9 @@
                 try {
                     await batch.commit();
                     ui.closeModal('modal-bill');
+                    ui.showToast(`Generated ${type} doc: ${invNo}`, 'success');
                     logAction('INFO', `Generated ${type} doc: ${invNo}`);
-                } catch(err) { alert(err); }
+                } catch(err) { ui.showToast(err.message || err, 'error'); }
             },
 
             // Direct Pay
@@ -1147,8 +1214,9 @@
                     await batch.commit();
                     ui.closeModal('modal-direct-pay');
                     document.getElementById('form-direct-pay').reset();
+                    ui.showToast(`Direct pay receipt generated: ${invNo}`, 'success');
                     logAction('INFO', `Direct pay receipt generated: ${invNo}`);
-                } catch(err) { alert(err); }
+                } catch(err) { ui.showToast(err.message || err, 'error'); }
             },
 
             // Mark invoice paid
@@ -1162,7 +1230,7 @@
                 const invId = document.getElementById('ip-inv-id').value;
                 const date = document.getElementById('ip-date').value;
                 const ref = document.getElementById('ip-ref').value;
-                if(!date || !ref) return alert("Fill all fields");
+                if(!date || !ref) return ui.showToast("Fill all fields", "error");
 
                 const inv = state.invoices.find(x => x.id === invId);
                 if(!inv) return;
@@ -1184,27 +1252,32 @@
                 try {
                     await batch.commit();
                     ui.closeModal('modal-inv-pay');
-                } catch(err) { alert(err); }
+                    ui.showToast("Payment recorded successfully", "success");
+                } catch(err) { ui.showToast(err.message || err, 'error'); }
             },
 
-            voidDoc: async (id) => {
+            voidDoc: (id) => {
                 const d = state.invoices.find(x=>x.id===id);
                 if(!d) return;
-                if(!confirm(`Void document ${d.invoice_no}? This will free up linked work items.`)) return;
-
-                const batch = writeBatch(db);
-                batch.delete(doc(db, ui.getTenantPath('invoices'), id));
-                if(d.type === 'MI' || d.type === 'IND') {
-                    d.items.forEach(wId => {
-                        batch.update(doc(db, ui.getTenantPath('workItems'), wId), { invoice_id: null });
-                    });
-                }
-                // If voiding a receipt linked to an invoice, reset invoice to Unpaid
-                if(d.type === 'REC' && d.linked_invoice_id) {
-                     batch.update(doc(db, ui.getTenantPath('invoices'), d.linked_invoice_id), { status: 'Unpaid', payment_date: null, payment_ref: null, linked_receipt: null });
-                }
                 
-                try { await batch.commit(); } catch(err){ alert(err); }
+                ui.showConfirm(`Void document ${d.invoice_no}? This will free up linked work items.`, async () => {
+                    const batch = writeBatch(db);
+                    batch.delete(doc(db, ui.getTenantPath('invoices'), id));
+                    if(d.type === 'MI' || d.type === 'IND') {
+                        d.items.forEach(wId => {
+                            batch.update(doc(db, ui.getTenantPath('workItems'), wId), { invoice_id: null });
+                        });
+                    }
+                    // If voiding a receipt linked to an invoice, reset invoice to Unpaid
+                    if(d.type === 'REC' && d.linked_invoice_id) {
+                         batch.update(doc(db, ui.getTenantPath('invoices'), d.linked_invoice_id), { status: 'Unpaid', payment_date: null, payment_ref: null, linked_receipt: null });
+                    }
+                    
+                    try { 
+                        await batch.commit(); 
+                        ui.showToast('Document voided successfully', 'success');
+                    } catch(err){ ui.showToast(err.message || err, 'error'); }
+                });
             }
         };
 
@@ -1396,7 +1469,7 @@
                             const file = new File([blob], opt.filename, { type: 'application/pdf' });
                             try {
                                 await navigator.share({ files: [file], title: opt.filename });
-                            } catch (err) { alert("Sharing failed or cancelled."); }
+                            } catch (err) { ui.showToast("Sharing failed or cancelled.", "info"); }
                         }
                     });
                 }
@@ -1519,11 +1592,12 @@
             },
             remCat: (idx) => { state.settings.categories.splice(idx, 1); window.settingsHelper.renderCats(); },
             resetTemplates: () => {
-                if(confirm("Reset all templates to factory defaults?")) {
+                ui.showConfirm("Reset all templates to factory defaults?", () => {
                     document.getElementById('tpl-invoice').value = defaultTemplates.invoice;
                     document.getElementById('tpl-statement').value = defaultTemplates.statement;
                     document.getElementById('tpl-receipt').value = defaultTemplates.receipt;
-                }
+                    ui.showToast('Templates reset. Click "Save All Settings" to apply.', 'info');
+                });
             }
         };
 
@@ -1576,8 +1650,8 @@
             };
             try {
                 await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), payload);
-                alert("Settings Saved Successfully!");
-            } catch(err) { alert(err); }
+                ui.showToast("Settings Saved Successfully!", "success");
+            } catch(err) { ui.showToast(err.message || err, 'error'); }
         });
 
         // Data Export Utility
