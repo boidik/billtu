@@ -200,7 +200,7 @@
                             <input type="checkbox" id="work-prepaid" class="w-5 h-5 rounded text-blue-500 border-none focus:ring-0 cursor-pointer">
                             <span class="text-sm font-bold text-slate-700">Prepaid (Zero Bill)</span>
                         </label>
-                        <div class="flex gap-2 mt-2">
+                        <div class="flex flex-col sm:flex-row gap-2 mt-2">
                             <button type="button" onclick="window.ui.resetWorkForm()" class="flex-1 py-3 bg-slate-100 text-slate-500 rounded-2xl font-bold hover:bg-slate-200 transition">Clear</button>
                             <button type="submit" class="flex-[2] py-3 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm">Save Entry</button>
                         </div>
@@ -269,9 +269,9 @@
                     <h2 class="text-3xl font-serif font-bold text-slate-800">Documents</h2>
                     <p class="text-slate-500 text-sm font-medium mt-1">Invoices, statements, and receipts.</p>
                 </div>
-                <div class="flex gap-3 w-full md:w-auto">
-                    <button onclick="window.ui.openModal('modal-pay')" class="flex-1 md:flex-none py-3 px-5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm"><i class="fa-solid fa-cash-register mr-2"></i> Record Pay</button>
-                    <button onclick="window.ui.openModal('modal-bill')" class="flex-1 md:flex-none py-3 px-5 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generate Bill</button>
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <button onclick="window.ui.openModal('modal-pay')" class="flex-1 py-3 px-5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm"><i class="fa-solid fa-cash-register mr-2"></i> Record Pay</button>
+                    <button onclick="window.ui.openModal('modal-bill')" class="flex-1 py-3 px-5 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generate Bill</button>
                 </div>
             </header>
 
@@ -389,7 +389,7 @@
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-95 transition-transform animate-fade-in-up">
             <h3 class="text-2xl font-serif font-bold text-slate-800 mb-3">Are you sure?</h3>
             <p id="confirm-msg" class="text-slate-500 text-sm mb-8 font-medium leading-relaxed"></p>
-            <div class="flex gap-3 justify-end">
+            <div class="flex flex-col sm:flex-row gap-3 justify-end">
                 <button onclick="window.ui.closeConfirm()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
                 <button id="confirm-btn-yes" onclick="window.ui.executeConfirm()" class="px-5 py-2.5 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-sm">Yes, Proceed</button>
             </div>
@@ -403,9 +403,19 @@
             <p class="text-slate-500 text-xs mb-4">Past work logs using this category will be automatically updated.</p>
             <input type="hidden" id="edit-cat-old">
             <input type="text" id="edit-cat-new" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none mb-6">
-            <div class="flex gap-3 justify-end">
+            <div class="flex flex-col sm:flex-row gap-3 justify-end">
                 <button onclick="document.getElementById('modal-cat-edit').classList.add('hidden')" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
                 <button onclick="window.ui.saveEditedCategory()" class="px-5 py-2.5 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition shadow-sm">Update</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- View Image Modal -->
+    <div id="modal-view-img" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[1000] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2rem] p-4 max-w-2xl w-full max-h-[90vh] flex flex-col relative animate-fade-in-up">
+            <button onclick="window.ui.closeModal('modal-view-img')" class="absolute top-4 right-4 w-10 h-10 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 flex items-center justify-center transition z-10"><i class="fa-solid fa-times"></i></button>
+            <div class="overflow-y-auto hide-scrollbar flex-1 rounded-xl bg-slate-100 flex items-center justify-center p-2 min-h-[300px]">
+                <img id="view-img-src" src="" class="max-w-full h-auto object-contain rounded-lg shadow-sm">
             </div>
         </div>
     </div>
@@ -421,6 +431,7 @@
             <div class="flex justify-between items-center p-4 border-b border-slate-100 bg-slate-50 shrink-0">
                 <h3 id="pdf-preview-title" class="font-bold text-slate-800 text-lg ml-2">Document Preview</h3>
                 <div class="flex gap-2">
+                    <button onclick="window.docsHelper.downloadPDF()" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 rounded-xl font-bold text-sm transition"><i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Download</span></button>
                     <button onclick="window.docsHelper.sharePDF()" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-4 py-2 rounded-xl font-bold text-sm transition"><i class="fa-solid fa-share-nodes"></i> <span class="hidden sm:inline">Share</span></button>
                     <button onclick="window.ui.closeModal('modal-pdf')" class="bg-slate-200 text-slate-700 hover:bg-slate-300 w-9 h-9 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-times"></i></button>
                 </div>
@@ -509,7 +520,11 @@
                     <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Ref / Mode</label>
                     <input type="text" id="pay-ref" placeholder="e.g. NEFT/UPI Ref" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
                 </div>
-                <div class="flex gap-2 mt-2">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Payment Proof (Optional Image)</label>
+                    <input type="file" id="pay-proof-file" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                </div>
+                <div class="flex flex-col sm:flex-row gap-2 mt-2">
                     <button onclick="window.ui.closeModal('modal-pay')" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">Cancel</button>
                     <button onclick="window.api.savePayment()" class="flex-1 py-3 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm">Save</button>
                 </div>
@@ -592,7 +607,7 @@
                             <tr><td style="color: #64748b; padding: 2px 0;">Account:</td><td style="font-weight: 600;">{{ac}}</td></tr>
                             <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
                         </table>
-                        <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px; display: inline-block;">
+                        <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px;">
                             <img src="{{qr}}" style="width: 90px; height: 90px; display: block;" alt="UPI QR">
                         </div>
                     </div>
@@ -616,7 +631,7 @@
             rowSt: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; page-break-inside: avoid; break-inside: avoid;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;" colspan="2">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</td></tr>`
         };
 
-        // --- STREAMING_CHUNK:Configuring UI helper functions and state handlers... ---
+        // --- UI & Helper Functions ---
         window.ui = {
             showToast: (msg, type = 'success') => {
                 const colors = type === 'success' ? 'bg-emerald-500 text-white' : type === 'error' ? 'bg-rose-500 text-white' : 'bg-slate-800 text-white';
@@ -726,7 +741,7 @@
                         <td class="py-3 pr-4"><div class="font-bold text-slate-800">${cl}</div><div class="text-xs text-slate-500">${ca}</div></td>
                         <td class="py-3 pr-4"><span class="bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-md font-bold mb-1 inline-block">${w.category}</span><div class="text-xs text-slate-600 truncate max-w-xs">${w.desc}</div></td>
                         <td class="py-3 pr-4 text-right font-bold ${w.amount===0 ? 'text-slate-400':'text-slate-800'}">${w.amount===0 ? 'Prepaid': window.ui.fmtMoney(w.amount)}</td>
-                        <td class="py-3 text-center opacity-0 group-hover:opacity-100 transition"><button onclick="window.api.editWork('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.ui.confirm('Delete this work entry forever?', ()=>window.api.delWork('${w.id}'))" class="text-rose-500 hover:text-rose-700 mx-1"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="py-3 text-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition"><button onclick="window.api.editWork('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1 p-2"><i class="fa-solid fa-pen"></i></button><button onclick="window.ui.confirm('Delete this work entry forever?', ()=>window.api.delWork('${w.id}'))" class="text-rose-500 hover:text-rose-700 mx-1 p-2"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>`;
                 }).join('');
                 document.getElementById('table-unbilled').innerHTML = html || '<tr><td colspan="5" class="py-8 text-center text-slate-400 font-medium">No unbilled work logs found.</td></tr>';
@@ -788,6 +803,8 @@
                     const cl = state.clients.find(c=>c.id===i.client_id)?.name || 'Unknown';
                     const isRec = i.type === 'REC';
                     const statColor = i.status === 'Paid' || isRec ? 'text-emerald-500 bg-emerald-50' : 'text-amber-600 bg-amber-50';
+                    const proofBtn = i.proof_img ? `<button onclick="window.ui.viewProof('${i.id}')" title="View Screenshot" class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition"><i class="fa-solid fa-image"></i></button>` : '';
+
                     return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition">
                         <td class="py-3 pr-4 font-bold text-slate-700">${i.invoice_no}</td>
                         <td class="py-3 pr-4">${window.ui.fmtDate(i.date)}</td>
@@ -796,13 +813,22 @@
                         <td class="py-3 pr-4 text-right font-bold ${isRec ? 'text-emerald-600' : 'text-slate-800'}">${window.ui.fmtMoney(i.total)}</td>
                         <td class="py-3 pr-4 text-center"><span class="text-xs font-bold px-2 py-1 rounded-md ${statColor}">${isRec ? 'Completed' : i.status}</span></td>
                         <td class="py-3 text-center flex justify-center gap-2">
-                            ${!isRec ? `<button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition"><i class="fa-solid fa-eye"></i></button>` : ''}
+                            <button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" title="View PDF" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition"><i class="fa-solid fa-eye"></i></button>
+                            ${proofBtn}
                             ${!isRec && i.status !== 'Paid' ? `<button onclick="window.ui.openPayForInv('${i.id}')" title="Record Payment" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"><i class="fa-solid fa-check"></i></button>` : ''}
                             <button onclick="window.ui.confirm('Delete this document? If it is a Receipt, the linked invoice will be marked Unpaid.', ()=>window.api.voidDoc('${i.id}'))" title="Void / Delete" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
                 }).join('');
                 document.getElementById('table-docs').innerHTML = html || '<tr><td colspan="7" class="py-8 text-center text-slate-400 font-medium">No documents found.</td></tr>';
+            },
+
+            viewProof: (id) => {
+                const i = state.invoices.find(x=>x.id===id);
+                if(i && i.proof_img) {
+                    document.getElementById('view-img-src').src = i.proof_img;
+                    window.ui.openModal('modal-view-img');
+                }
             },
 
             // Settings Sync
@@ -982,11 +1008,12 @@
                 document.getElementById('pay-amt').value = inv.total;
                 document.getElementById('pay-date').valueAsDate = new Date();
                 document.getElementById('pay-ref').value = '';
+                if(document.getElementById('pay-proof-file')) document.getElementById('pay-proof-file').value = '';
                 window.ui.openModal('modal-pay');
             }
         };
 
-        // --- STREAMING_CHUNK:Configuring Firebase API endpoints and synchronization... ---
+        // --- Core API / Firebase ---
         window.api = {
             logError: (msg) => {
                 try {
@@ -1037,7 +1064,7 @@
             saveSettingsCore: async (data, silent = false) => {
                 try {
                     const r = doc(db, `saas_tenants/${state.uid}/settings`, 'global');
-                    await setDoc(r, data, { merge: true });
+                    await setDoc(r, data, { merge: true }); // using merge so it never crashes if doc is fresh
                     if(!silent) window.ui.showToast('Settings saved successfully!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
@@ -1128,6 +1155,30 @@
                         payment_ref: document.getElementById('pay-ref').value, linked_invoice_id: invId || null
                     };
 
+                    // Handle Screenshot Compression
+                    const fileInput = document.getElementById('pay-proof-file');
+                    if(fileInput && fileInput.files.length > 0) {
+                        const file = fileInput.files[0];
+                        pDoc.proof_img = await new Promise(resolve => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const img = new Image();
+                                img.onload = () => {
+                                    const canvas = document.createElement('canvas');
+                                    const MAX_W = 800; const MAX_H = 800;
+                                    let w = img.width; let h = img.height;
+                                    if(w > h && w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
+                                    else if (h > MAX_H) { w *= MAX_H / h; h = MAX_H; }
+                                    canvas.width = w; canvas.height = h;
+                                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compressing down to keep DB fast
+                                };
+                                img.src = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    }
+
                     const batch = writeBatch(db);
                     const nRef = doc(collection(db, `saas_tenants/${state.uid}/invoices`));
                     batch.set(nRef, pDoc);
@@ -1137,6 +1188,7 @@
                     
                     await batch.commit();
                     window.ui.closeModal('modal-pay');
+                    if(fileInput) fileInput.value = '';
                     window.ui.showToast('Payment recorded!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
@@ -1215,7 +1267,7 @@
             }
         };
 
-        // --- STREAMING_CHUNK:Configuring PDF generator & document rendering engine... ---
+        // --- PDF Generation Engine ---
         window.docsHelper = {
             generateHTML: async (inv) => {
                 const s = state.settings;
@@ -1262,7 +1314,8 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
+                    // Receipts don't need a table of work. They just get a big clean "Payment Received" box.
+                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:30px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
@@ -1279,12 +1332,12 @@
                     const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tn=${encodeURIComponent(inv.invoice_no)}&am=${inv.total}&cu=INR`;
                     const qD = document.createElement('div');
                     qD.style.display = 'none';
-                    document.body.appendChild(qD);
+                    document.body.appendChild(qD); // Temporarily attach to DOM for safe canvas rendering
                     new QRCode(qD, { text: str, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.L });
                     await new Promise(res => setTimeout(res, 250)); 
                     const cNode = qD.querySelector('canvas');
                     if(cNode) qrUri = cNode.toDataURL();
-                    document.body.removeChild(qD);
+                    document.body.removeChild(qD); // Clean up
                 }
 
                 const map = {
@@ -1294,7 +1347,7 @@
                     '{{period_str}}': inv.period_start ? `${window.ui.fmtDate(inv.period_start)} to ${window.ui.fmtDate(inv.period_end)}` : `Upto ${window.ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
                     '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
-                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:block;' : 'display:none;',
+                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:inline-block;' : 'display:none;',
                     '{{sig}}': s.sig||'', '{{sig_display}}': s.sig ? 'display:block;' : 'display:none;',
                     '{{total}}': inv.type==='ST' ? (runBal<0?window.ui.fmtMoney(Math.abs(runBal))+' (Cr)':window.ui.fmtMoney(runBal)) : window.ui.fmtMoney(inv.total)
                 };
@@ -1314,10 +1367,12 @@
                 const container = document.getElementById('pdf-root-container');
                 container.innerHTML = await window.docsHelper.generateHTML(inv);
                 
-                await new Promise(r => setTimeout(r, 400));
+                await new Promise(r => setTimeout(r, 400)); // allow DOM to paint and web fonts to process
 
+                // Tightly controlled A4 margins. Zero width margins force true centering on the 800px width.
+                // 15mm top prevents header overlap. 20mm bottom provides safe space.
                 const opt = {
-                    margin: [15, 0, 15, 0],
+                    margin: [15, 0, 20, 0],
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
@@ -1344,9 +1399,11 @@
                             pdf.setFontSize(8);
                             pdf.setTextColor(150);
                             pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 20, pdf.internal.pageSize.getHeight() - 10, { align: 'right' });
+                            
+                            // Multi-page continuing header logic placed at y=10mm (comfortably inside the 15mm top margin)
                             if (i > 1) {
                                 const cName = state.clients.find(c=>c.id===inv.client_id)?.name || '';
-                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 10, 8);
+                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 10, 10);
                             }
                         }
                     }).output('blob').then((blob) => {
@@ -1365,6 +1422,14 @@
                         }
                     });
                 } catch(e) { window.ui.showToast('PDF Engine Error: ' + e.message, 'error'); window.api.logError(e.message); }
+            },
+
+            downloadPDF: () => {
+                if(!state.pdfBlobUrl || !state.currentPdfInv) return;
+                const link = document.createElement('a');
+                link.href = state.pdfBlobUrl;
+                link.download = `${state.currentPdfInv.invoice_no}.pdf`;
+                link.click();
             },
 
             sharePDF: async () => {
