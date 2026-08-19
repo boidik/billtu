@@ -616,7 +616,7 @@
                         <tr><td style="padding: 2px 0;">Account:</td><td style="font-weight: 700; color:#0f172a;">{{ac}}</td></tr>
                         <tr><td style="padding: 2px 0;">IFSC:</td><td style="font-weight: 700; color:#0f172a;">{{ifsc}}</td></tr>
                     </table>
-                    <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 6px; border-radius: 12px; display: inline-block; background: #fff;">
+                    <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 6px; border-radius: 12px; background: #fff;">
                         <img src="{{qr}}" style="width: 80px; height: 80px; display: block;" alt="UPI QR">
                     </div>
                 </div>
@@ -1392,7 +1392,7 @@
                     '{{period_str}}': inv.period_start ? `${window.ui.fmtDate(inv.period_start)} to ${window.ui.fmtDate(inv.period_end)}` : `Upto ${window.ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
                     '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
-                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:block;' : 'display:none;',
+                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:inline-block;' : 'display:none;',
                     '{{hide_payment_info}}': hidePaymentInfo,
                     '{{sig}}': s.sig||'', '{{sig_display}}': s.sig ? 'display:block;' : 'display:none;',
                     '{{total}}': inv.type==='ST' ? (runBal<0?window.ui.fmtMoney(Math.abs(runBal))+' (Cr)':window.ui.fmtMoney(runBal)) : window.ui.fmtMoney(inv.total)
