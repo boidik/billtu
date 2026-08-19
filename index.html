@@ -2,724 +2,731 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Boidik Legal Cloud</title>
-    <!-- Favicon (Base64 Encoded SVG for single-file deployment) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMwZjE3MmEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjM2I4MmY2IiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMjgiIGZpbGw9InVybCgjZykiLz48cGF0aCBkPSJNIDM1IDIwIEwgMzUgODAgTSAyNSAyNSBMIDY1IDI1IEwgMjUgNDIgTCA1NSA0MiBNIDM1IDI1IEMgNjAgMjUsIDYwIDUyLCAzNSA1MiBNIDM1IDUyIEMgNjUgNTIsIDY1IDgwLCAzNSA4MCBNIDQ1IDUyIEwgNjUgODAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iOCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+">
     
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { brand: '#3b82f6', bg: '#FDFBF7' },
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
-                    animation: { 'fade-in-up': 'fadeInUp 0.5s ease-out forwards' },
-                    keyframes: {
-                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Favicon Injection -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230f172a' /%3E%3Cstop offset='100%25' stop-color='%233b82f6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cpath d='M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
-    <!-- Libraries -->
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], serif: ['"Playfair Display"', 'serif'] },
+                    colors: { brand: '#3b82f6', bgmain: '#FDFBF7' }
+                }
+            }
+        }
+    </script>
     <style>
-        /* Custom Styles & Utilities */
-        body { background-color: #FDFBF7; color: #334155; }
+        body { background-color: #FDFBF7; font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Animation delays for staggered entry */
-        .delay-100 { animation-delay: 100ms; }
-        .delay-200 { animation-delay: 200ms; }
-        .delay-300 { animation-delay: 300ms; }
-        
-        /* Essential rule for PDF Table generation to prevent cuts */
-        .pdf-table-row { page-break-inside: avoid !important; }
+        /* Animations */
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+        .animate-fade-in-up-delay-1 { animation: fadeInUp 0.5s ease-out 0.1s forwards; opacity: 0; }
+        .animate-fade-in-up-delay-2 { animation: fadeInUp 0.5s ease-out 0.2s forwards; opacity: 0; }
+
+        /* PDF Root specific sizing to guarantee A4 */
+        #pdf-root-container { position: absolute; left: -10000px; top: 0; width: 800px; background: white; z-index: -9999; }
+        .pdf-template-style table { width: 100%; border-collapse: collapse; }
+        .pdf-template-style th, .pdf-template-style td { padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
+        .pdf-template-style th { font-weight: bold; color: #475569; }
+        .pdf-template-style tr { page-break-inside: avoid !important; }
     </style>
 </head>
-<body class="h-[100dvh] w-full overflow-hidden antialiased">
+<body class="h-[100dvh] overflow-hidden flex bg-bgmain">
 
-    <!-- Detached PDF Container: Pushed off screen entirely with fixed width to prevent mobile squishing -->
-    <div style="position: absolute; left: -10000px; top: 0; width: 800px;">
-        <div id="pdf-render-container" style="width: 800px; padding: 20px; background: white; color: black; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif;"></div>
-    </div>
-    <!-- Hidden QR Code container -->
-    <div id="qr-code-hidden" class="hidden"></div>
-
-    <!-- UI Overlay: Toasts -->
-    <div id="toast-container" class="fixed top-6 right-6 z-[60] flex flex-col gap-2 pointer-events-none"></div>
-
-    <!-- UI Overlay: Confirm Modal -->
-    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full transform scale-95 transition-transform duration-300" id="confirm-modal-box">
-            <h3 class="font-bold text-lg text-slate-800 mb-2">Confirm Action</h3>
-            <p id="confirm-msg" class="text-slate-600 mb-6 text-sm"></p>
-            <div class="flex justify-end gap-3">
-                <button onclick="window.ui.closeConfirm()" class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 font-medium text-sm transition">Cancel</button>
-                <button id="confirm-btn" class="px-4 py-2 rounded-xl bg-brand text-white font-medium text-sm hover:bg-blue-600 shadow-md transition">Proceed</button>
-            </div>
+    <!-- Sidebar -->
+    <nav class="w-20 md:w-64 flex-shrink-0 border-r border-slate-200 bg-white/50 backdrop-blur-md flex flex-col items-center md:items-start transition-all duration-300">
+        <div class="h-20 w-full flex items-center justify-center md:justify-start md:px-8 border-b border-slate-100">
+            <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="gx" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0f172a" /><stop offset="100%" stop-color="#3b82f6" /></linearGradient></defs><rect width="100" height="100" rx="28" fill="url(#gx)"/><path d="M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="hidden md:block ml-3 font-serif font-semibold text-lg text-slate-800">Boidik Legal</span>
         </div>
-    </div>
-
-    <!-- UI Overlay: Loading Screen -->
-    <div id="app-loading" class="fixed inset-0 bg-bg z-[100] flex flex-col items-center justify-center">
-        <i class="fa-solid fa-circle-notch fa-spin text-brand text-4xl mb-4"></i>
-        <p class="text-slate-500 font-medium animate-pulse">Initializing Legal Cloud...</p>
-    </div>
-
-    <!-- Authentication View -->
-    <div id="auth-view" class="fixed inset-0 bg-bg z-[50] hidden flex items-center justify-center p-4">
-        <div class="bg-white p-10 rounded-[2.5rem] shadow-xl max-w-md w-full text-center animate-fade-in-up border border-slate-100">
-            <div class="w-16 h-16 bg-gradient-to-br from-slate-900 to-brand rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg">
-                <svg class="w-8 h-8 text-white" viewBox="0 0 100 100"><path d="M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <h1 class="text-2xl font-serif font-bold text-slate-800 mb-2">Boidik Legal Cloud</h1>
-            <p class="text-slate-500 text-sm mb-8">Secure Practice Management</p>
-            <button id="btn-login" class="w-full bg-slate-900 text-white rounded-2xl py-4 font-semibold shadow-lg hover:bg-brand hover:shadow-brand/30 transition-all duration-300 flex items-center justify-center gap-3">
-                <i class="fa-brands fa-google"></i> Sign in with Google
-            </button>
+        <div class="flex-1 w-full py-6 flex flex-col gap-2 px-3">
+            <button onclick="window.ui.switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-chart-pie md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Dashboard</span></button>
+            <button onclick="window.ui.switchTab('logs')" id="nav-logs" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-clock md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Work Logs</span></button>
+            <button onclick="window.ui.switchTab('directory')" id="nav-directory" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-folder-open md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Directory</span></button>
+            <button onclick="window.ui.switchTab('docs')" id="nav-docs" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-file-invoice-dollar md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Documents</span></button>
+            <button onclick="window.ui.switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group mt-auto active:scale-95"><i class="fa-solid fa-gear md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Settings</span></button>
         </div>
-    </div>
+    </nav>
 
-    <!-- Main Application Container -->
-    <div id="main-app" class="hidden h-full w-full flex flex-col md:flex-row">
+    <!-- Main Content -->
+    <main class="flex-1 h-full overflow-y-auto hide-scrollbar p-4 md:p-8 relative">
         
-        <!-- Sidebar Navigation -->
-        <aside class="w-full md:w-64 bg-white md:rounded-r-[2.5rem] shadow-[4px_0_24px_rgba(0,0,0,0.02)] flex flex-col h-16 md:h-full flex-shrink-0 z-20 border-r border-slate-100">
-            <div class="hidden md:flex items-center gap-3 p-6 pt-8 border-b border-slate-100/50">
-                <div class="w-10 h-10 bg-gradient-to-br from-slate-900 to-brand rounded-xl flex items-center justify-center shadow-md">
-                    <svg class="w-5 h-5 text-white" viewBox="0 0 100 100"><path d="M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <!-- Loading Overlay -->
+        <div id="loading-overlay" class="absolute inset-0 bg-bgmain z-50 flex flex-col items-center justify-center transition-opacity duration-300">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand mb-4"></i>
+            <p class="text-slate-500 font-medium">Syncing Secure Cloud...</p>
+        </div>
+
+        <section id="view-dashboard" class="view-section hidden h-full flex flex-col gap-6 animate-fade-in-up">
+            <header class="flex justify-between items-center mb-2">
+                <h1 class="text-3xl font-serif font-semibold text-slate-800">Overview</h1>
+            </header>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <span class="text-slate-400 font-semibold text-sm mb-2"><i class="fa-solid fa-hourglass-half mr-2"></i>Total Unbilled</span>
+                    <span id="dash-unbilled" class="text-3xl font-bold text-slate-700">₹0</span>
                 </div>
-                <div>
-                    <h2 class="font-bold text-slate-800 leading-tight">Boidik</h2>
-                    <p class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Cloud</p>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
+                    <span class="text-rose-400 font-semibold text-sm mb-2"><i class="fa-solid fa-money-bill-wave mr-2"></i>Outstanding Debt</span>
+                    <span id="dash-debt" class="text-3xl font-bold text-slate-700">₹0</span>
+                </div>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between bg-gradient-to-br from-brand/10 to-brand/5">
+                    <span class="text-brand font-semibold text-sm mb-2"><i class="fa-solid fa-coins mr-2"></i>Collected This Month</span>
+                    <span id="dash-collected" class="text-3xl font-bold text-brand">₹0</span>
                 </div>
             </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[300px]">
+                <div class="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col">
+                    <h3 class="font-semibold text-slate-700 mb-4">Revenue vs Work</h3>
+                    <div class="flex-1 relative w-full h-full"><canvas id="chart-revenue"></canvas></div>
+                </div>
+                <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col">
+                    <h3 class="font-semibold text-slate-700 mb-4">Work Breakdown</h3>
+                    <div class="flex-1 relative w-full h-full flex items-center justify-center"><canvas id="chart-category"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-logs" class="view-section hidden h-full flex flex-col animate-fade-in-up">
+            <header class="mb-6"><h1 class="text-3xl font-serif font-semibold text-slate-800">Time & Logs</h1></header>
             
-            <nav class="flex-1 flex md:flex-col overflow-x-auto md:overflow-visible hide-scrollbar p-2 md:p-4 gap-1 md:gap-2 items-center md:items-stretch h-full">
-                <button onclick="window.ui.switchTab('dashboard')" class="nav-btn active flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
-                    <i class="fa-solid fa-chart-pie md:w-5 text-center"></i> <span>Insights</span>
-                </button>
-                <button onclick="window.ui.switchTab('works')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
-                    <i class="fa-solid fa-clock-rotate-left md:w-5 text-center"></i> <span>Logs</span>
-                </button>
-                <button onclick="window.ui.switchTab('directory')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
-                    <i class="fa-solid fa-address-book md:w-5 text-center"></i> <span>Directory</span>
-                </button>
-                <button onclick="window.ui.switchTab('docs')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
-                    <i class="fa-solid fa-file-invoice md:w-5 text-center"></i> <span>Billing</span>
-                </button>
-                <div class="hidden md:block flex-1"></div>
-                <button onclick="window.ui.switchTab('settings')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
-                    <i class="fa-solid fa-sliders md:w-5 text-center"></i> <span>Settings</span>
-                </button>
-                <button id="btn-logout" class="flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-rose-400 hover:bg-rose-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
-                    <i class="fa-solid fa-arrow-right-from-bracket md:w-5 text-center"></i> <span class="hidden md:inline">Sign Out</span>
-                </button>
-            </nav>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 overflow-y-auto hide-scrollbar p-4 md:p-8 md:px-10 relative">
-            
-            <!-- Dashboard View -->
-            <section id="view-dashboard" class="tab-content block animate-fade-in-up">
-                <header class="mb-8">
-                    <h1 class="text-3xl font-serif font-bold text-slate-800">Overview</h1>
-                    <p class="text-slate-500">Welcome back. Here is your financial snapshot.</p>
-                </header>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 delay-100 animate-fade-in-up">
-                        <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-xl"><i class="fa-solid fa-hourglass-half"></i></div>
-                        <div><p class="text-sm font-semibold text-slate-400">Unbilled Work</p><h3 class="text-2xl font-bold text-slate-800" id="dash-unbilled">₹0</h3></div>
-                    </div>
-                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 delay-200 animate-fade-in-up">
-                        <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center text-xl"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                        <div><p class="text-sm font-semibold text-slate-400">Outstanding Debt</p><h3 class="text-2xl font-bold text-slate-800" id="dash-debt">₹0</h3></div>
-                    </div>
-                    <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 delay-300 animate-fade-in-up">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center text-xl"><i class="fa-solid fa-wallet"></i></div>
-                        <div><p class="text-sm font-semibold text-slate-400">Collected (This Month)</p><h3 class="text-2xl font-bold text-slate-800" id="dash-collected">₹0</h3></div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <h3 class="font-bold text-slate-800 mb-4 px-2">Revenue vs Work (6 Months)</h3>
-                        <div class="relative h-64 w-full"><canvas id="chart-revenue"></canvas></div>
-                    </div>
-                    <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col">
-                        <h3 class="font-bold text-slate-800 mb-4 px-2">Revenue by Category</h3>
-                        <div class="relative flex-1 w-full min-h-[200px] flex items-center justify-center"><canvas id="chart-category"></canvas></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Work Logs View -->
-            <section id="view-works" class="tab-content hidden animate-fade-in-up">
-                <header class="mb-8 flex justify-between items-end">
-                    <div><h1 class="text-3xl font-serif font-bold text-slate-800">Time & Work</h1><p class="text-slate-500">Log billable activities and unbilled expenses.</p></div>
-                </header>
-                
-                <div class="flex flex-col lg:flex-row gap-6">
-                    <!-- Form -->
-                    <div class="w-full lg:w-1/3 bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 h-fit">
-                        <h3 class="font-bold text-slate-800 mb-4" id="work-form-title">Log New Item</h3>
-                        <form id="form-work" class="space-y-4" onsubmit="event.preventDefault(); window.workHelper.saveWork();">
-                            <input type="hidden" id="work-id">
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-2">Date</label><input type="date" id="work-date" required class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-brand/20"></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-2">Client</label><select id="work-client" required class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-brand/20" onchange="window.workHelper.filterCases()"><option value="">Select Client...</option></select></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-2">Case / Matter</label><select id="work-case" required class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-brand/20"><option value="">Select Case...</option></select></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-2">Category</label><select id="work-category" required class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-brand/20"><option value="">Select Category...</option></select></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-2">Description</label><textarea id="work-desc" required rows="2" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-brand/20 placeholder-slate-400" placeholder="Details of work..."></textarea></div>
-                            <div class="flex gap-3">
-                                <div class="flex-1"><label class="block text-xs font-bold text-slate-400 mb-1 ml-2">Amount (₹)</label><input type="number" step="0.01" id="work-amount" required class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-brand/20"></div>
-                                <div class="flex items-center pt-5 pr-2">
-                                    <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold text-slate-600"><input type="checkbox" id="work-prepaid" class="w-5 h-5 rounded text-brand focus:ring-brand"> Prepaid</label>
-                                </div>
-                            </div>
-                            <div class="pt-2 flex gap-2">
-                                <button type="button" onclick="window.workHelper.resetForm()" class="px-4 py-3 rounded-2xl text-slate-500 bg-slate-100 hover:bg-slate-200 font-bold text-sm transition">Clear</button>
-                                <button type="submit" class="flex-1 bg-slate-900 text-white rounded-2xl py-3 font-bold shadow-md hover:bg-brand transition text-sm">Save Log</button>
-                            </div>
-                        </form>
-                    </div>
+            <div class="flex flex-col lg:flex-row gap-6 flex-1 h-full overflow-hidden">
+                <!-- Log Form -->
+                <div class="w-full lg:w-1/3 bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col h-fit">
+                    <h3 class="font-semibold text-slate-700 mb-4" id="log-form-title">Quick Log</h3>
+                    <input type="hidden" id="log-id">
                     
-                    <!-- Table -->
-                    <div class="w-full lg:w-2/3 bg-white p-2 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-4 border-b border-slate-50"><h3 class="font-bold text-slate-800 px-2">Unbilled Pipeline</h3></div>
-                        <div class="w-full overflow-x-auto hide-scrollbar p-2">
-                            <table class="w-full text-left border-collapse min-w-[600px]">
-                                <thead><tr class="text-xs uppercase tracking-wider text-slate-400 font-bold border-b border-slate-100"><th class="p-3">Date</th><th class="p-3">Client / Case</th><th class="p-3">Category</th><th class="p-3">Amount</th><th class="p-3 text-right">Action</th></tr></thead>
-                                <tbody id="table-works" class="text-sm text-slate-700 divide-y divide-slate-50"></tbody>
-                            </table>
+                    <div class="space-y-4">
+                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Date</label><input type="date" id="log-date" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"></div>
+                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Client</label><select id="log-client" onchange="window.logsHelper.updateCaseDropdown()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"><option value="">Select Client...</option></select></div>
+                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Case/Matter</label><select id="log-case" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"><option value="">Select Case...</option></select></div>
+                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Category</label><select id="log-category" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"></select></div>
+                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Description</label><textarea id="log-desc" rows="3" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm resize-none"></textarea></div>
+                        <div class="flex gap-4">
+                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500 ml-1">Amount (₹)</label><input type="number" id="log-amount" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"></div>
+                            <div class="flex items-center mt-6">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" id="log-prepaid" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    <span class="ml-2 text-sm font-medium text-slate-600">Prepaid</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="pt-2 flex gap-2">
+                            <button onclick="window.logsHelper.saveLog()" class="flex-1 bg-brand text-white py-3 rounded-2xl font-semibold hover:bg-blue-600 transition shadow-sm active:scale-95">Save Log</button>
+                            <button onclick="window.logsHelper.clearForm()" class="px-4 bg-slate-100 text-slate-600 rounded-2xl font-semibold hover:bg-slate-200 transition"><i class="fa-solid fa-rotate-left"></i></button>
                         </div>
                     </div>
                 </div>
-            </section>
 
-            <!-- Directory & Cases View -->
-            <section id="view-directory" class="tab-content hidden animate-fade-in-up">
-                <header class="mb-8 flex justify-between items-end">
-                    <div><h1 class="text-3xl font-serif font-bold text-slate-800">Directory</h1><p class="text-slate-500">Manage clients and legal matters.</p></div>
-                    <input type="text" id="dir-search" placeholder="Search everywhere..." class="w-64 bg-white border border-slate-200 rounded-2xl px-4 py-2 text-sm outline-none focus:border-brand shadow-sm" oninput="window.dirHelper.render()">
-                </header>
-
-                <div class="flex flex-col lg:flex-row gap-6">
-                    <!-- Clients -->
-                    <div class="flex-1 bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <div class="flex justify-between items-center mb-4 px-2">
-                            <h3 class="font-bold text-slate-800">Clients</h3>
-                            <button onclick="window.dirHelper.openClientModal()" class="text-brand bg-blue-50 px-3 py-1 rounded-xl text-xs font-bold hover:bg-blue-100 transition"><i class="fa-solid fa-plus"></i> New</button>
-                        </div>
-                        <div id="list-clients" class="space-y-3 max-h-[60vh] overflow-y-auto hide-scrollbar px-2"></div>
+                <!-- Unbilled Table -->
+                <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                        <h3 class="font-semibold text-slate-700">Unbilled Work</h3>
                     </div>
-                    
-                    <!-- Cases -->
-                    <div class="flex-1 bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <div class="flex justify-between items-center mb-4 px-2">
-                            <h3 class="font-bold text-slate-800">Cases & Matters</h3>
-                            <button onclick="window.dirHelper.openCaseModal()" class="text-brand bg-blue-50 px-3 py-1 rounded-xl text-xs font-bold hover:bg-blue-100 transition"><i class="fa-solid fa-plus"></i> New</button>
-                        </div>
-                        <div id="list-cases" class="space-y-3 max-h-[60vh] overflow-y-auto hide-scrollbar px-2"></div>
-                    </div>
-                </div>
-
-                <!-- Modals -->
-                <div id="modal-client" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-                    <form onsubmit="event.preventDefault(); window.dirHelper.saveClient();" class="bg-white p-6 rounded-[2.5rem] shadow-2xl w-full max-w-sm">
-                        <h3 class="font-bold text-lg mb-4 text-slate-800" id="mc-title">Client</h3>
-                        <input type="hidden" id="mc-id">
-                        <div class="space-y-3">
-                            <input type="text" id="mc-name" required placeholder="Client Name" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand/20">
-                            <input type="email" id="mc-email" placeholder="Email Address" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand/20">
-                        </div>
-                        <div class="flex justify-end gap-2 mt-6">
-                            <button type="button" onclick="document.getElementById('modal-client').classList.add('hidden')" class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 text-sm font-bold">Cancel</button>
-                            <button type="submit" class="px-5 py-2 rounded-xl bg-slate-900 text-white hover:bg-brand text-sm font-bold shadow-md">Save</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="modal-case" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-                    <form onsubmit="event.preventDefault(); window.dirHelper.saveCase();" class="bg-white p-6 rounded-[2.5rem] shadow-2xl w-full max-w-sm">
-                        <h3 class="font-bold text-lg mb-4 text-slate-800" id="mca-title">Case / Matter</h3>
-                        <input type="hidden" id="mca-id">
-                        <div class="space-y-3">
-                            <select id="mca-client" required class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand/20"><option value="">Select Client...</option></select>
-                            <input type="text" id="mca-name" required placeholder="Case Name / Description" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand/20">
-                            <input type="text" id="mca-ref" placeholder="Court / Reference No." class="w-full bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-brand/20">
-                        </div>
-                        <div class="flex justify-end gap-2 mt-6">
-                            <button type="button" onclick="document.getElementById('modal-case').classList.add('hidden')" class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 text-sm font-bold">Cancel</button>
-                            <button type="submit" class="px-5 py-2 rounded-xl bg-slate-900 text-white hover:bg-brand text-sm font-bold shadow-md">Save</button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Documents & Billing View -->
-            <section id="view-docs" class="tab-content hidden animate-fade-in-up">
-                <header class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-                    <div><h1 class="text-3xl font-serif font-bold text-slate-800">Billing</h1><p class="text-slate-500">Generate invoices, statements, and receipts.</p></div>
-                    <div class="flex gap-2">
-                        <button onclick="window.docsHelper.openPayModal()" class="px-4 py-2 rounded-2xl bg-emerald-50 text-emerald-600 font-bold text-sm hover:bg-emerald-100 transition shadow-sm"><i class="fa-solid fa-hand-holding-dollar mr-1"></i> Direct Pay</button>
-                        <button onclick="window.docsHelper.openGenModal()" class="px-4 py-2 rounded-2xl bg-slate-900 text-white font-bold text-sm hover:bg-brand transition shadow-md"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Create Bill</button>
-                    </div>
-                </header>
-
-                <div class="bg-white p-4 rounded-[2.5rem] shadow-sm border border-slate-100 mb-6 flex flex-wrap gap-3 items-center">
-                    <select id="doc-f-client" class="bg-slate-50 border-none rounded-xl px-3 py-2 text-sm outline-none w-40" onchange="window.docsHelper.render()"><option value="">All Clients</option></select>
-                    <select id="doc-f-type" class="bg-slate-50 border-none rounded-xl px-3 py-2 text-sm outline-none w-32" onchange="window.docsHelper.render()"><option value="">All Types</option><option value="MI">MI (Monthly)</option><option value="IND">IND (Individual)</option><option value="ST">ST (Statement)</option><option value="REC">REC (Receipt)</option></select>
-                    <input type="text" id="doc-f-search" placeholder="Search ID..." class="bg-slate-50 border-none rounded-xl px-3 py-2 text-sm outline-none flex-1 min-w-[150px]" oninput="window.docsHelper.render()">
-                </div>
-
-                <div class="bg-white p-2 rounded-[2.5rem] shadow-sm border border-slate-100 overflow-hidden">
-                    <div class="w-full overflow-x-auto hide-scrollbar p-2">
-                        <table class="w-full text-left border-collapse min-w-[800px]">
-                            <thead><tr class="text-xs uppercase tracking-wider text-slate-400 font-bold border-b border-slate-100"><th class="p-3">Doc ID</th><th class="p-3">Date</th><th class="p-3">Client</th><th class="p-3">Amount</th><th class="p-3">Status</th><th class="p-3 text-right">Actions</th></tr></thead>
-                            <tbody id="table-documents" class="text-sm text-slate-700 divide-y divide-slate-50"></tbody>
+                    <div class="flex-1 w-full overflow-x-auto hide-scrollbar">
+                        <table class="w-full min-w-[600px] text-sm text-left text-slate-500">
+                            <thead class="text-xs text-slate-400 uppercase bg-slate-50">
+                                <tr>
+                                    <th class="px-4 py-3">Date</th>
+                                    <th class="px-4 py-3">Client & Case</th>
+                                    <th class="px-4 py-3">Details</th>
+                                    <th class="px-4 py-3">Amount</th>
+                                    <th class="px-4 py-3 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-logs" class="divide-y divide-slate-100">
+                                <!-- Populated by JS -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <!-- Generate Bill Modal -->
-                <div id="modal-gen" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-                    <div class="bg-white p-6 rounded-[2.5rem] shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-                        <h3 class="font-bold text-xl mb-4 text-slate-800">Generate Document</h3>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 shrink-0">
-                            <div class="col-span-2 md:col-span-1"><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">Type</label><select id="gen-type" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none" onchange="window.docsHelper.genFilterChange()"><option value="MI">Monthly Invoice</option><option value="IND">Individual Invoice</option><option value="ST">Statement of Ledger</option></select></div>
-                            <div class="col-span-2 md:col-span-1"><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">Client</label><select id="gen-client" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none" onchange="window.docsHelper.genFilterChange()"><option value="">Select...</option></select></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">From Date</label><input type="date" id="gen-start" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none" onchange="window.docsHelper.genFilterChange()"></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">To Date</label><input type="date" id="gen-end" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none" onchange="window.docsHelper.genFilterChange()"></div>
-                            <div class="col-span-2 hidden" id="gen-case-container"><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">Specific Case</label><select id="gen-case" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none" onchange="window.docsHelper.genFilterChange()"><option value="">Select Case...</option></select></div>
-                            <div class="col-span-2 flex items-center pt-5 pl-2"><label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-600"><input type="checkbox" id="gen-rebill" class="rounded text-brand" onchange="window.docsHelper.genFilterChange()"> Include previously billed items</label></div>
+        <section id="view-directory" class="view-section hidden h-full flex flex-col animate-fade-in-up">
+            <header class="mb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+                <h1 class="text-3xl font-serif font-semibold text-slate-800">Directory</h1>
+                <input type="text" id="dir-search" onkeyup="window.directoryHelper.render()" placeholder="Search clients or cases..." class="w-full md:w-64 p-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm shadow-sm">
+            </header>
+
+            <div class="flex flex-col lg:flex-row gap-6 flex-1 h-full overflow-hidden">
+                <!-- Clients Column -->
+                <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                        <div class="flex gap-2">
+                            <input type="text" id="add-client-name" placeholder="New Client Name..." class="flex-1 p-2 bg-white border border-slate-200 rounded-xl outline-none text-sm">
+                            <input type="email" id="add-client-email" placeholder="Email (opt)" class="w-1/3 p-2 bg-white border border-slate-200 rounded-xl outline-none text-sm hidden md:block">
+                            <button onclick="window.directoryHelper.addClient()" class="px-4 bg-brand text-white rounded-xl font-semibold hover:bg-blue-600 transition active:scale-95"><i class="fa-solid fa-plus"></i></button>
                         </div>
-                        <div class="flex-1 overflow-y-auto hide-scrollbar border border-slate-100 rounded-xl p-2 mb-4 bg-slate-50/50 relative">
-                            <table class="w-full text-left text-sm" id="gen-table">
-                                <thead><tr class="text-xs uppercase text-slate-400 border-b border-slate-200"><th class="p-2 w-8"><input type="checkbox" id="gen-check-all" onchange="window.docsHelper.toggleAllGen(this.checked)"></th><th class="p-2">Date</th><th class="p-2">Description</th><th class="p-2 text-right">Amount</th></tr></thead>
-                                <tbody id="gen-items" class="divide-y divide-slate-100"></tbody>
-                            </table>
-                            <div id="gen-empty" class="text-center py-8 text-slate-400 text-sm">Select filters to view items.</div>
-                        </div>
-                        <div class="shrink-0 flex justify-between items-center bg-slate-50 p-4 rounded-2xl">
-                            <div><p class="text-xs font-bold text-slate-400">Selected Total</p><h3 class="text-xl font-bold text-slate-800" id="gen-total">₹0.00</h3></div>
-                            <div class="flex gap-2">
-                                <button onclick="document.getElementById('modal-gen').classList.add('hidden')" class="px-4 py-2 rounded-xl text-slate-500 font-bold hover:bg-slate-200 text-sm">Cancel</button>
-                                <button onclick="window.docsHelper.saveDocument()" class="px-5 py-2 rounded-xl bg-slate-900 text-white font-bold hover:bg-brand text-sm shadow-md">Generate & Save</button>
-                            </div>
-                        </div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar" id="list-clients">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
 
-                <!-- Pay Modal -->
-                <div id="modal-pay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-                    <form onsubmit="event.preventDefault(); window.docsHelper.savePayment();" class="bg-white p-6 rounded-[2.5rem] shadow-2xl w-full max-w-sm">
-                        <h3 class="font-bold text-lg mb-4 text-slate-800" id="mp-title">Record Payment</h3>
-                        <input type="hidden" id="mp-inv-id">
+                <!-- Cases Column -->
+                <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                        <div class="flex gap-2">
+                            <select id="add-case-client" class="w-1/3 p-2 bg-white border border-slate-200 rounded-xl outline-none text-sm"><option value="">Client...</option></select>
+                            <input type="text" id="add-case-name" placeholder="Case Name..." class="flex-1 p-2 bg-white border border-slate-200 rounded-xl outline-none text-sm">
+                            <button onclick="window.directoryHelper.addCase()" class="px-4 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-700 transition active:scale-95"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar" id="list-cases">
+                         <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-docs" class="view-section hidden h-full flex flex-col animate-fade-in-up">
+            <header class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                <h1 class="text-3xl font-serif font-semibold text-slate-800">Documents</h1>
+                <div class="flex gap-2">
+                    <button onclick="window.docsHelper.openPayModal()" class="px-5 py-3 bg-white border border-emerald-200 text-emerald-600 rounded-2xl font-semibold hover:bg-emerald-50 transition shadow-sm active:scale-95"><i class="fa-solid fa-money-check-dollar mr-2"></i>Record Pay</button>
+                    <button onclick="window.docsHelper.openBillModal()" class="px-5 py-3 bg-brand text-white rounded-2xl font-semibold hover:bg-blue-600 transition shadow-sm active:scale-95"><i class="fa-solid fa-file-invoice mr-2"></i>Generate Bill</button>
+                </div>
+            </header>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col flex-1 overflow-hidden">
+                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-wrap gap-3">
+                    <select id="doc-f-client" onchange="window.docsHelper.render()" class="p-2 bg-white border border-slate-200 rounded-xl text-sm outline-none"><option value="">All Clients</option></select>
+                    <select id="doc-f-type" onchange="window.docsHelper.render()" class="p-2 bg-white border border-slate-200 rounded-xl text-sm outline-none"><option value="">All Types</option><option value="MI">MI (Monthly)</option><option value="IND">IND (Individual)</option><option value="ST">ST (Statement)</option><option value="REC">REC (Receipt)</option></select>
+                    <input type="text" id="doc-f-search" onkeyup="window.docsHelper.render()" placeholder="Search Ref..." class="p-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-32 md:w-48">
+                </div>
+                <div class="flex-1 w-full overflow-x-auto hide-scrollbar">
+                    <table class="w-full min-w-[700px] text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-400 uppercase bg-slate-50">
+                            <tr>
+                                <th class="px-4 py-3">Doc Ref</th>
+                                <th class="px-4 py-3">Date</th>
+                                <th class="px-4 py-3">Client</th>
+                                <th class="px-4 py-3">Amount</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-documents" class="divide-y divide-slate-100">
+                             <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-settings" class="view-section hidden h-full overflow-y-auto hide-scrollbar animate-fade-in-up pb-20">
+            <header class="mb-6"><h1 class="text-3xl font-serif font-semibold text-slate-800">Master Records</h1></header>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl">
+                
+                <!-- Profile & Payment -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                        <h3 class="font-semibold text-slate-700 mb-4 border-b pb-2">Professional Profile</h3>
                         <div class="space-y-3">
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">Client</label><select id="mp-client" required class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none"></select></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">Date</label><input type="date" id="mp-date" required class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none"></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">Amount</label><input type="number" step="0.01" id="mp-amount" required class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none"></div>
-                            <div><label class="block text-xs font-bold text-slate-400 mb-1 ml-1">Ref / Mode (Optional)</label><input type="text" id="mp-ref" placeholder="e.g. NEFT, UPI, Cash" class="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm outline-none"></div>
-                        </div>
-                        <div class="flex justify-end gap-2 mt-6">
-                            <button type="button" onclick="document.getElementById('modal-pay').classList.add('hidden')" class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 text-sm font-bold">Cancel</button>
-                            <button type="submit" class="px-5 py-2 rounded-xl bg-emerald-500 text-white hover:bg-emerald-600 text-sm font-bold shadow-md">Record Receipt</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- PDF Preview Modal -->
-                <div id="modal-pdf" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-[60] hidden flex flex-col p-4 md:p-8">
-                    <div class="flex justify-end gap-3 mb-4 shrink-0">
-                        <button onclick="document.getElementById('modal-pdf').classList.add('hidden')" class="w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center"><i class="fa-solid fa-times"></i></button>
-                    </div>
-                    <iframe id="pdf-frame" class="w-full flex-1 bg-white rounded-xl shadow-2xl border-none"></iframe>
-                </div>
-            </section>
-
-            <!-- Settings View -->
-            <section id="view-settings" class="tab-content hidden animate-fade-in-up">
-                <header class="mb-8">
-                    <h1 class="text-3xl font-serif font-bold text-slate-800">Master Records</h1><p class="text-slate-500">Configure your practice details.</p>
-                </header>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Profile & Bank -->
-                    <div class="space-y-6">
-                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                            <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-50 pb-2">Professional Profile</h3>
-                            <div class="space-y-3">
-                                <div><label class="text-xs font-bold text-slate-400 ml-1">Advocate / Firm Name</label><input type="text" id="set-name" class="w-full bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none focus:ring-1 focus:ring-brand/30"></div>
-                                <div class="flex gap-3">
-                                    <div class="flex-1"><label class="text-xs font-bold text-slate-400 ml-1">Email</label><input type="email" id="set-email" class="w-full bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none"></div>
-                                    <div class="flex-1"><label class="text-xs font-bold text-slate-400 ml-1">Phone</label><input type="text" id="set-phone" class="w-full bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none"></div>
-                                </div>
-                                <div><label class="text-xs font-bold text-slate-400 ml-1">PAN Number</label><input type="text" id="set-pan" class="w-full bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none uppercase"></div>
-                                <div>
-                                    <label class="text-xs font-bold text-slate-400 ml-1 block mb-1">Signature (Base64 Image)</label>
-                                    <input type="file" id="set-sig-file" accept="image/*" class="text-xs mb-2" onchange="window.settingsHelper.processSig(this)">
-                                    <textarea id="set-sig" rows="2" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-[10px] text-slate-400 font-mono outline-none break-all"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                            <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-50 pb-2">Payment Details</h3>
-                            <div class="space-y-3">
-                                <div><label class="text-xs font-bold text-slate-400 ml-1">Bank Name</label><input type="text" id="set-bank" class="w-full bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none"></div>
-                                <div class="flex gap-3">
-                                    <div class="flex-1"><label class="text-xs font-bold text-slate-400 ml-1">Account No.</label><input type="text" id="set-ac" class="w-full bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none"></div>
-                                    <div class="flex-1"><label class="text-xs font-bold text-slate-400 ml-1">IFSC Code</label><input type="text" id="set-ifsc" class="w-full bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none uppercase"></div>
-                                </div>
-                                <div><label class="text-xs font-bold text-slate-400 ml-1">UPI ID</label><input type="text" id="set-upi" class="w-full bg-slate-50 rounded-xl px-4 py-2 text-sm outline-none"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Config & Templates -->
-                    <div class="space-y-6">
-                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                            <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-50 pb-2">Invoice Configuration</h3>
-                            <div class="grid grid-cols-2 gap-3 mb-4">
-                                <div><label class="text-xs font-bold text-slate-400 ml-1">MI Prefix</label><input type="text" id="set-p-mi" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none"></div>
-                                <div><label class="text-xs font-bold text-slate-400 ml-1">IND Prefix</label><input type="text" id="set-p-ind" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none"></div>
-                                <div><label class="text-xs font-bold text-slate-400 ml-1">ST Prefix</label><input type="text" id="set-p-st" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none"></div>
-                                <div><label class="text-xs font-bold text-slate-400 ml-1">REC Prefix</label><input type="text" id="set-p-rec" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none"></div>
-                            </div>
-                            <div><label class="text-xs font-bold text-slate-400 ml-1">Next Sequence No.</label><input type="number" id="set-seq" class="w-32 bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none"></div>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                            <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-50 pb-2">Work Categories</h3>
-                            <div class="flex flex-wrap gap-2 mb-3" id="set-cat-list"></div>
+                            <div><label class="text-xs font-semibold text-slate-500">Name / Firm Name</label><input type="text" id="set-name" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
                             <div class="flex gap-2">
-                                <input type="text" id="set-new-cat" placeholder="Add custom category..." class="flex-1 bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none">
-                                <button type="button" onclick="window.settingsHelper.addCategory()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 rounded-xl font-bold text-sm"><i class="fa-solid fa-plus"></i></button>
+                                <div class="flex-1"><label class="text-xs font-semibold text-slate-500">Email</label><input type="email" id="set-email" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                                <div class="flex-1"><label class="text-xs font-semibold text-slate-500">Phone</label><input type="text" id="set-phone" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-2 ml-1">Categories auto-save and sync immediately.</p>
+                            <div><label class="text-xs font-semibold text-slate-500">PAN Number</label><input type="text" id="set-pan" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm uppercase"></div>
+                            <div>
+                                <label class="text-xs font-semibold text-slate-500">Signature Image</label>
+                                <input type="file" id="set-sig-file" accept="image/*" class="text-xs w-full mb-1" onchange="window.settingsHelper.processSig(this)">
+                                <input type="hidden" id="set-sig">
+                                <img id="sig-preview" src="" class="h-12 object-contain hidden border border-dashed border-slate-300 p-1 rounded bg-slate-50">
+                            </div>
                         </div>
+                    </div>
 
-                        <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                            <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-50 pb-2">Templates & Export</h3>
-                            <div class="space-y-2 mb-4">
-                                <select id="set-tpl-sel" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-sm outline-none font-bold" onchange="window.settingsHelper.loadTplText()"><option value="MI">MI Template</option><option value="IND">IND Template</option><option value="ST">ST Template</option><option value="REC">REC Template</option></select>
-                                <textarea id="set-tpl-text" rows="5" class="w-full bg-slate-50 rounded-xl px-3 py-2 text-[10px] font-mono outline-none" oninput="window.settingsHelper.saveTplText()"></textarea>
-                                <button type="button" onclick="window.settingsHelper.resetTemplates()" class="text-xs text-brand font-bold hover:underline">Reset to Defaults</button>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                        <h3 class="font-semibold text-slate-700 mb-4 border-b pb-2">Payment Details</h3>
+                        <div class="space-y-3">
+                            <div><label class="text-xs font-semibold text-slate-500">Bank Name</label><input type="text" id="set-bank" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                            <div class="flex gap-2">
+                                <div class="flex-1"><label class="text-xs font-semibold text-slate-500">Account No.</label><input type="text" id="set-ac" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                                <div class="flex-1"><label class="text-xs font-semibold text-slate-500">IFSC Code</label><input type="text" id="set-ifsc" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm uppercase"></div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="window.settingsHelper.exportCSV('clients')" class="bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl py-2 text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Clients</button>
-                                <button onclick="window.settingsHelper.exportCSV('cases')" class="bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl py-2 text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Cases</button>
-                                <button onclick="window.settingsHelper.exportCSV('works')" class="bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl py-2 text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Work Logs</button>
-                                <button onclick="window.settingsHelper.exportCSV('invoices')" class="bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl py-2 text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Billing</button>
-                            </div>
+                            <div><label class="text-xs font-semibold text-slate-500">UPI ID</label><input type="text" id="set-upi" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="fixed bottom-6 right-6 md:bottom-8 md:right-10">
-                    <button onclick="window.settingsHelper.saveGlobal()" class="bg-slate-900 text-white rounded-2xl px-6 py-4 font-bold shadow-2xl hover:bg-brand hover:scale-105 transition-all transform flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Save Core Settings</button>
+                <!-- Config & Categories -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                        <h3 class="font-semibold text-slate-700 mb-4 border-b pb-2">Document Prefixes & Seq</h3>
+                        <div class="flex gap-2 mb-3">
+                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500">MI Prefix</label><input type="text" id="set-p-mi" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500">IND Prefix</label><input type="text" id="set-p-ind" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                        </div>
+                        <div class="flex gap-2 mb-3">
+                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500">ST Prefix</label><input type="text" id="set-p-st" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500">REC Prefix</label><input type="text" id="set-p-rec" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                        </div>
+                        <div><label class="text-xs font-semibold text-slate-500">Next Sequence No.</label><input type="number" id="set-seq" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono"></div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                        <h3 class="font-semibold text-slate-700 mb-4 border-b pb-2">Work Categories</h3>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="set-cat-new" placeholder="New category..." class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-brand">
+                            <button onclick="window.settingsHelper.addCategory()" class="px-4 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700">Add</button>
+                        </div>
+                        <div id="set-cat-list" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    
+                    <button onclick="window.settingsHelper.saveGlobal()" class="w-full py-4 bg-brand text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-md active:scale-95 text-lg">Save Core Settings</button>
                 </div>
-            </section>
-        </main>
+                
+                <!-- Templates -->
+                <div class="md:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                    <div class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h3 class="font-semibold text-slate-700">PDF HTML Templates Engine</h3>
+                        <button onclick="window.settingsHelper.resetTpl()" class="text-xs text-rose-500 font-semibold px-2 py-1 bg-rose-50 rounded">Reset Defaults</button>
+                    </div>
+                    <p class="text-xs text-slate-400 mb-3">Edit the raw HTML structure for the generated PDFs. Internal CSS only. Placeholders like <code>{{name}}</code> will be replaced.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div><label class="text-xs font-semibold text-slate-500">Invoice (MI/IND)</label><textarea id="tpl-inv" rows="5" class="w-full p-2 bg-slate-900 text-green-400 font-mono text-[10px] rounded-xl"></textarea></div>
+                        <div><label class="text-xs font-semibold text-slate-500">Statement (ST)</label><textarea id="tpl-st" rows="5" class="w-full p-2 bg-slate-900 text-green-400 font-mono text-[10px] rounded-xl"></textarea></div>
+                    </div>
+                    <button onclick="window.settingsHelper.saveTpl()" class="mt-4 px-6 py-2 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700">Save Templates</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2"></div>
+
+    <!-- Confirm Modal -->
+    <div id="modal-confirm" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[999] hidden flex items-center justify-center">
+        <div class="bg-white rounded-3xl shadow-xl w-full max-w-sm p-6 transform scale-95 transition-transform animate-fade-in-up">
+            <h3 class="text-xl font-serif font-semibold text-slate-800 mb-2">Confirm Action</h3>
+            <p id="confirm-msg" class="text-slate-500 text-sm mb-6">Are you sure?</p>
+            <div class="flex gap-3 justify-end">
+                <button onclick="window.ui.closeConfirm()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-medium hover:bg-slate-200">Cancel</button>
+                <button id="confirm-btn-yes" class="px-4 py-2 bg-rose-500 text-white rounded-xl font-medium hover:bg-rose-600">Yes, Proceed</button>
+            </div>
+        </div>
     </div>
 
+    <!-- PDF Generation Root (Hidden offscreen, strictly 800px wide) -->
+    <div id="pdf-root-container"></div>
+
+    <!-- PDF Preview Modal -->
+    <div id="modal-pdf" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex flex-col items-center justify-center p-4">
+        <div class="w-full max-w-4xl bg-white rounded-t-2xl p-4 flex justify-between items-center">
+            <h3 class="font-bold text-slate-800">Document Preview</h3>
+            <button onclick="document.getElementById('modal-pdf').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <iframe id="pdf-frame" class="w-full max-w-4xl h-[80vh] bg-slate-100 rounded-b-2xl border-none"></iframe>
+    </div>
+
+    <!-- Generate Bill Modal -->
+    <div id="modal-bill" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-xl w-full max-w-3xl flex flex-col max-h-[90vh]">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="text-2xl font-serif font-bold text-slate-800">Generate Bill</h3>
+                <button onclick="document.getElementById('modal-bill').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-2xl"><i class="fa-solid fa-circle-xmark"></i></button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto hide-scrollbar flex-1 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500">Bill Type</label>
+                        <select id="bill-type" onchange="window.docsHelper.onBillTypeChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none">
+                            <option value="MI">Monthly Retainer (MI)</option>
+                            <option value="IND">Individual Case (IND)</option>
+                            <option value="ST">Statement of Account (ST)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold text-slate-500">Client</label>
+                        <select id="bill-client" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none"><option value="">Select...</option></select>
+                    </div>
+                    <div id="bill-case-container" class="hidden">
+                        <label class="text-xs font-semibold text-slate-500">Case</label>
+                        <select id="bill-case" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none"><option value="">Select Client First...</option></select>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-xs font-semibold text-slate-500">Period Start</label><input type="date" id="bill-start" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm"></div>
+                    <div><label class="text-xs font-semibold text-slate-500">Period End</label><input type="date" id="bill-end" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm"></div>
+                </div>
+
+                <div id="bill-rebill-container" class="flex items-center">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" id="bill-rebill" onchange="window.docsHelper.onBillFiltersChange()" class="sr-only peer">
+                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
+                        <span class="ml-2 text-sm font-medium text-slate-600">Include previously billed un-paid items</span>
+                    </label>
+                </div>
+
+                <!-- Live Item Selection -->
+                <div id="bill-items-wrapper" class="border border-slate-200 rounded-2xl p-4 bg-slate-50 hidden">
+                    <div class="flex justify-between items-center mb-3">
+                        <h4 class="font-semibold text-slate-700 text-sm">Select Items to Include</h4>
+                        <span id="bill-live-total" class="font-bold text-brand">₹0</span>
+                    </div>
+                    <div id="bill-items-list" class="space-y-2 max-h-48 overflow-y-auto hide-scrollbar text-sm">
+                        <!-- Populated dynamically based on filters -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-[2.5rem]">
+                <button onclick="window.docsHelper.generate()" class="w-full py-4 bg-brand text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-md active:scale-95">Generate Document</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Direct Pay Modal -->
+    <div id="modal-pay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-xl w-full max-w-sm flex flex-col">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="text-xl font-serif font-bold text-slate-800">Record Payment</h3>
+                <button onclick="document.getElementById('modal-pay').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="pay-inv-id">
+                <div><label class="text-xs font-semibold text-slate-500">Client</label><select id="pay-client" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"><option value="">Select...</option></select></div>
+                <div><label class="text-xs font-semibold text-slate-500">Amount Received (₹)</label><input type="number" id="pay-amount" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-bold text-brand"></div>
+                <div><label class="text-xs font-semibold text-slate-500">Date Received</label><input type="date" id="pay-date" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"></div>
+                <div><label class="text-xs font-semibold text-slate-500">Reference (e.g., NEFT/UPI/Cash)</label><input type="text" id="pay-ref" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm uppercase"></div>
+            </div>
+            <div class="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-[2.5rem]">
+                <button onclick="window.docsHelper.processPayment()" class="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition shadow-md active:scale-95">Save & Generate Receipt</button>
+            </div>
+        </div>
+    </div>
+
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, onSnapshot, query, addDoc, deleteDoc, writeBatch } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, collection, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCAJUoKTzaVpMsOeYW0Ewdnk33K_1HuJhk",
-            authDomain: "legallyboidik.firebaseapp.com",
-            projectId: "legallyboidik",
-            storageBucket: "legallyboidik.firebasestorage.app",
-            messagingSenderId: "34600326596",
-            appId: "1:34600326596:web:6c4264f2d11de5db758091",
-            measurementId: "G-QFK7B9N06J"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'boidik-legal';
+        const fCfgStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{"apiKey":"AIzaSyCAJUoKTzaVpMsOeYW0Ewdnk33K_1HuJhk","authDomain":"legallyboidik.firebaseapp.com","projectId":"legallyboidik","storageBucket":"legallyboidik.firebasestorage.app","appId":"1:34600326596:web:6c4264f2d11de5db758091"}';
+        const app = initializeApp(JSON.parse(fCfgStr));
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        
+        let userId = null;
+        let authReady = false;
 
         // Global State
-        const state = {
-            user: null,
-            settings: { categories: ['Consultation', 'Drafting', 'Filing', 'Appearance', 'Expense'], prefs: { MI:'MI-', IND:'IND-', ST:'ST-', REC:'REC-' }, seq: 1, tpl: {} },
-            clients: [], cases: [], works: [], invoices: [],
-            unsubs: []
-        };
-        window.state = state; // Make state accessible globally just in case
+        const state = { invoices: [], clients: [], cases: [], workItems: [], settings: {} };
 
-        // Webhook Logger
-        const logWebhook = (msg, level="INFO") => {
-            const url = "https://script.google.com/macros/s/AKfycbwDummyUrlForLogging/exec"; 
-            fetch(url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: state.user?.email, time: new Date().toISOString(), level, msg }) }).catch(()=>{});
-        };
+        window.ui = {
+            fmtMoney: (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amt||0),
+            fmtDate: (dStr) => dStr ? new Date(dStr).toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'}) : '',
+            switchTab: (tabId) => {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-slate-100', 'text-brand'));
+                
+                document.getElementById(`view-${tabId}`).classList.remove('hidden');
+                document.getElementById(`nav-${tabId}`).classList.add('bg-slate-100', 'text-brand');
+                
+                if(tabId === 'dashboard') window.dashboardHelper.render();
+                if(tabId === 'docs') window.docsHelper.render();
+            },
+            getTenantPath: (colName) => `artifacts/${appId}/users/${userId}/${colName}`,
+            populateSelects: () => {
+                const cOpts = '<option value="">Select...</option>' + state.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                const currentLogClient = document.getElementById('log-client').value;
+                const currentBillClient = document.getElementById('bill-client').value;
+                const currentPayClient = document.getElementById('pay-client').value;
 
-        // UI Controller
-        const ui = {
-            getTenantPath: (col) => `saas_tenants/${state.user.uid}/${col}`,
-            switchTab: (id) => {
-                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-                document.getElementById(`view-${id}`).classList.remove('hidden');
-                document.querySelectorAll('.nav-btn').forEach(el => { el.classList.remove('text-slate-800', 'bg-slate-50'); el.classList.add('text-slate-400'); });
-                event.currentTarget.classList.remove('text-slate-400');
-                event.currentTarget.classList.add('text-slate-800', 'bg-slate-50');
+                document.getElementById('log-client').innerHTML = cOpts;
+                document.getElementById('bill-client').innerHTML = cOpts;
+                document.getElementById('pay-client').innerHTML = cOpts;
+                document.getElementById('doc-f-client').innerHTML = '<option value="">All Clients</option>' + cOpts.replace('<option value="">Select...</option>','');
+                document.getElementById('add-case-client').innerHTML = cOpts;
+
+                if(currentLogClient) document.getElementById('log-client').value = currentLogClient;
+                if(currentBillClient) document.getElementById('bill-client').value = currentBillClient;
+                if(currentPayClient) document.getElementById('pay-client').value = currentPayClient;
+                window.logsHelper.updateCaseDropdown();
+
+                // Categories
+                const cats = state.settings.categories || ['Consultation', 'Drafting', 'Filing', 'Appearance'];
+                const currentCat = document.getElementById('log-category').value;
+                document.getElementById('log-category').innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
+                if(currentCat && cats.includes(currentCat)) document.getElementById('log-category').value = currentCat;
+                window.settingsHelper.renderCategories();
             },
-            showToast: (msg, type = 'info') => {
-                const colors = { success: 'bg-emerald-50 text-emerald-700 border-emerald-200', error: 'bg-rose-50 text-rose-700 border-rose-200', info: 'bg-white text-slate-700 border-slate-200' };
-                const icon = { success: 'fa-check-circle text-emerald-500', error: 'fa-triangle-exclamation text-rose-500', info: 'fa-info-circle text-blue-500' };
-                const el = document.createElement('div');
-                el.className = `p-4 rounded-2xl shadow-lg border ${colors[type]} flex items-center gap-3 transform translate-x-full transition-transform duration-300 font-semibold text-sm z-50 pointer-events-auto`;
-                el.innerHTML = `<i class="fa-solid ${icon[type]} text-lg"></i> ${msg}`;
-                document.getElementById('toast-container').appendChild(el);
-                setTimeout(() => el.classList.remove('translate-x-full'), 10);
-                setTimeout(() => { el.classList.add('translate-x-full'); setTimeout(() => el.remove(), 300); }, 3000);
+            showToast: (msg, type='info') => {
+                const c = document.getElementById('toast-container');
+                const t = document.createElement('div');
+                const colors = type==='error'?'bg-rose-500 text-white':type==='success'?'bg-emerald-500 text-white':'bg-slate-800 text-white';
+                t.className = `px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-medium transform transition-all duration-300 translate-x-full opacity-0 ${colors}`;
+                t.innerHTML = `<i class="fa-solid fa-${type==='error'?'circle-exclamation':type==='success'?'circle-check':'info-circle'}"></i> <span>${msg}</span>`;
+                c.appendChild(t);
+                
+                requestAnimationFrame(() => {
+                    t.classList.remove('translate-x-full', 'opacity-0');
+                });
+                
+                setTimeout(() => {
+                    t.classList.add('translate-x-full', 'opacity-0');
+                    setTimeout(() => t.remove(), 300);
+                }, 3000);
             },
-            showConfirm: (msg, onConfirm) => {
+            confirmAction: null,
+            confirm: (msg, callback) => {
                 document.getElementById('confirm-msg').innerText = msg;
-                const m = document.getElementById('confirm-modal');
-                const b = document.getElementById('confirm-modal-box');
-                m.classList.remove('hidden');
-                setTimeout(() => { m.classList.remove('opacity-0'); b.classList.remove('scale-95'); }, 10);
-                document.getElementById('confirm-btn').onclick = () => { ui.closeConfirm(); onConfirm(); };
+                document.getElementById('modal-confirm').classList.remove('hidden');
+                window.ui.confirmAction = callback;
             },
             closeConfirm: () => {
-                const m = document.getElementById('confirm-modal');
-                const b = document.getElementById('confirm-modal-box');
-                m.classList.add('opacity-0'); b.classList.add('scale-95');
-                setTimeout(() => m.classList.add('hidden'), 300);
-            },
-            fmtMoney: (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amt),
-            fmtDate: (d) => { const dt = new Date(d); return isNaN(dt) ? '-' : dt.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); },
-            
-            // Populates all dropdowns safely retaining current selections where possible
-            populateSelects: () => {
-                const cls = state.clients.sort((a,b)=>a.name.localeCompare(b.name));
-                const clHtml = '<option value="">Select...</option>' + cls.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-                
-                ['work-client', 'mca-client', 'doc-f-client', 'gen-client', 'mp-client'].forEach(id => {
-                    const el = document.getElementById(id); if(!el) return;
-                    const val = el.value; el.innerHTML = clHtml; if(val) el.value = val;
-                });
-                
-                const catHtml = '<option value="">Select...</option>' + state.settings.categories.map(c => `<option value="${c}">${c}</option>`).join('');
-                const elCat = document.getElementById('work-category');
-                if(elCat) { const val = elCat.value; elCat.innerHTML = catHtml; if(val) elCat.value = val; }
+                document.getElementById('modal-confirm').classList.add('hidden');
+                window.ui.confirmAction = null;
             }
         };
-        // EXTREMELY IMPORTANT: Attach UI object to window so HTML buttons can trigger it
-        window.ui = ui;
 
-        const initDataListeners = () => {
-            const path = ui.getTenantPath;
-            // Unsubscribe existing
-            state.unsubs.forEach(u => u()); state.unsubs = [];
-            
-            // Settings Listener
-            state.unsubs.push(onSnapshot(doc(db, path('settings'), 'global'), (d) => {
-                if(d.exists()) {
-                    state.settings = { ...state.settings, ...d.data() };
-                    window.settingsHelper.populateForm();
-                    window.settingsHelper.renderCats(); // Auto renders categories and repopulates selects
-                } else {
-                    window.settingsHelper.resetTemplates();
-                    setDoc(doc(db, path('settings'), 'global'), state.settings);
-                }
-            }));
+        // Attach confirm listener
+        document.getElementById('confirm-btn-yes').addEventListener('click', () => {
+            if(window.ui.confirmAction) window.ui.confirmAction();
+            window.ui.closeConfirm();
+        });
 
-            // Collections Listeners
-            const makeListener = (colName, stateKey, cb) => {
-                state.unsubs.push(onSnapshot(collection(db, path(colName)), (snap) => {
-                    state[stateKey] = snap.docs.map(x => ({ id: x.id, ...x.data() }));
-                    if(cb) cb();
-                }));
-            };
 
-            makeListener('clients', 'clients', () => { ui.populateSelects(); window.dirHelper.render(); window.dashHelper.render(); });
-            makeListener('cases', 'cases', () => { window.dirHelper.render(); });
-            makeListener('workItems', 'works', () => { window.workHelper.render(); window.dashHelper.render(); });
-            makeListener('invoices', 'invoices', () => { window.docsHelper.render(); window.dashHelper.render(); });
-        };
-
-        window.dashHelper = {
-            chartR: null, chartC: null,
+        window.dashboardHelper = {
+            revChart: null, catChart: null,
             render: () => {
-                // Calculations
-                const unbilledWorks = state.works.filter(w => !w.invoice_id);
-                const unbilledTotal = unbilledWorks.reduce((sum, w) => sum + (w.prepaid ? 0 : parseFloat(w.amount||0)), 0);
-                
-                const totalWorkLifetime = state.works.reduce((sum, w) => sum + (w.prepaid ? 0 : parseFloat(w.amount||0)), 0);
-                const totalPaidLifetime = state.invoices.filter(i => i.type === 'REC').reduce((sum, i) => sum + parseFloat(i.total||0), 0);
-                const debt = totalWorkLifetime - totalPaidLifetime;
+                const now = new Date();
+                let unbilled = 0;
+                let debt = 0;
+                let collected = 0;
+                let revData = {}; let catData = {};
 
-                const currMo = new Date().toISOString().substring(0,7);
-                const collectedMo = state.invoices.filter(i => i.type === 'REC' && i.date.startsWith(currMo)).reduce((sum, i) => sum + parseFloat(i.total||0), 0);
+                // Init last 6 months
+                for(let i=5; i>=0; i--) {
+                    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+                    const k = d.toLocaleString('default', { month: 'short', year: '2-digit' });
+                    revData[k] = { work: 0, rev: 0 };
+                }
 
-                document.getElementById('dash-unbilled').innerText = ui.fmtMoney(unbilledTotal);
-                document.getElementById('dash-debt').innerText = ui.fmtMoney(debt);
-                document.getElementById('dash-collected').innerText = ui.fmtMoney(collectedMo);
+                // Process Work Items
+                state.workItems.forEach(w => {
+                    if(!w.invoice_id) unbilled += w.amount || 0;
+                    debt += w.amount || 0; // Total work done
+
+                    const d = new Date(w.date);
+                    const k = d.toLocaleString('default', { month: 'short', year: '2-digit' });
+                    if(revData[k]) revData[k].work += w.amount || 0;
+
+                    if(w.category) {
+                        catData[w.category] = (catData[w.category] || 0) + (w.amount || 0);
+                    }
+                });
+
+                // Process Invoices/Receipts
+                state.invoices.forEach(i => {
+                    if(i.type === 'REC' || i.status === 'Paid') {
+                        debt -= i.total || 0; // Paid off work
+                        const d = new Date(i.payment_date || i.date);
+                        if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+                            collected += i.total || 0;
+                        }
+                        const k = d.toLocaleString('default', { month: 'short', year: '2-digit' });
+                        if(revData[k]) revData[k].rev += i.total || 0;
+                    }
+                });
+
+                document.getElementById('dash-unbilled').innerText = ui.fmtMoney(unbilled);
+                document.getElementById('dash-debt').innerText = ui.fmtMoney(debt > 0 ? debt : 0);
+                document.getElementById('dash-collected').innerText = ui.fmtMoney(collected);
 
                 // Charts
-                const revData = {}, workData = {};
-                for(let i=5; i>=0; i--) { 
-                    let d = new Date(); d.setMonth(d.getMonth()-i); 
-                    let k = d.toISOString().substring(0,7); 
-                    revData[k]=0; workData[k]=0; 
-                }
-                
-                state.invoices.filter(x=>x.type==='REC').forEach(r => { const m = r.date.substring(0,7); if(revData[m]!==undefined) revData[m]+=parseFloat(r.total||0); });
-                state.works.forEach(w => { const m = w.date.substring(0,7); if(workData[m]!==undefined) workData[m]+=(w.prepaid ? 0 : parseFloat(w.amount||0)); });
+                if(window.dashboardHelper.revChart) window.dashboardHelper.revChart.destroy();
+                if(window.dashboardHelper.catChart) window.dashboardHelper.catChart.destroy();
 
-                const labels = Object.keys(revData).map(x => { let [y,m] = x.split('-'); return new Date(y,m-1).toLocaleString('default',{month:'short'}); });
-
-                if(window.dashHelper.chartR) window.dashHelper.chartR.destroy();
-                window.dashHelper.chartR = new Chart(document.getElementById('chart-revenue'), {
+                const ctxR = document.getElementById('chart-revenue').getContext('2d');
+                window.dashboardHelper.revChart = new Chart(ctxR, {
                     type: 'bar',
-                    data: { labels, datasets: [
-                        { label: 'Billed Work', data: Object.values(workData), backgroundColor: '#cbd5e1', borderRadius: 4 },
-                        { label: 'Collected Rev', data: Object.values(revData), backgroundColor: '#3b82f6', borderRadius: 4 }
-                    ]},
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true } } }
+                    data: {
+                        labels: Object.keys(revData),
+                        datasets: [
+                            { label: 'Work Logged', data: Object.values(revData).map(v=>v.work), backgroundColor: '#cbd5e1', borderRadius: 4 },
+                            { label: 'Revenue Collected', data: Object.values(revData).map(v=>v.rev), backgroundColor: '#3b82f6', borderRadius: 4 }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }, plugins: { legend: { position: 'top' } } }
                 });
 
-                const catMap = {};
-                state.works.forEach(w => { catMap[w.category] = (catMap[w.category]||0) + (w.prepaid?0:parseFloat(w.amount||0)); });
-                
-                if(window.dashHelper.chartC) window.dashHelper.chartC.destroy();
-                window.dashHelper.chartC = new Chart(document.getElementById('chart-category'), {
+                const ctxC = document.getElementById('chart-category').getContext('2d');
+                window.dashboardHelper.catChart = new Chart(ctxC, {
                     type: 'doughnut',
-                    data: { labels: Object.keys(catMap), datasets: [{ data: Object.values(catMap), backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#64748b'] }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+                    data: {
+                        labels: Object.keys(catData),
+                        datasets: [{ data: Object.values(catData), backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#6366f1', '#ec4899', '#8b5cf6'], borderWidth: 0 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right' } } }
                 });
             }
         };
 
-        window.workHelper = {
-            filterCases: () => {
-                const cid = document.getElementById('work-client').value;
-                const el = document.getElementById('work-case');
-                const val = el.value;
-                el.innerHTML = '<option value="">Select Case...</option>' + state.cases.filter(c => c.client_id === cid).map(c => `<option value="${c.id}">${c.name} ${c.case_ref?`(${c.case_ref})`:''}</option>`).join('');
-                if(val && state.cases.find(c=>c.id===val && c.client_id===cid)) el.value = val;
-            },
-            resetForm: () => { document.getElementById('form-work').reset(); document.getElementById('work-id').value = ''; document.getElementById('work-form-title').innerText = 'Log New Item'; },
-            edit: (id) => {
-                const w = state.works.find(x=>x.id===id); if(!w) return;
-                document.getElementById('work-id').value = w.id;
-                document.getElementById('work-date').value = w.date;
-                document.getElementById('work-client').value = w.client_id;
-                window.workHelper.filterCases();
-                document.getElementById('work-case').value = w.case_id;
-                document.getElementById('work-category').value = w.category;
-                document.getElementById('work-desc').value = w.desc;
-                document.getElementById('work-amount').value = w.amount;
-                document.getElementById('work-prepaid').checked = w.prepaid;
-                document.getElementById('work-form-title').innerText = 'Edit Item';
-            },
-            del: (id) => {
-                ui.showConfirm("Delete this work log?", async () => {
-                    try { await deleteDoc(doc(db, ui.getTenantPath('workItems'), id)); ui.showToast('Deleted', 'success'); } catch(e) { ui.showToast(e.message, 'error'); }
-                });
-            },
-            saveWork: async () => {
-                const d = {
-                    date: document.getElementById('work-date').value,
-                    client_id: document.getElementById('work-client').value,
-                    case_id: document.getElementById('work-case').value,
-                    category: document.getElementById('work-category').value,
-                    desc: document.getElementById('work-desc').value,
-                    amount: parseFloat(document.getElementById('work-amount').value) || 0,
-                    prepaid: document.getElementById('work-prepaid').checked,
-                    invoice_id: null
-                };
-                const id = document.getElementById('work-id').value;
-                try {
-                    if(id) { await updateDoc(doc(db, ui.getTenantPath('workItems'), id), d); ui.showToast('Updated', 'success'); }
-                    else { await addDoc(collection(db, ui.getTenantPath('workItems')), d); ui.showToast('Logged', 'success'); }
-                    window.workHelper.resetForm();
-                } catch(e) { ui.showToast(e.message, 'error'); }
-            },
-            render: () => {
-                const u = state.works.filter(w => !w.invoice_id).sort((a,b) => b.date.localeCompare(a.date));
-                document.getElementById('table-works').innerHTML = u.map(w => {
-                    const c = state.clients.find(x=>x.id===w.client_id);
-                    const cs = state.cases.find(x=>x.id===w.case_id);
-                    return `<tr>
-                        <td class="p-3">${ui.fmtDate(w.date)}</td>
-                        <td class="p-3">
-                            <div class="font-semibold text-slate-800">${c?c.name:'-'}</div>
-                            <div class="text-[10px] text-slate-400">${cs?cs.name:'-'}</div>
-                        </td>
-                        <td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-1 rounded text-xs">${w.category}</span></td>
-                        <td class="p-3 font-semibold ${w.prepaid?'text-emerald-500':'text-slate-800'}">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td>
-                        <td class="p-3 text-right">
-                            <button onclick="window.workHelper.edit('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="window.workHelper.del('${w.id}')" class="text-rose-400 hover:text-rose-600 mx-1"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-                }).join('') || '<tr><td colspan="5" class="text-center py-8 text-slate-400 text-sm">No unbilled work logs found.</td></tr>';
-            }
-        };
-
-        window.dirHelper = {
+        window.directoryHelper = {
             render: () => {
                 const q = document.getElementById('dir-search').value.toLowerCase();
-                const cls = state.clients.filter(c => c.name.toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q));
                 
-                document.getElementById('list-clients').innerHTML = cls.map(c => {
-                    const uw = state.works.filter(w => w.client_id === c.id && !w.invoice_id).reduce((s,w)=>s+(w.prepaid?0:w.amount),0);
-                    return `<div class="bg-slate-50 p-4 rounded-2xl flex justify-between items-center group hover:bg-slate-100 transition">
-                        <div><h4 class="font-bold text-slate-800">${c.name}</h4><p class="text-xs text-slate-500">${c.email||'-'}</p></div>
-                        <div class="flex items-center gap-3">
-                            ${uw > 0 ? `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded text-xs font-bold">Unbilled: ${ui.fmtMoney(uw)}</span>` : ''}
-                            <button onclick="window.dirHelper.editClient('${c.id}')" class="text-slate-400 hover:text-brand opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-pen"></i></button>
+                // Clients
+                const cl = state.clients.filter(c => c.name.toLowerCase().includes(q));
+                document.getElementById('list-clients').innerHTML = cl.map(c => {
+                    const unb = state.workItems.filter(w => w.client_id === c.id && !w.invoice_id).reduce((s,w)=>s+w.amount,0);
+                    return `
+                    <div class="p-3 border border-slate-100 rounded-xl bg-white hover:border-brand/30 transition shadow-sm">
+                        <div class="flex justify-between items-start">
+                            <div><h4 class="font-bold text-slate-800">${c.name}</h4><p class="text-xs text-slate-400 mt-1">${c.email||'No email'}</p></div>
+                            <span class="text-xs font-semibold px-2 py-1 rounded bg-slate-100 ${unb>0?'text-rose-500':'text-slate-500'}">Unbilled: ${ui.fmtMoney(unb)}</span>
                         </div>
                     </div>`;
-                }).join('') || '<p class="text-slate-400 text-sm text-center py-4">No clients found.</p>';
+                }).join('') || '<p class="text-xs text-slate-400 text-center py-4">No clients found.</p>';
 
-                const css = state.cases.filter(c => c.name.toLowerCase().includes(q) || (c.case_ref||'').toLowerCase().includes(q));
-                document.getElementById('list-cases').innerHTML = css.map(c => {
-                    const cl = state.clients.find(x=>x.id===c.client_id);
-                    return `<div class="bg-slate-50 p-4 rounded-2xl flex justify-between items-center group hover:bg-slate-100 transition">
-                        <div>
-                            <h4 class="font-bold text-slate-800">${c.name}</h4>
-                            <p class="text-xs text-slate-500">${cl?cl.name:'-'} ${c.case_ref ? ` • Ref: ${c.case_ref}` : ''}</p>
+                // Cases
+                const ca = state.cases.filter(c => c.name.toLowerCase().includes(q) || (state.clients.find(x=>x.id===c.client_id)?.name||'').toLowerCase().includes(q));
+                document.getElementById('list-cases').innerHTML = ca.map(c => {
+                    const cli = state.clients.find(x=>x.id===c.client_id);
+                    return `
+                    <div class="p-3 border border-slate-100 rounded-xl bg-white hover:border-brand/30 transition shadow-sm">
+                        <h4 class="font-bold text-slate-800">${c.name}</h4>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xs font-medium text-slate-500"><i class="fa-solid fa-user mr-1"></i>${cli?cli.name:'Unknown'}</span>
                         </div>
-                        <button onclick="window.dirHelper.editCase('${c.id}')" class="text-slate-400 hover:text-brand opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-pen"></i></button>
                     </div>`;
-                }).join('') || '<p class="text-slate-400 text-sm text-center py-4">No cases found.</p>';
+                }).join('') || '<p class="text-xs text-slate-400 text-center py-4">No cases found.</p>';
             },
-            openClientModal: () => { document.getElementById('mc-id').value=''; document.getElementById('mc-name').value=''; document.getElementById('mc-email').value=''; document.getElementById('mc-title').innerText='New Client'; document.getElementById('modal-client').classList.remove('hidden'); },
-            editClient: (id) => { const c=state.clients.find(x=>x.id===id); if(c){ document.getElementById('mc-id').value=c.id; document.getElementById('mc-name').value=c.name; document.getElementById('mc-email').value=c.email; document.getElementById('mc-title').innerText='Edit Client'; document.getElementById('modal-client').classList.remove('hidden'); } },
-            saveClient: async () => {
-                const id = document.getElementById('mc-id').value, d = { name: document.getElementById('mc-name').value, email: document.getElementById('mc-email').value };
-                try { if(id) await updateDoc(doc(db, ui.getTenantPath('clients'), id), d); else await addDoc(collection(db, ui.getTenantPath('clients')), d); ui.showToast('Saved', 'success'); document.getElementById('modal-client').classList.add('hidden'); } catch(e) { ui.showToast(e.message, 'error'); }
+            addClient: async () => {
+                const n = document.getElementById('add-client-name').value;
+                const e = document.getElementById('add-client-email').value;
+                if(!n) return ui.showToast('Name required', 'error');
+                try {
+                    await addDoc(collection(db, ui.getTenantPath('clients')), { name: n, email: e, created: new Date().toISOString() });
+                    document.getElementById('add-client-name').value = ''; document.getElementById('add-client-email').value = '';
+                    ui.showToast('Client added', 'success');
+                } catch(err) { ui.showToast(err.message, 'error'); }
             },
-            openCaseModal: () => { document.getElementById('mca-id').value=''; document.getElementById('mca-client').value=''; document.getElementById('mca-name').value=''; document.getElementById('mca-ref').value=''; document.getElementById('mca-title').innerText='New Case'; document.getElementById('modal-case').classList.remove('hidden'); },
-            editCase: (id) => { const c=state.cases.find(x=>x.id===id); if(c){ document.getElementById('mca-id').value=c.id; document.getElementById('mca-client').value=c.client_id; document.getElementById('mca-name').value=c.name; document.getElementById('mca-ref').value=c.case_ref; document.getElementById('mca-title').innerText='Edit Case'; document.getElementById('modal-case').classList.remove('hidden'); } },
-            saveCase: async () => {
-                const id = document.getElementById('mca-id').value, d = { client_id: document.getElementById('mca-client').value, name: document.getElementById('mca-name').value, case_ref: document.getElementById('mca-ref').value };
-                try { if(id) await updateDoc(doc(db, ui.getTenantPath('cases'), id), d); else await addDoc(collection(db, ui.getTenantPath('cases')), d); ui.showToast('Saved', 'success'); document.getElementById('modal-case').classList.add('hidden'); } catch(e) { ui.showToast(e.message, 'error'); }
+            addCase: async () => {
+                const c = document.getElementById('add-case-client').value;
+                const n = document.getElementById('add-case-name').value;
+                if(!c || !n) return ui.showToast('Client and Case Name required', 'error');
+                try {
+                    await addDoc(collection(db, ui.getTenantPath('cases')), { client_id: c, name: n, created: new Date().toISOString() });
+                    document.getElementById('add-case-name').value = '';
+                    ui.showToast('Case added', 'success');
+                } catch(err) { ui.showToast(err.message, 'error'); }
+            }
+        };
+
+        window.logsHelper = {
+            updateCaseDropdown: () => {
+                const cid = document.getElementById('log-client').value;
+                const cSel = document.getElementById('log-case');
+                const currVal = cSel.value;
+                cSel.innerHTML = '<option value="">Select Case...</option>' + state.cases.filter(c => c.client_id === cid).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                if(currVal) cSel.value = currVal;
+            },
+            saveLog: async () => {
+                const id = document.getElementById('log-id').value;
+                const d = {
+                    date: document.getElementById('log-date').value,
+                    client_id: document.getElementById('log-client').value,
+                    case_id: document.getElementById('log-case').value,
+                    category: document.getElementById('log-category').value,
+                    desc: document.getElementById('log-desc').value,
+                    amount: parseFloat(document.getElementById('log-amount').value) || 0,
+                    prepaid: document.getElementById('log-prepaid').checked,
+                    invoice_id: null
+                };
+                if(!d.date || !d.client_id || !d.category) return ui.showToast('Missing required fields', 'error');
+                try {
+                    if(id) await updateDoc(doc(db, ui.getTenantPath('workItems'), id), d);
+                    else await addDoc(collection(db, ui.getTenantPath('workItems')), d);
+                    window.logsHelper.clearForm();
+                    ui.showToast('Log saved', 'success');
+                } catch(e) { ui.showToast(e.message, 'error'); }
+            },
+            clearForm: () => {
+                document.getElementById('log-id').value = '';
+                document.getElementById('log-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('log-client').value = '';
+                document.getElementById('log-case').value = '';
+                document.getElementById('log-desc').value = '';
+                document.getElementById('log-amount').value = '';
+                document.getElementById('log-prepaid').checked = false;
+                document.getElementById('log-form-title').innerText = 'Quick Log';
+            },
+            editLog: (id) => {
+                const w = state.workItems.find(x=>x.id===id);
+                if(!w) return;
+                document.getElementById('log-id').value = w.id;
+                document.getElementById('log-date').value = w.date;
+                document.getElementById('log-client').value = w.client_id;
+                window.logsHelper.updateCaseDropdown();
+                document.getElementById('log-case').value = w.case_id || '';
+                document.getElementById('log-category').value = w.category;
+                document.getElementById('log-desc').value = w.desc || '';
+                document.getElementById('log-amount').value = w.amount;
+                document.getElementById('log-prepaid').checked = w.prepaid || false;
+                document.getElementById('log-form-title').innerText = 'Edit Log';
+            },
+            delLog: (id) => {
+                ui.confirm('Delete this unbilled work item?', async () => {
+                    try { await deleteDoc(doc(db, ui.getTenantPath('workItems'), id)); ui.showToast('Deleted', 'success'); }
+                    catch(e) { ui.showToast(e.message, 'error'); }
+                });
+            },
+            render: () => {
+                let unb = state.workItems.filter(w => !w.invoice_id);
+                unb.sort((a,b) => b.date.localeCompare(a.date));
+                
+                document.getElementById('table-logs').innerHTML = unb.map(w => {
+                    const c = state.clients.find(x=>x.id===w.client_id);
+                    const ca = state.cases.find(x=>x.id===w.case_id);
+                    return `
+                    <tr class="hover:bg-slate-50 transition group">
+                        <td class="px-4 py-3 whitespace-nowrap">${ui.fmtDate(w.date)}</td>
+                        <td class="px-4 py-3">
+                            <div class="font-semibold text-slate-800">${c?c.name:'-'}</div>
+                            <div class="text-xs">${ca?ca.name:'General'}</div>
+                        </td>
+                        <td class="px-4 py-3 max-w-[200px] truncate">
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-700 mr-1">${w.category}</span>
+                            ${w.desc}
+                        </td>
+                        <td class="px-4 py-3 font-semibold ${w.prepaid?'text-emerald-500':'text-slate-700'}">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td>
+                        <td class="px-4 py-3 text-right opacity-0 group-hover:opacity-100 transition">
+                            <button onclick="window.logsHelper.editLog('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="window.logsHelper.delLog('${w.id}')" class="text-slate-400 hover:text-rose-500 mx-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                }).join('') || '<tr><td colspan="5" class="text-center py-8 text-slate-400">No unbilled logs.</td></tr>';
             }
         };
 
@@ -730,7 +737,6 @@
                 document.getElementById('set-email').value = s.email || '';
                 document.getElementById('set-phone').value = s.phone || '';
                 document.getElementById('set-pan').value = s.pan || '';
-                document.getElementById('set-sig').value = s.sig || '';
                 document.getElementById('set-bank').value = s.bank || '';
                 document.getElementById('set-ac').value = s.ac || '';
                 document.getElementById('set-ifsc').value = s.ifsc || '';
@@ -740,6 +746,12 @@
                 document.getElementById('set-p-st').value = s.prefs?.ST || 'ST-';
                 document.getElementById('set-p-rec').value = s.prefs?.REC || 'REC-';
                 document.getElementById('set-seq').value = s.seq || 1;
+                if(s.sig) {
+                    document.getElementById('set-sig').value = s.sig;
+                    document.getElementById('sig-preview').src = s.sig;
+                    document.getElementById('sig-preview').classList.remove('hidden');
+                }
+                window.settingsHelper.renderCategories();
                 window.settingsHelper.loadTplText();
             },
             saveGlobal: async () => {
@@ -751,123 +763,129 @@
                     upi: document.getElementById('set-upi').value, seq: parseInt(document.getElementById('set-seq').value)||1,
                     prefs: { MI: document.getElementById('set-p-mi').value, IND: document.getElementById('set-p-ind').value, ST: document.getElementById('set-p-st').value, REC: document.getElementById('set-p-rec').value }
                 };
-                try { await updateDoc(doc(db, ui.getTenantPath('settings'), 'global'), d); ui.showToast('Core Settings Saved', 'success'); } catch(e) { ui.showToast(e.message, 'error'); }
+                try {
+                    // Use setDoc with merge:true to ensure it works on fresh accounts
+                    await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), d, { merge: true }); 
+                    ui.showToast('Core Settings Saved', 'success'); 
+                } catch(e) { ui.showToast(e.message, 'error'); }
             },
             processSig: (inp) => {
-                const f = inp.files[0]; if(!f) return;
-                const r = new FileReader();
-                r.onload = (e) => {
-                    const img = new Image(); img.onload = () => {
-                        const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
-                        const MAX_W = 200, MAX_H = 100; let w = img.width, h = img.height;
-                        if(w > MAX_W) { h *= MAX_W/w; w = MAX_W; } if(h > MAX_H) { w *= MAX_H/h; h = MAX_H; }
-                        canvas.width = w; canvas.height = h; ctx.drawImage(img, 0, 0, w, h);
-                        document.getElementById('set-sig').value = canvas.toDataURL('image/png');
-                    }; img.src = e.target.result;
-                }; r.readAsDataURL(f);
-            },
-            renderCats: () => {
-                const h = state.settings.categories.map((c, i) => `
-                    <div class="bg-slate-100 text-slate-700 pl-3 pr-1 py-1 rounded-xl text-sm font-semibold flex items-center gap-2 group">
-                        <span id="cat-text-${i}">${c}</span>
-                        <input type="text" id="cat-input-${i}" value="${c}" class="hidden text-sm px-2 py-0.5 rounded border border-slate-300 outline-none w-24">
-                        <button type="button" onclick="window.settingsHelper.startEditCat(${i})" id="cat-btn-edit-${i}" class="text-slate-400 hover:text-brand p-1"><i class="fa-solid fa-pen text-[10px]"></i></button>
-                        <button type="button" onclick="window.settingsHelper.saveEditCat(${i}, '${c}')" id="cat-btn-save-${i}" class="hidden text-emerald-500 hover:text-emerald-700 p-1"><i class="fa-solid fa-check text-[10px]"></i></button>
-                        <button type="button" onclick="window.settingsHelper.remCat(${i})" class="text-rose-400 hover:text-rose-600 p-1"><i class="fa-solid fa-times text-[10px]"></i></button>
-                    </div>
-                `).join('');
-                document.getElementById('set-cat-list').innerHTML = h;
-                ui.populateSelects();
-            },
-            addCategory: async () => {
-                const i = document.getElementById('set-new-cat'); const val = i.value.trim();
-                if(val && !state.settings.categories.includes(val)) {
-                    const newArr = [...state.settings.categories, val];
-                    i.value = '';
-                    try { await updateDoc(doc(db, ui.getTenantPath('settings'), 'global'), { categories: newArr }); ui.showToast('Added', 'success'); } catch(e) { ui.showToast(e.message, 'error'); }
+                if(inp.files && inp.files[0]) {
+                    const r = new FileReader();
+                    r.onload = (e) => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const c = document.createElement('canvas');
+                            const mDim = 300;
+                            let w = img.width, h = img.height;
+                            if(w > mDim || h > mDim) { if(w > h) { h *= mDim/w; w = mDim; } else { w *= mDim/h; h = mDim; } }
+                            c.width = w; c.height = h;
+                            c.getContext('2d').drawImage(img, 0, 0, w, h);
+                            const b64 = c.toDataURL('image/jpeg', 0.8);
+                            document.getElementById('set-sig').value = b64;
+                            document.getElementById('sig-preview').src = b64;
+                            document.getElementById('sig-preview').classList.remove('hidden');
+                        }
+                        img.src = e.target.result;
+                    };
+                    r.readAsDataURL(inp.files[0]);
                 }
             },
-            startEditCat: (idx) => {
-                document.getElementById(`cat-text-${idx}`).classList.add('hidden');
-                document.getElementById(`cat-btn-edit-${idx}`).classList.add('hidden');
-                document.getElementById(`cat-input-${idx}`).classList.remove('hidden');
-                document.getElementById(`cat-btn-save-${idx}`).classList.remove('hidden');
-                document.getElementById(`cat-input-${idx}`).focus();
+            renderCategories: () => {
+                const cats = state.settings.categories || ['Consultation', 'Drafting', 'Filing', 'Appearance'];
+                document.getElementById('set-cat-list').innerHTML = cats.map((c, i) => `
+                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-full text-sm text-slate-700 border border-slate-200">
+                        <span>${c}</span>
+                        <button onclick="window.settingsHelper.editCategory(${i})" class="text-blue-400 hover:text-blue-600 ml-1"><i class="fa-solid fa-pen text-xs"></i></button>
+                        <button onclick="window.settingsHelper.delCategory(${i})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `).join('');
             },
-            saveEditCat: async (idx, oldCat) => {
-                const newCat = document.getElementById(`cat-input-${idx}`).value.trim();
-                if(!newCat || newCat === oldCat) { window.settingsHelper.renderCats(); return; }
-                if(state.settings.categories.includes(newCat)) { ui.showToast("Category exists", "error"); window.settingsHelper.renderCats(); return; }
-                
-                ui.showConfirm(`Rename "${oldCat}" to "${newCat}"? This updates all past records.`, async () => {
-                    const newArr = [...state.settings.categories]; newArr[idx] = newCat;
+            addCategory: async () => {
+                const val = document.getElementById('set-cat-new').value.trim();
+                if(!val) return;
+                let cats = state.settings.categories || ['Consultation', 'Drafting', 'Filing', 'Appearance'];
+                if(cats.includes(val)) return ui.showToast('Category exists', 'error');
+                cats.push(val);
+                try {
+                    await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), { categories: cats }, { merge: true });
+                    document.getElementById('set-cat-new').value = '';
+                } catch(e) { ui.showToast('Failed to add category', 'error'); }
+            },
+            delCategory: (idx) => {
+                ui.confirm('Delete category?', async () => {
+                    let cats = state.settings.categories || [];
+                    cats.splice(idx, 1);
+                    await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), { categories: cats }, { merge: true });
+                });
+            },
+            editCategory: (idx) => {
+                let cats = state.settings.categories || [];
+                const oldVal = cats[idx];
+                const newVal = prompt('Rename category:', oldVal);
+                if(newVal && newVal.trim() !== '' && newVal !== oldVal) {
+                    cats[idx] = newVal.trim();
+                    // Batch update old work items
                     const batch = writeBatch(db);
-                    batch.update(doc(db, ui.getTenantPath('settings'), 'global'), { categories: newArr });
-                    state.works.filter(w => w.category === oldCat).forEach(w => { batch.update(doc(db, ui.getTenantPath('workItems'), w.id), { category: newCat }); });
-                    try { await batch.commit(); ui.showToast('Updated globally', 'success'); } catch(e) { ui.showToast(e.message, 'error'); }
-                });
+                    state.workItems.forEach(w => {
+                        if(w.category === oldVal) {
+                            batch.update(doc(db, ui.getTenantPath('workItems'), w.id), { category: newVal.trim() });
+                        }
+                    });
+                    batch.set(doc(db, ui.getTenantPath('settings'), 'global'), { categories: cats }, { merge: true });
+                    batch.commit().then(() => ui.showToast('Category renamed', 'success')).catch(e => ui.showToast('Error', 'error'));
+                }
             },
-            remCat: (idx) => { 
-                ui.showConfirm(`Delete category?`, async () => {
-                    const newArr = [...state.settings.categories]; newArr.splice(idx, 1); 
-                    try { await updateDoc(doc(db, ui.getTenantPath('settings'), 'global'), { categories: newArr }); ui.showToast('Deleted', 'success'); } catch(e) { ui.showToast(e.message, 'error'); }
-                });
-            },
-            loadTplText: () => { const t = document.getElementById('set-tpl-sel').value; document.getElementById('set-tpl-text').value = state.settings.tpl?.[t] || ''; },
-            saveTplText: () => { const t = document.getElementById('set-tpl-sel').value; state.settings.tpl[t] = document.getElementById('set-tpl-text').value; },
-            resetTemplates: () => {
-                const h = `
-<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px;">
-    <div style="text-align: center; margin-bottom: 20px;">
-        <h1 style="font-family: 'Playfair Display', serif; font-size: 24px; margin: 0;">{{COMPANY_NAME}}</h1>
-        <p style="margin: 0; color: #666;">{{COMPANY_PHONE}} | {{COMPANY_EMAIL}}</p>
+            defaultTpl: {
+                inv: `<div class="pdf-template-style" style="padding: 20px; font-family: sans-serif; color: #1e293b; background: white;">
+    <div style="display:flex;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:20px;margin-bottom:20px;">
+        <div><h1 style="margin:0;color:#0f172a;font-size:24px;">{{pro_name}}</h1><p style="margin:5px 0 0;font-size:12px;color:#64748b;">{{pro_phone}} | {{pro_email}}<br>PAN: {{pro_pan}}</p></div>
+        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:20px;">INVOICE</h2><p style="margin:5px 0 0;font-size:12px;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
     </div>
-    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-        <div><b>To:</b><br>{{CLIENT_NAME}}<br>{{CLIENT_EMAIL}}</div>
-        <div style="text-align: right;"><b>Invoice No:</b> {{INVOICE_NO}}<br><b>Date:</b> {{INVOICE_DATE}}<br><b>Type:</b> {{DOC_TYPE}}</div>
+    <div style="margin-bottom:30px;">
+        <h3 style="margin:0 0 10px;font-size:14px;color:#64748b;">BILL TO</h3>
+        <p style="margin:0;font-weight:bold;font-size:16px;">{{client_name}}</p>
+        <p style="margin:5px 0 0;font-size:14px;">Period: {{period_str}}</p>
     </div>
-    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-        <thead>
-            <tr style="background: #f1f5f9;">
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Date</th>
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Description</th>
-                <th style="padding: 8px; border: 1px solid #ddd; text-align: right;">Amount</th>
-            </tr>
-        </thead>
-        <tbody>{{TABLE_ROWS}}</tbody>
-        <tfoot>
-            <tr>
-                <td colspan="2" style="padding: 8px; text-align: right; font-weight: bold; border: 1px solid #ddd;">Total Due</td>
-                <td style="padding: 8px; text-align: right; font-weight: bold; border: 1px solid #ddd; font-size: 14px;">{{TOTAL_AMOUNT}}</td>
-            </tr>
-        </tfoot>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:30px;">
+        <thead><tr style="background:#f8fafc;"><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;">Date</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;">Description</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;">Amount</th></tr></thead>
+        <tbody>{{table_rows}}</tbody>
     </table>
-    <div style="margin-top: 30px; display: flex; justify-content: space-between;">
-        <div>
-            <h4 style="margin:0 0 5px 0;">Payment Details</h4>
-            <p style="margin:0;">Bank: {{BANK_NAME}}</p><p style="margin:0;">A/c: {{BANK_AC}}</p><p style="margin:0;">IFSC: {{BANK_IFSC}}</p>
-        </div>
-        <div style="text-align: center;">{{QR_CODE}}<p style="margin-top:5px; font-size:9px;">Scan to Pay</p></div>
+    <div style="display:flex;justify-content:space-between;">
+        <div style="width:40%;"><p style="font-size:12px;color:#64748b;margin:0 0 5px;">Bank: {{bank}}<br>A/c: {{ac}}<br>IFSC: {{ifsc}}</p><img src="{{qr}}" style="width:100px;height:100px;{{qr_display}}"></div>
+        <div style="width:40%;text-align:right;"><h3 style="margin:0;font-size:20px;color:#0f172a;padding-top:10px;border-top:2px solid #e2e8f0;">Total: {{total}}</h3><br><br><img src="{{sig}}" style="height:50px;{{sig_display}}"></div>
     </div>
-    <div style="margin-top: 20px; text-align: right;">
-        {{SIGNATURE_IMG}}<br><p style="margin:0;">Authorized Signatory</p>
+</div>`,
+                st: `<div class="pdf-template-style" style="padding: 20px; font-family: sans-serif; color: #1e293b; background: white;">
+    <div style="display:flex;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:20px;margin-bottom:20px;">
+        <div><h1 style="margin:0;color:#0f172a;font-size:24px;">{{pro_name}}</h1></div>
+        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:20px;">STATEMENT OF ACCOUNT</h2><p style="margin:5px 0 0;font-size:12px;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
     </div>
-</div>`;
-                state.settings.tpl = { MI: h, IND: h, ST: h, REC: h }; window.settingsHelper.loadTplText(); ui.showToast('Reset (Requires Save)');
+    <div style="margin-bottom:20px;"><p style="margin:0;font-weight:bold;font-size:16px;">{{client_name}}</p><p style="margin:5px 0 0;font-size:14px;">Period: {{period_str}}</p></div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:30px;">
+        <thead><tr style="background:#f8fafc;"><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;">Date</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;">Details</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;">Debit</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;">Credit</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;">Balance</th></tr></thead>
+        <tbody>{{table_rows}}</tbody>
+    </table>
+    <div style="text-align:right;"><h3 style="margin:0;font-size:18px;">Closing Balance: {{total}}</h3><p style="font-size:12px;color:#64748b;">(Positive balance indicates amount due)</p></div>
+</div>`
             },
-            exportCSV: (type) => {
-                let data = [];
-                if(type==='clients') data = state.clients.map(c=>({ID:c.id, Name:c.name, Email:c.email}));
-                else if(type==='cases') data = state.cases.map(c=>({ID:c.id, Client:state.clients.find(x=>x.id===c.client_id)?.name, Name:c.name, Ref:c.case_ref}));
-                else if(type==='works') data = state.works.map(w=>({Date:w.date, Client:state.clients.find(x=>x.id===w.client_id)?.name, Category:w.category, Desc:w.desc, Amount:w.amount, Prepaid:w.prepaid, Billed:!!w.invoice_id}));
-                else if(type==='invoices') data = state.invoices.map(i=>({No:i.invoice_no, Date:i.date, Type:i.type, Client:state.clients.find(x=>x.id===i.client_id)?.name, Total:i.total, Status:i.status}));
-                
-                if(!data.length) return ui.showToast('No data to export');
-                const hdr = Object.keys(data[0]).join(',') + '\n';
-                const rows = data.map(o => Object.values(o).map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
-                const blob = new Blob([hdr+rows], {type:'text/csv'});
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a'); a.href = url; a.download = `${type}_export.csv`; a.click();
+            loadTplText: () => {
+                const s = state.settings.templates || window.settingsHelper.defaultTpl;
+                document.getElementById('tpl-inv').value = s.inv || window.settingsHelper.defaultTpl.inv;
+                document.getElementById('tpl-st').value = s.st || window.settingsHelper.defaultTpl.st;
+            },
+            saveTpl: async () => {
+                const t = { inv: document.getElementById('tpl-inv').value, st: document.getElementById('tpl-st').value };
+                try {
+                    await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), { templates: t }, { merge: true });
+                    ui.showToast('Templates saved', 'success');
+                } catch(e) { ui.showToast(e.message, 'error'); }
+            },
+            resetTpl: () => {
+                ui.confirm('Reset to defaults? Custom edits will be lost.', () => {
+                    document.getElementById('tpl-inv').value = window.settingsHelper.defaultTpl.inv;
+                    document.getElementById('tpl-st').value = window.settingsHelper.defaultTpl.st;
+                });
             }
         };
 
@@ -884,223 +902,278 @@
                     const c = state.clients.find(x=>x.id===i.client_id);
                     const isPaid = i.status === 'Paid' || i.type === 'REC';
                     const sCol = isPaid ? 'text-emerald-500 bg-emerald-50' : 'text-amber-600 bg-amber-50';
-                    return `<tr>
-                        <td class="p-3 font-mono text-xs font-bold">${i.invoice_no}</td>
-                        <td class="p-3">${ui.fmtDate(i.date)}</td>
-                        <td class="p-3 font-semibold">${c?c.name:'-'}</td>
-                        <td class="p-3 font-bold">${ui.fmtMoney(i.total)}</td>
-                        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-bold ${sCol}">${i.status || (i.type==='REC'?'Paid':'Unpaid')}</span></td>
-                        <td class="p-3 text-right">
+                    return `
+                    <tr class="hover:bg-slate-50 transition group">
+                        <td class="px-4 py-3 font-mono text-xs font-bold text-slate-700">${i.invoice_no}</td>
+                        <td class="px-4 py-3">${ui.fmtDate(i.date)}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-800">${c?c.name:'-'}</td>
+                        <td class="px-4 py-3 font-bold">${ui.fmtMoney(i.total)}</td>
+                        <td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-bold ${sCol}">${i.status || (i.type==='REC'?'Paid':'Unpaid')}</span></td>
+                        <td class="px-4 py-3 text-right opacity-0 group-hover:opacity-100 transition">
                             <button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" class="text-blue-500 hover:text-blue-700 mx-1" title="Preview"><i class="fa-solid fa-eye"></i></button>
                             <button onclick="window.docsHelper.processPDF('${i.id}', 'download')" class="text-slate-400 hover:text-brand mx-1" title="Download"><i class="fa-solid fa-download"></i></button>
-                            ${!isPaid && i.type !== 'ST' ? `<button onclick="window.docsHelper.openPayModal('${i.id}')" class="text-emerald-500 hover:text-emerald-600 mx-1 font-semibold text-xs ml-2 border border-emerald-200 px-2 rounded">Mark Paid</button>` : ''}
+                            <button onclick="window.docsHelper.processPDF('${i.id}', 'share')" class="text-indigo-400 hover:text-indigo-600 mx-1" title="Share"><i class="fa-solid fa-share-nodes"></i></button>
+                            ${!isPaid && i.type !== 'ST' ? `<button onclick="window.docsHelper.openPayModal('${i.id}')" class="text-emerald-500 hover:text-emerald-600 mx-1 font-semibold text-xs ml-2 border border-emerald-200 px-2 py-1 rounded">Mark Paid</button>` : ''}
                             <button onclick="window.docsHelper.voidDoc('${i.id}')" class="text-slate-300 hover:text-rose-500 mx-1 ml-2" title="Delete/Void"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
-                }).join('') || '<tr><td colspan="6" class="text-center py-8 text-slate-400 text-sm">No documents found.</td></tr>';
+                }).join('') || '<tr><td colspan="6" class="text-center py-8 text-slate-400">No documents found.</td></tr>';
             },
             voidDoc: (id) => {
-                const d = state.invoices.find(x=>x.id===id); if(!d) return;
-                let msg = `Void document ${d.invoice_no}? This frees up linked work items.`;
-                if(d.type === 'REC') msg = `Delete payment receipt ${d.invoice_no}? ${d.linked_invoice_id ? 'The linked invoice will revert to Unpaid.' : ''}`;
-                
-                ui.showConfirm(msg, async () => {
-                    const batch = writeBatch(db);
-                    batch.delete(doc(db, ui.getTenantPath('invoices'), id));
-                    
-                    if(d.type === 'MI' || d.type === 'IND' || d.type === 'ST') {
-                        (d.items||[]).forEach(itemId => batch.update(doc(db, ui.getTenantPath('workItems'), itemId), { invoice_id: null }));
-                    }
-                    if(d.type === 'REC' && d.linked_invoice_id) {
-                        batch.update(doc(db, ui.getTenantPath('invoices'), d.linked_invoice_id), { status: 'Unpaid', linked_receipt: null });
-                    }
-                    try { await batch.commit(); ui.showToast('Deleted Document', 'success'); } catch(e) { ui.showToast(e.message, 'error'); }
+                ui.confirm('Delete this document? If it is a receipt, the linked invoice will become unpaid.', async () => {
+                    const docToVoid = state.invoices.find(i => i.id === id);
+                    if(!docToVoid) return;
+                    try {
+                        const batch = writeBatch(db);
+                        // If receipt, unlink and mark invoice unpaid
+                        if(docToVoid.type === 'REC' && docToVoid.linked_invoice_id) {
+                            batch.update(doc(db, ui.getTenantPath('invoices'), docToVoid.linked_invoice_id), { status: 'Unpaid', payment_ref: null, payment_date: null });
+                        }
+                        // Free work items
+                        if(docToVoid.items) {
+                            docToVoid.items.forEach(wi => batch.update(doc(db, ui.getTenantPath('workItems'), wi), { invoice_id: null }));
+                        }
+                        batch.delete(doc(db, ui.getTenantPath('invoices'), id));
+                        await batch.commit();
+                        ui.showToast('Document Deleted', 'success');
+                    } catch(e) { ui.showToast(e.message, 'error'); }
                 });
             },
+            openBillModal: () => {
+                document.getElementById('bill-start').value = ''; document.getElementById('bill-end').value = new Date().toISOString().split('T')[0];
+                document.getElementById('modal-bill').classList.remove('hidden');
+                window.docsHelper.onBillTypeChange();
+            },
+            onBillTypeChange: () => {
+                const t = document.getElementById('bill-type').value;
+                document.getElementById('bill-case-container').style.display = t==='IND' ? 'block' : 'none';
+                document.getElementById('bill-rebill-container').style.display = t!=='ST' ? 'flex' : 'none';
+                window.docsHelper.onBillFiltersChange();
+            },
+            onBillFiltersChange: () => {
+                const t = document.getElementById('bill-type').value, cid = document.getElementById('bill-client').value, start = document.getElementById('bill-start').value, end = document.getElementById('bill-end').value;
+                if(t==='IND') {
+                    const cSel = document.getElementById('bill-case');
+                    const curr = cSel.value;
+                    cSel.innerHTML = '<option value="">All Cases...</option>' + state.cases.filter(c => c.client_id === cid).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                    if(curr) cSel.value = curr;
+                }
+                
+                if(!cid || !end) { document.getElementById('bill-items-wrapper').classList.add('hidden'); return; }
+                
+                if(t==='ST') return; // ST doesn't select items
+                
+                document.getElementById('bill-items-wrapper').classList.remove('hidden');
+                const rebill = document.getElementById('bill-rebill').checked;
+                const caseId = document.getElementById('bill-case').value;
+
+                let items = state.workItems.filter(w => w.client_id === cid && w.date <= end && (!start || w.date >= start));
+                if(t==='IND' && caseId) items = items.filter(w => w.case_id === caseId);
+                
+                // Filter unbilled, OR previously billed but unpaid if rebill is checked
+                items = items.filter(w => {
+                    if(!w.invoice_id) return true;
+                    if(rebill) { const inv = state.invoices.find(i => i.id === w.invoice_id); return inv && inv.status !== 'Paid'; }
+                    return false;
+                });
+
+                document.getElementById('bill-items-list').innerHTML = items.map(w => `
+                    <label class="flex justify-between items-center p-2 hover:bg-slate-100 rounded cursor-pointer border-b border-slate-100">
+                        <div class="flex items-center"><input type="checkbox" class="bill-item-cb w-4 h-4 text-brand rounded mr-3" value="${w.id}" data-amt="${w.prepaid?0:w.amount}" checked onchange="window.docsHelper.calcBillTotal()"><span class="text-xs text-slate-500 mr-2">${ui.fmtDate(w.date)}</span><span class="truncate max-w-[200px]">${w.desc}</span></div>
+                        <span class="font-semibold text-slate-700">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</span>
+                    </label>
+                `).join('') || '<p class="text-xs text-slate-400 p-2">No work items found for these filters.</p>';
+                window.docsHelper.calcBillTotal();
+            },
+            calcBillTotal: () => {
+                const total = Array.from(document.querySelectorAll('.bill-item-cb:checked')).reduce((s, cb) => s + parseFloat(cb.dataset.amt), 0);
+                document.getElementById('bill-live-total').innerText = ui.fmtMoney(total);
+            },
+            generate: async () => {
+                const t = document.getElementById('bill-type').value, cid = document.getElementById('bill-client').value, start = document.getElementById('bill-start').value, end = document.getElementById('bill-end').value;
+                if(!cid || !end) return ui.showToast('Client and End Date required', 'error');
+
+                const s = state.settings;
+                const pref = s.prefs?.[t] || `${t}-`;
+                const seq = s.seq || 1;
+                const invNo = `${pref}${String(seq).padStart(3, '0')}`;
+                
+                const payload = { type: t, client_id: cid, period_start: start, period_end: end, date: new Date().toISOString().split('T')[0], invoice_no: invNo, status: 'Unpaid' };
+                
+                const batch = writeBatch(db);
+                const invRef = doc(collection(db, ui.getTenantPath('invoices')));
+
+                if(t !== 'ST') {
+                    const sel = Array.from(document.querySelectorAll('.bill-item-cb:checked'));
+                    if(sel.length === 0) return ui.showToast('Select at least one item', 'error');
+                    payload.items = sel.map(cb => cb.value);
+                    payload.total = sel.reduce((s, cb) => s + parseFloat(cb.dataset.amt), 0);
+                    payload.items.forEach(id => batch.update(doc(db, ui.getTenantPath('workItems'), id), { invoice_id: invRef.id }));
+                } else {
+                    // Statement Logic handled at render time. Just save bounds.
+                    payload.total = 0; // calc later
+                }
+
+                batch.set(invRef, payload);
+                batch.update(doc(db, ui.getTenantPath('settings'), 'global'), { seq: seq + 1 });
+                
+                try {
+                    await batch.commit();
+                    document.getElementById('modal-bill').classList.add('hidden');
+                    ui.showToast('Generated ' + invNo, 'success');
+                    window.docsHelper.processPDF(invRef.id, 'preview');
+                } catch(e) { ui.showToast(e.message, 'error'); }
+            },
             openPayModal: (invId = null) => {
-                document.getElementById('modal-pay').classList.remove('hidden');
-                document.getElementById('mp-date').value = new Date().toISOString().split('T')[0];
-                document.getElementById('mp-ref').value = '';
+                document.getElementById('pay-inv-id').value = invId || '';
+                document.getElementById('pay-client').value = '';
+                document.getElementById('pay-amount').value = '';
+                document.getElementById('pay-date').value = new Date().toISOString().split('T')[0];
+                document.getElementById('pay-ref').value = '';
+                
                 if(invId) {
-                    const inv = state.invoices.find(x=>x.id===invId);
-                    document.getElementById('mp-inv-id').value = invId;
-                    document.getElementById('mp-client').value = inv.client_id;
-                    document.getElementById('mp-amount').value = inv.total;
-                    document.getElementById('mp-client').disabled = true;
-                    document.getElementById('mp-title').innerText = `Pay: ${inv.invoice_no}`;
-                } else {
-                    document.getElementById('mp-inv-id').value = '';
-                    document.getElementById('mp-client').value = '';
-                    document.getElementById('mp-amount').value = '';
-                    document.getElementById('mp-client').disabled = false;
-                    document.getElementById('mp-title').innerText = `Direct Receipt`;
+                    const inv = state.invoices.find(i => i.id === invId);
+                    if(inv) { document.getElementById('pay-client').value = inv.client_id; document.getElementById('pay-amount').value = inv.total; }
                 }
+                document.getElementById('modal-pay').classList.remove('hidden');
             },
-            savePayment: async () => {
-                const cid = document.getElementById('mp-client').value, amt = parseFloat(document.getElementById('mp-amount').value), invId = document.getElementById('mp-inv-id').value;
-                const d = {
-                    date: document.getElementById('mp-date').value, type: 'REC', client_id: cid, period_start: null, period_end: null, items: [],
-                    total: amt, status: 'Paid', payment_ref: document.getElementById('mp-ref').value, linked_invoice_id: invId || null,
-                    invoice_no: `${state.settings.prefs?.REC || 'REC-'}${state.settings.seq.toString().padStart(4,'0')}`
-                };
-                const batch = writeBatch(db);
-                batch.set(doc(collection(db, ui.getTenantPath('invoices'))), d);
-                batch.update(doc(db, ui.getTenantPath('settings'), 'global'), { seq: state.settings.seq + 1 });
-                if(invId) batch.update(doc(db, ui.getTenantPath('invoices'), invId), { status: 'Paid' });
-                
-                try { await batch.commit(); ui.showToast('Payment recorded', 'success'); document.getElementById('modal-pay').classList.add('hidden'); } catch(e) { ui.showToast(e.message, 'error'); }
-            },
-            openGenModal: () => {
-                document.getElementById('modal-gen').classList.remove('hidden');
-                const d = new Date(); d.setDate(0); const e = d.toISOString().split('T')[0]; d.setDate(1); const s = d.toISOString().split('T')[0];
-                document.getElementById('gen-start').value = s; document.getElementById('gen-end').value = e;
-                document.getElementById('gen-client').value = ''; document.getElementById('gen-case').value = '';
-                document.getElementById('gen-rebill').checked = false; window.docsHelper.genFilterChange();
-            },
-            genFilterChange: () => {
-                const t = document.getElementById('gen-type').value, c = document.getElementById('gen-client').value, s = document.getElementById('gen-start').value, e = document.getElementById('gen-end').value, r = document.getElementById('gen-rebill').checked;
-                
-                const cc = document.getElementById('gen-case-container');
-                if(t === 'IND') { cc.classList.remove('hidden'); document.getElementById('gen-case').innerHTML = '<option value="">Select Case...</option>' + state.cases.filter(x=>x.client_id===c).map(x=>`<option value="${x.id}">${x.name}</option>`).join(''); } else { cc.classList.add('hidden'); }
-                
-                const b = document.getElementById('gen-items'); const empty = document.getElementById('gen-empty');
-                if(!c || !s || !e) { b.innerHTML = ''; empty.style.display = 'block'; window.docsHelper.calcGenTotal(); return; }
-                empty.style.display = 'none';
+            processPayment: async () => {
+                const invId = document.getElementById('pay-inv-id').value;
+                const cid = document.getElementById('pay-client').value;
+                const amt = parseFloat(document.getElementById('pay-amount').value);
+                const d = document.getElementById('pay-date').value;
+                const r = document.getElementById('pay-ref').value;
 
-                if(t === 'ST') {
-                    // Statement logic: Get all works and receipts for client up to end date.
-                    const evs = [];
-                    state.works.filter(w => w.client_id === c && w.date <= e).forEach(w => evs.push({ ...w, _t: 'W', amt: (w.prepaid?0:parseFloat(w.amount)) }));
-                    state.invoices.filter(i => i.client_id === c && i.type === 'REC' && i.date <= e).forEach(i => evs.push({ ...i, _t: 'R', amt: parseFloat(i.total) }));
-                    
-                    let opBal = 0; const rngEvs = [];
-                    evs.forEach(ev => { if(ev.date < s) opBal += ev._t==='W' ? ev.amt : -ev.amt; else rngEvs.push(ev); });
-                    rngEvs.sort((a,b)=>a.date.localeCompare(b.date));
+                if(!cid || !amt || !d) return ui.showToast('Fill required fields', 'error');
 
-                    let bal = opBal;
-                    let html = `<tr><td class="p-2"><input type="checkbox" disabled checked class="gen-chk" data-amt="0" data-type="OP"></td><td class="p-2 text-slate-500">${ui.fmtDate(s)}</td><td class="p-2 font-bold text-slate-500">Opening Balance</td><td class="p-2 text-right font-bold">${ui.fmtMoney(opBal)}</td></tr>`;
-                    rngEvs.forEach(ev => {
-                        bal += ev._t==='W' ? ev.amt : -ev.amt;
-                        html += `<tr><td class="p-2"><input type="checkbox" disabled checked class="gen-chk" data-amt="${bal}"></td><td class="p-2">${ui.fmtDate(ev.date)}</td><td class="p-2">${ev._t==='W'?ev.desc:`Receipt ${ev.invoice_no}`}</td><td class="p-2 text-right">${ev._t==='W'?ui.fmtMoney(ev.amt):`<span class="text-emerald-500">-${ui.fmtMoney(ev.amt)}</span>`}</td></tr>`;
-                    });
-                    html += `<tr class="bg-slate-100"><td class="p-2"></td><td class="p-2"></td><td class="p-2 font-bold">Closing Balance</td><td class="p-2 text-right font-bold text-brand">${ui.fmtMoney(bal)}</td></tr>`;
-                    b.innerHTML = html;
-                } else {
-                    const cid = document.getElementById('gen-case').value;
-                    let ws = state.works.filter(w => w.client_id === c && w.date >= s && w.date <= e && (r || !w.invoice_id));
-                    if(t === 'IND' && cid) ws = ws.filter(w => w.case_id === cid);
-                    
-                    b.innerHTML = ws.map(w => `<tr><td class="p-2"><input type="checkbox" class="gen-chk" checked data-id="${w.id}" data-amt="${w.prepaid?0:w.amount}" onchange="window.docsHelper.calcGenTotal()"></td><td class="p-2">${ui.fmtDate(w.date)}</td><td class="p-2">${w.desc}</td><td class="p-2 text-right">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td></tr>`).join('');
-                }
-                window.docsHelper.calcGenTotal();
-            },
-            toggleAllGen: (chk) => { document.querySelectorAll('.gen-chk:not([disabled])').forEach(el => el.checked = chk); window.docsHelper.calcGenTotal(); },
-            calcGenTotal: () => {
-                const t = document.getElementById('gen-type').value;
-                if(t === 'ST') {
-                    const chks = document.querySelectorAll('.gen-chk');
-                    document.getElementById('gen-total').innerText = chks.length ? ui.fmtMoney(parseFloat(chks[chks.length-1].dataset.amt)) : '₹0.00';
-                } else {
-                    let total = 0; document.querySelectorAll('.gen-chk:checked').forEach(el => { total += parseFloat(el.dataset.amt||0); });
-                    document.getElementById('gen-total').innerText = ui.fmtMoney(total);
-                }
-            },
-            saveDocument: async () => {
-                const type = document.getElementById('gen-type').value;
-                const items = Array.from(document.querySelectorAll('.gen-chk:checked:not([disabled])')).map(el => el.dataset.id).filter(x=>x);
-                if(type !== 'ST' && !items.length) return ui.showToast('Select items to bill', 'error');
-
-                let total = 0;
-                if(type === 'ST') { const chks = document.querySelectorAll('.gen-chk'); total = chks.length ? parseFloat(chks[chks.length-1].dataset.amt) : 0; }
-                else { items.forEach(id => { const w = state.works.find(x=>x.id===id); if(w) total += (w.prepaid?0:parseFloat(w.amount)); }); }
-
-                const pfx = state.settings.prefs?.[type] || `${type}-`;
-                const d = {
-                    date: new Date().toISOString().split('T')[0], type, client_id: document.getElementById('gen-client').value,
-                    period_start: document.getElementById('gen-start').value, period_end: document.getElementById('gen-end').value,
-                    items, total, invoice_no: `${pfx}${state.settings.seq.toString().padStart(4,'0')}`, status: 'Unpaid'
-                };
+                const s = state.settings;
+                const pref = s.prefs?.REC || 'REC-';
+                const seq = s.seq || 1;
+                const recNo = `${pref}${String(seq).padStart(3, '0')}`;
 
                 const batch = writeBatch(db);
-                const docRef = doc(collection(db, ui.getTenantPath('invoices')));
-                batch.set(docRef, d);
-                batch.update(doc(db, ui.getTenantPath('settings'), 'global'), { seq: state.settings.seq + 1 });
-                if(type !== 'ST') items.forEach(id => batch.update(doc(db, ui.getTenantPath('workItems'), id), { invoice_id: docRef.id }));
+                const recRef = doc(collection(db, ui.getTenantPath('invoices')));
 
-                try { await batch.commit(); ui.showToast('Document saved', 'success'); document.getElementById('modal-gen').classList.add('hidden'); } catch(e) { ui.showToast(e.message, 'error'); }
+                batch.set(recRef, { type: 'REC', client_id: cid, date: d, invoice_no: recNo, total: amt, payment_ref: r, linked_invoice_id: invId || null });
+                batch.update(doc(db, ui.getTenantPath('settings'), 'global'), { seq: seq + 1 });
+
+                if(invId) batch.update(doc(db, ui.getTenantPath('invoices'), invId), { status: 'Paid', payment_ref: r, payment_date: d, linked_receipt: recRef.id });
+
+                try {
+                    await batch.commit();
+                    document.getElementById('modal-pay').classList.add('hidden');
+                    ui.showToast('Payment Recorded', 'success');
+                } catch(e) { ui.showToast(e.message, 'error'); }
             },
-            
-            processPDF: async (id, action) => {
-                const inv = state.invoices.find(x=>x.id===id); if(!inv) return;
-                const cli = state.clients.find(x=>x.id===inv.client_id) || {};
-                const set = state.settings;
-                let html = set.tpl[inv.type];
+            generateHTML: async (inv) => {
+                const s = state.settings;
+                const c = state.clients.find(x => x.id === inv.client_id) || {};
+                let tpl = (s.templates && s.templates[inv.type === 'ST' ? 'st' : 'inv']) ? s.templates[inv.type === 'ST' ? 'st' : 'inv'] : window.settingsHelper.defaultTpl[inv.type === 'ST' ? 'st' : 'inv'];
                 
-                // Compile Template
-                html = html.replace(/{{COMPANY_NAME}}/g, set.name||'').replace(/{{COMPANY_PHONE}}/g, set.phone||'').replace(/{{COMPANY_EMAIL}}/g, set.email||'');
-                html = html.replace(/{{CLIENT_NAME}}/g, cli.name||'').replace(/{{CLIENT_EMAIL}}/g, cli.email||'');
-                html = html.replace(/{{INVOICE_NO}}/g, inv.invoice_no).replace(/{{INVOICE_DATE}}/g, ui.fmtDate(inv.date)).replace(/{{DOC_TYPE}}/g, inv.type==='MI'?'Monthly Invoice':(inv.type==='IND'?'Invoice':(inv.type==='ST'?'Statement of Ledger':'Receipt')));
-                html = html.replace(/{{BANK_NAME}}/g, set.bank||'').replace(/{{BANK_AC}}/g, set.ac||'').replace(/{{BANK_IFSC}}/g, set.ifsc||'');
-                html = html.replace(/{{TOTAL_AMOUNT}}/g, ui.fmtMoney(inv.total));
-                html = html.replace(/{{SIGNATURE_IMG}}/g, set.sig ? `<img src="${set.sig}" style="max-height: 60px; display:inline-block;" />` : '');
-                
-                // Build Table Rows ensuring class pdf-table-row is attached
                 let rows = '';
-                if(inv.type === 'ST') {
-                    // Rebuild statement logic based on exact dates stored
-                    const evs = [];
-                    state.works.filter(w => w.client_id === inv.client_id && w.date <= inv.period_end).forEach(w => evs.push({ ...w, _t: 'W', amt: (w.prepaid?0:parseFloat(w.amount)) }));
-                    state.invoices.filter(i => i.client_id === inv.client_id && i.type === 'REC' && i.date <= inv.period_end).forEach(i => evs.push({ ...i, _t: 'R', amt: parseFloat(i.total) }));
-                    let opBal = 0; const rngEvs = [];
-                    evs.forEach(ev => { if(ev.date < inv.period_start) opBal += ev._t==='W' ? ev.amt : -ev.amt; else rngEvs.push(ev); });
-                    rngEvs.sort((a,b)=>a.date.localeCompare(b.date));
-                    let bal = opBal;
-                    rows += `<tr class="pdf-table-row"><td style="padding:8px; border:1px solid #ddd;">${ui.fmtDate(inv.period_start)}</td><td style="padding:8px; border:1px solid #ddd;"><b>Opening Balance</b></td><td style="padding:8px; border:1px solid #ddd; text-align:right;">${ui.fmtMoney(opBal)}</td></tr>`;
-                    rngEvs.forEach(ev => { bal += ev._t==='W' ? ev.amt : -ev.amt; rows += `<tr class="pdf-table-row"><td style="padding:8px; border:1px solid #ddd;">${ui.fmtDate(ev.date)}</td><td style="padding:8px; border:1px solid #ddd;">${ev._t==='W'?ev.desc:`Receipt ${ev.invoice_no}`}</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">${ev._t==='W'?ui.fmtMoney(ev.amt):`-${ui.fmtMoney(ev.amt)}`}</td></tr>`; });
-                } else if(inv.type === 'REC') {
-                    rows = `<tr class="pdf-table-row"><td style="padding:8px; border:1px solid #ddd;">${ui.fmtDate(inv.date)}</td><td style="padding:8px; border:1px solid #ddd;">Payment Received ${inv.payment_ref?`(${inv.payment_ref})`:''}</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">${ui.fmtMoney(inv.total)}</td></tr>`;
-                } else {
-                    const ws = state.works.filter(w => inv.items.includes(w.id));
-                    ws.forEach(w => { rows += `<tr class="pdf-table-row"><td style="padding:8px; border:1px solid #ddd;">${ui.fmtDate(w.date)}</td><td style="padding:8px; border:1px solid #ddd;">${w.desc}</td><td style="padding:8px; border:1px solid #ddd; text-align:right;">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td></tr>`; });
-                }
-                html = html.replace(/{{TABLE_ROWS}}/g, rows);
+                let runBal = 0;
 
-                // Generate QR Code if UPI is set and it's an unpaid bill
-                let qrImgHtml = '';
-                if(set.upi && inv.type !== 'REC') {
-                    const upiUrl = `upi://pay?pa=${set.upi}&pn=${encodeURIComponent(set.name||'')}&tn=${encodeURIComponent(inv.invoice_no)}&am=${inv.total}&cu=INR`;
-                    document.getElementById('qr-code-hidden').innerHTML = '';
-                    new QRCode(document.getElementById('qr-code-hidden'), { text: upiUrl, width: 100, height: 100 });
-                    await new Promise(r => setTimeout(r, 100)); // wait for generation
-                    const qrC = document.querySelector('#qr-code-hidden img');
-                    if(qrC && qrC.src) qrImgHtml = `<img src="${qrC.src}" style="width: 80px; height: 80px; margin: 0 auto; display:block;" />`;
-                }
-                html = html.replace(/{{QR_CODE}}/g, qrImgHtml);
+                if(inv.type !== 'ST' && inv.type !== 'REC') {
+                    const items = (inv.items || []).map(id => state.workItems.find(w => w.id === id)).filter(Boolean);
+                    items.sort((a,b) => a.date.localeCompare(b.date));
+                    rows = items.map(w => `<tr><td style="padding:10px;border-bottom:1px solid #e2e8f0;">${ui.fmtDate(w.date)}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;">${w.desc}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td></tr>`).join('');
+                } else if(inv.type === 'ST') {
+                    const allW = state.workItems.filter(w => w.client_id === inv.client_id && w.date <= inv.period_end);
+                    const allR = state.invoices.filter(i => i.type === 'REC' && i.client_id === inv.client_id && i.date <= inv.period_end);
+                    
+                    let preW = 0, preR = 0;
+                    if(inv.period_start) {
+                        preW = allW.filter(w => w.date < inv.period_start).reduce((sum, w) => sum + (w.prepaid?0:w.amount), 0);
+                        preR = allR.filter(i => i.date < inv.period_start).reduce((sum, i) => sum + i.total, 0);
+                    }
+                    runBal = preW - preR;
 
-                const container = document.getElementById('pdf-render-container');
+                    let events = [];
+                    if(inv.period_start) events.push({ date: inv.period_start, desc: 'Opening Balance', dr: 0, cr: 0, isOp: true });
+                    
+                    allW.filter(w => !inv.period_start || w.date >= inv.period_start).forEach(w => events.push({ date: w.date, desc: `Work: ${w.desc}`, dr: w.prepaid?0:w.amount, cr: 0 }));
+                    allR.filter(i => !inv.period_start || i.date >= inv.period_start).forEach(i => events.push({ date: i.date, desc: `Receipt: ${i.invoice_no} ${i.payment_ref?`(${i.payment_ref})`:''}`, dr: 0, cr: i.total }));
+                    
+                    events.sort((a,b) => a.date.localeCompare(b.date));
+
+                    rows = events.map(e => {
+                        if(!e.isOp) runBal += e.dr - e.cr;
+                        return `<tr><td style="padding:10px;border-bottom:1px solid #e2e8f0;">${ui.fmtDate(e.date)}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;">${e.desc}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;">${e.dr?ui.fmtMoney(e.dr):'-'}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;">${e.cr?ui.fmtMoney(e.cr):'-'}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:bold;">${runBal<0?ui.fmtMoney(Math.abs(runBal))+' (Cr)':ui.fmtMoney(runBal)}</td></tr>`;
+                    }).join('');
+                }
+
+                // QR Code for Invoices
+                let qrUri = '';
+                if(s.upi && inv.type !== 'ST' && inv.type !== 'REC') {
+                    const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tn=${encodeURIComponent(inv.invoice_no)}&am=${inv.total}&cu=INR`;
+                    const qD = document.createElement('div');
+                    new QRCode(qD, { text: str, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.L });
+                    await new Promise(res => setTimeout(res, 100)); // wait for render
+                    qrUri = qD.querySelector('canvas').toDataURL();
+                }
+
+                const map = {
+                    '{{pro_name}}': s.name || 'Legal Professional', '{{pro_phone}}': s.phone || '', '{{pro_email}}': s.email || '', '{{pro_pan}}': s.pan || '',
+                    '{{inv_no}}': inv.invoice_no, '{{date}}': ui.fmtDate(inv.date), '{{client_name}}': c.name || 'Unknown',
+                    '{{period_str}}': inv.period_start ? `${ui.fmtDate(inv.period_start)} to ${ui.fmtDate(inv.period_end)}` : `Upto ${ui.fmtDate(inv.date)}`,
+                    '{{table_rows}}': rows,
+                    '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
+                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:block;' : 'display:none;',
+                    '{{sig}}': s.sig||'', '{{sig_display}}': s.sig ? 'display:block;' : 'display:none;',
+                    '{{total}}': inv.type==='ST' ? (runBal<0?ui.fmtMoney(Math.abs(runBal))+' (Cr)':ui.fmtMoney(runBal)) : ui.fmtMoney(inv.total)
+                };
+
+                let h = tpl;
+                for(let [k,v] of Object.entries(map)) h = h.replaceAll(k, v);
+                return h;
+            },
+            processPDF: async (id, action) => {
+                const inv = state.invoices.find(i => i.id === id);
+                if(!inv) return;
+                
+                const html = await window.docsHelper.generateHTML(inv);
+                const container = document.getElementById('pdf-root-container');
                 container.innerHTML = html;
 
-                // Configure html2pdf to properly size the A4 render ignoring the mobile viewport size.
+                // html2pdf strict config for A4 fitting via out-of-bounds hidden container
                 const opt = {
-                    margin: [10, 10, 15, 10], // top, left, bottom, right in mm
+                    margin: [15, 15, 20, 15],
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
+                    html2canvas: { scale: 2, useCORS: true, windowWidth: 800 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['.pdf-table-row'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.avoid-break'] }
                 };
 
                 ui.showToast('Generating PDF...', 'info');
                 try {
                     const worker = html2pdf().set(opt).from(container);
+                    
                     if(action === 'download') {
                         await worker.save();
-                        ui.showToast('Downloaded', 'success');
-                        logWebhook(`Downloaded PDF ${inv.invoice_no}`);
-                    } else if(action === 'preview') {
-                        const pdfStr = await worker.outputPdf('datauristring');
-                        document.getElementById('pdf-frame').src = pdfStr;
-                        document.getElementById('modal-pdf').classList.remove('hidden');
+                        ui.showToast('Downloaded PDF', 'success');
+                    } else {
+                        // Directly fetch blob to prevent iFrame/Share empty data string errors
+                        await worker.toPdf().get('pdf').then(async (pdf) => {
+                            const pdfBlob = pdf.output('blob');
+                            
+                            if (action === 'preview') {
+                                const url = URL.createObjectURL(pdfBlob);
+                                document.getElementById('pdf-frame').src = url;
+                                document.getElementById('modal-pdf').classList.remove('hidden');
+                            } else if (action === 'share') {
+                                const file = new File([pdfBlob], `${inv.invoice_no}.pdf`, { type: 'application/pdf' });
+                                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                                    await navigator.share({
+                                        title: `Document ${inv.invoice_no}`,
+                                        files: [file]
+                                    });
+                                } else {
+                                    ui.showToast('Native sharing not supported. Downloading...', 'info');
+                                    await worker.save();
+                                }
+                            }
+                        });
                     }
                 } catch(err) {
                     console.error(err);
@@ -1109,24 +1182,57 @@
             }
         };
 
-        document.getElementById('btn-login').addEventListener('click', () => { signInWithPopup(auth, new GoogleAuthProvider()).catch(e=>ui.showToast(e.message,'error')); });
-        document.getElementById('btn-logout').addEventListener('click', () => { signOut(auth); });
 
-        onAuthStateChanged(auth, (user) => {
-            document.getElementById('app-loading').classList.add('hidden');
-            if (user) {
-                state.user = user;
-                document.getElementById('auth-view').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
+        const initDataListeners = () => {
+            const cols = ['invoices', 'clients', 'cases', 'workItems'];
+            cols.forEach(cName => {
+                onSnapshot(collection(db, ui.getTenantPath(cName)), (snap) => {
+                    state[cName] = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    window.ui.populateSelects();
+                    if(!document.getElementById('view-dashboard').classList.contains('hidden')) window.dashboardHelper.render();
+                    if(!document.getElementById('view-logs').classList.contains('hidden')) window.logsHelper.render();
+                    if(!document.getElementById('view-directory').classList.contains('hidden')) window.directoryHelper.render();
+                    if(!document.getElementById('view-docs').classList.contains('hidden')) window.docsHelper.render();
+                }, (err) => { console.error(`Error syncing ${cName}:`, err); });
+            });
+
+            onSnapshot(doc(db, ui.getTenantPath('settings'), 'global'), (snap) => {
+                if(snap.exists()) {
+                    state.settings = snap.data();
+                    window.settingsHelper.populateForm();
+                    window.ui.populateSelects(); // Categories might update
+                }
+                
+                // Hide loader
+                document.getElementById('loading-overlay').classList.add('opacity-0');
+                setTimeout(() => document.getElementById('loading-overlay').classList.add('hidden'), 300);
+            }, (err) => { console.error('Settings error:', err); });
+        };
+
+        const boot = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                userId = auth.currentUser.uid;
+                authReady = true;
+                
+                // Start Default view
+                window.ui.switchTab('dashboard');
                 initDataListeners();
-                ui.switchTab('dashboard');
-                logWebhook('User login');
-            } else {
-                state.user = null;
-                document.getElementById('main-app').classList.add('hidden');
-                document.getElementById('auth-view').classList.remove('hidden');
+
+            } catch (err) {
+                console.error("Auth Failed:", err);
+                document.getElementById('loading-overlay').innerHTML = `<div class="text-rose-500 font-bold p-4 bg-white rounded shadow text-center">Authentication Failed.<br><span class="text-xs text-slate-500">${err.message}</span></div>`;
             }
-        });
+        };
+
+        // Attach main startup
+        window.addEventListener('DOMContentLoaded', boot);
+
     </script>
 </body>
 </html>
