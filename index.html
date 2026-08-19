@@ -1415,9 +1415,10 @@
                 
                 await new Promise(r => setTimeout(r, 400)); // allow DOM to paint and web fonts to process
 
-                // Strict coordinates and margin zeroes for perfect fit. Margin is handled via html padding.
+                // INCREASED TOP & BOTTOM MARGINS to 25mm to prevent overlapping on new pages.
+                // Right/Left remain 0 to ensure the perfect 800px edge-to-edge centering.
                 const opt = {
-                    margin: 0,
+                    margin: [25, 0, 25, 0], 
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
@@ -1432,7 +1433,7 @@
                         backgroundColor: '#ffffff'
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['.pdf-page-break'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.pdf-page-break'] }
                 };
 
                 try {
@@ -1441,12 +1442,18 @@
                         const totalPages = pdf.internal.getNumberOfPages();
                         for (let i = 1; i <= totalPages; i++) {
                             pdf.setPage(i);
-                            pdf.setFontSize(8);
+                            
+                            // Bottom Right Page Number
+                            pdf.setFontSize(9);
                             pdf.setTextColor(150);
-                            pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 15, pdf.internal.pageSize.getHeight() - 10, { align: 'right' });
+                            pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 20, pdf.internal.pageSize.getHeight() - 10, { align: 'right' });
+                            
+                            // Top Left Continued Header (Now safely inside the 25mm margin!)
                             if (i > 1) {
                                 const cName = state.clients.find(c=>c.id===inv.client_id)?.name || '';
-                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 15, 10);
+                                pdf.setFontSize(10);
+                                pdf.setTextColor(100);
+                                pdf.text(`Document: ${inv.invoice_no} — ${cName} (Continued)`, 15, 15);
                             }
                         }
                     }).output('blob').then((blob) => {
@@ -1458,18 +1465,13 @@
                             document.getElementById('pdf-iframe').src = state.pdfBlobUrl;
                             window.ui.openModal('modal-pdf');
                         } else {
-                            window.docsHelper.downloadPDF();
+                            const link = document.createElement('a');
+                            link.href = state.pdfBlobUrl;
+                            link.download = opt.filename;
+                            link.click();
                         }
                     });
                 } catch(e) { window.ui.showToast('PDF Engine Error: ' + e.message, 'error'); window.api.logError(e.message); }
-            },
-
-            downloadPDF: () => {
-                if(!state.pdfBlobUrl || !state.currentPdfInv) return;
-                const link = document.createElement('a');
-                link.href = state.pdfBlobUrl;
-                link.download = `${state.currentPdfInv.invoice_no}.pdf`;
-                link.click();
             },
 
             sharePDF: async () => {
