@@ -54,36 +54,36 @@
 </head>
 <body class="h-[100dvh] w-full overflow-hidden antialiased">
 
-    <!-- Detached PDF Container: Ensures proper A4 width scaling by giving it a fixed width container hidden via opacity, not display:none -->
-    <div style="position: absolute; top: 0; left: 0; width: 100vw; height: 0; overflow: hidden; z-index: -9999; opacity: 0; pointer-events: none;">
+    <!-- Detached PDF Container: Pushed off screen entirely with fixed width to prevent mobile squishing -->
+    <div style="position: absolute; left: -10000px; top: 0; width: 800px;">
         <div id="pdf-render-container" style="width: 800px; padding: 20px; background: white; color: black; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif;"></div>
     </div>
     <!-- Hidden QR Code container -->
     <div id="qr-code-hidden" class="hidden"></div>
 
     <!-- UI Overlay: Toasts -->
-    <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-2"></div>
+    <div id="toast-container" class="fixed top-6 right-6 z-[60] flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- UI Overlay: Confirm Modal -->
-    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div id="confirm-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white p-6 rounded-3xl shadow-2xl max-w-sm w-full transform scale-95 transition-transform duration-300" id="confirm-modal-box">
             <h3 class="font-bold text-lg text-slate-800 mb-2">Confirm Action</h3>
             <p id="confirm-msg" class="text-slate-600 mb-6 text-sm"></p>
             <div class="flex justify-end gap-3">
-                <button onclick="ui.closeConfirm()" class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 font-medium text-sm transition">Cancel</button>
+                <button onclick="window.ui.closeConfirm()" class="px-4 py-2 rounded-xl text-slate-500 hover:bg-slate-100 font-medium text-sm transition">Cancel</button>
                 <button id="confirm-btn" class="px-4 py-2 rounded-xl bg-brand text-white font-medium text-sm hover:bg-blue-600 shadow-md transition">Proceed</button>
             </div>
         </div>
     </div>
 
     <!-- UI Overlay: Loading Screen -->
-    <div id="app-loading" class="fixed inset-0 bg-bg z-50 flex flex-col items-center justify-center">
+    <div id="app-loading" class="fixed inset-0 bg-bg z-[100] flex flex-col items-center justify-center">
         <i class="fa-solid fa-circle-notch fa-spin text-brand text-4xl mb-4"></i>
         <p class="text-slate-500 font-medium animate-pulse">Initializing Legal Cloud...</p>
     </div>
 
     <!-- Authentication View -->
-    <div id="auth-view" class="fixed inset-0 bg-bg z-40 hidden flex items-center justify-center p-4">
+    <div id="auth-view" class="fixed inset-0 bg-bg z-[50] hidden flex items-center justify-center p-4">
         <div class="bg-white p-10 rounded-[2.5rem] shadow-xl max-w-md w-full text-center animate-fade-in-up border border-slate-100">
             <div class="w-16 h-16 bg-gradient-to-br from-slate-900 to-brand rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg">
                 <svg class="w-8 h-8 text-white" viewBox="0 0 100 100"><path d="M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -112,20 +112,20 @@
             </div>
             
             <nav class="flex-1 flex md:flex-col overflow-x-auto md:overflow-visible hide-scrollbar p-2 md:p-4 gap-1 md:gap-2 items-center md:items-stretch h-full">
-                <button onclick="ui.switchTab('dashboard')" class="nav-btn active flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
+                <button onclick="window.ui.switchTab('dashboard')" class="nav-btn active flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
                     <i class="fa-solid fa-chart-pie md:w-5 text-center"></i> <span>Insights</span>
                 </button>
-                <button onclick="ui.switchTab('works')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
+                <button onclick="window.ui.switchTab('works')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
                     <i class="fa-solid fa-clock-rotate-left md:w-5 text-center"></i> <span>Logs</span>
                 </button>
-                <button onclick="ui.switchTab('directory')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
+                <button onclick="window.ui.switchTab('directory')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
                     <i class="fa-solid fa-address-book md:w-5 text-center"></i> <span>Directory</span>
                 </button>
-                <button onclick="ui.switchTab('docs')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
+                <button onclick="window.ui.switchTab('docs')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
                     <i class="fa-solid fa-file-invoice md:w-5 text-center"></i> <span>Billing</span>
                 </button>
                 <div class="hidden md:block flex-1"></div>
-                <button onclick="ui.switchTab('settings')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
+                <button onclick="window.ui.switchTab('settings')" class="nav-btn flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-slate-400 hover:text-slate-800 hover:bg-slate-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
                     <i class="fa-solid fa-sliders md:w-5 text-center"></i> <span>Settings</span>
                 </button>
                 <button id="btn-logout" class="flex flex-col md:flex-row items-center gap-1 md:gap-3 px-4 py-2 md:py-3 rounded-2xl text-rose-400 hover:bg-rose-50 transition-all text-xs md:text-sm font-semibold min-w-[70px]">
@@ -467,6 +467,7 @@
             clients: [], cases: [], works: [], invoices: [],
             unsubs: []
         };
+        window.state = state; // Make state accessible globally just in case
 
         // Webhook Logger
         const logWebhook = (msg, level="INFO") => {
@@ -488,7 +489,7 @@
                 const colors = { success: 'bg-emerald-50 text-emerald-700 border-emerald-200', error: 'bg-rose-50 text-rose-700 border-rose-200', info: 'bg-white text-slate-700 border-slate-200' };
                 const icon = { success: 'fa-check-circle text-emerald-500', error: 'fa-triangle-exclamation text-rose-500', info: 'fa-info-circle text-blue-500' };
                 const el = document.createElement('div');
-                el.className = `p-4 rounded-2xl shadow-lg border ${colors[type]} flex items-center gap-3 transform translate-x-full transition-transform duration-300 font-semibold text-sm z-50`;
+                el.className = `p-4 rounded-2xl shadow-lg border ${colors[type]} flex items-center gap-3 transform translate-x-full transition-transform duration-300 font-semibold text-sm z-50 pointer-events-auto`;
                 el.innerHTML = `<i class="fa-solid ${icon[type]} text-lg"></i> ${msg}`;
                 document.getElementById('toast-container').appendChild(el);
                 setTimeout(() => el.classList.remove('translate-x-full'), 10);
@@ -526,6 +527,8 @@
                 if(elCat) { const val = elCat.value; elCat.innerHTML = catHtml; if(val) elCat.value = val; }
             }
         };
+        // EXTREMELY IMPORTANT: Attach UI object to window so HTML buttons can trigger it
+        window.ui = ui;
 
         const initDataListeners = () => {
             const path = ui.getTenantPath;
@@ -600,11 +603,6 @@
                 });
 
                 const catMap = {};
-                state.invoices.filter(x=>x.type==='REC').forEach(r => {
-                    // Approximate category breakdown based on case/client would go here, 
-                    // for simplicity allocating equally if multiple works, or just total works breakdown
-                });
-                // Since Receipts don't strictly tie to specific works categories cleanly, we chart Work Logged by Category instead
                 state.works.forEach(w => { catMap[w.category] = (catMap[w.category]||0) + (w.prepaid?0:parseFloat(w.amount||0)); });
                 
                 if(window.dashHelper.chartC) window.dashHelper.chartC.destroy();
@@ -768,7 +766,6 @@
                     }; img.src = e.target.result;
                 }; r.readAsDataURL(f);
             },
-            // Auto syncing categories implementation
             renderCats: () => {
                 const h = state.settings.categories.map((c, i) => `
                     <div class="bg-slate-100 text-slate-700 pl-3 pr-1 py-1 rounded-xl text-sm font-semibold flex items-center gap-2 group">
@@ -917,7 +914,7 @@
                     if(d.type === 'REC' && d.linked_invoice_id) {
                         batch.update(doc(db, ui.getTenantPath('invoices'), d.linked_invoice_id), { status: 'Unpaid', linked_receipt: null });
                     }
-                    try { await batch.commit(); ui.showToast('Voided', 'success'); } catch(e) { ui.showToast(e.message, 'error'); }
+                    try { await batch.commit(); ui.showToast('Deleted Document', 'success'); } catch(e) { ui.showToast(e.message, 'error'); }
                 });
             },
             openPayModal: (invId = null) => {
@@ -1033,7 +1030,6 @@
                 try { await batch.commit(); ui.showToast('Document saved', 'success'); document.getElementById('modal-gen').classList.add('hidden'); } catch(e) { ui.showToast(e.message, 'error'); }
             },
             
-            // PDF Engine Logic
             processPDF: async (id, action) => {
                 const inv = state.invoices.find(x=>x.id===id); if(!inv) return;
                 const cli = state.clients.find(x=>x.id===inv.client_id) || {};
@@ -1084,12 +1080,12 @@
                 const container = document.getElementById('pdf-render-container');
                 container.innerHTML = html;
 
-                // PDF Generator configuration optimized for A4 width
+                // Configure html2pdf to properly size the A4 render ignoring the mobile viewport size.
                 const opt = {
                     margin: [10, 10, 15, 10], // top, left, bottom, right in mm
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+                    html2canvas: { scale: 2, useCORS: true, letterRendering: true, windowWidth: 800 },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                     pagebreak: { mode: ['css', 'legacy'], avoid: ['.pdf-table-row'] }
                 };
