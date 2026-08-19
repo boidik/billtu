@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Boidik Legal Cloud</title>
     
-    <!-- Favicon -->
+    <!-- Favicon (Properly URL-encoded SVG for broad browser support) -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230f172a' /%3E%3Cstop offset='100%25' stop-color='%233b82f6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cpath d='M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    <link rel="shortcut icon" href="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230f172a' /%3E%3Cstop offset='100%25' stop-color='%233b82f6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cpath d='M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Tailwind CSS -->
@@ -385,7 +386,7 @@
             <p id="confirm-msg" class="text-slate-500 text-sm mb-8 font-medium leading-relaxed"></p>
             <div class="flex gap-3 justify-end">
                 <button onclick="window.ui.closeConfirm()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
-                <button id="confirm-btn-yes" class="px-5 py-2.5 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-sm">Yes, Proceed</button>
+                <button id="confirm-btn-yes" onclick="window.ui.executeConfirm()" class="px-5 py-2.5 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-sm">Yes, Proceed</button>
             </div>
         </div>
     </div>
@@ -404,8 +405,8 @@
         </div>
     </div>
 
-    <!-- PDF Generation Root: Mathematically isolated, fixed position, out of sight -->
-    <div id="pdf-wrapper" style="position: fixed; top: 0; left: 0; width: 800px; height: auto; z-index: -9999; opacity: 0.001; pointer-events: none; margin: 0; padding: 0; overflow: hidden; background: white;">
+    <!-- PDF Generation Root: Fixed width, positioned mathematically perfectly inside view but hidden by z-index -->
+    <div id="pdf-wrapper" style="position: fixed; top: 0; left: 0; width: 800px; height: auto; z-index: -9999; opacity: 0.001; pointer-events: none; margin: 0; padding: 0; overflow: hidden; background: white; box-sizing: border-box;">
         <div id="pdf-root-container" style="width: 800px; max-width: 800px; box-sizing: border-box; background: white; margin: 0; padding: 0; text-align: left;"></div>
     </div>
 
@@ -515,8 +516,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc, getDocs, writeBatch, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc, getDocs, writeBatch, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Firebase Configuration provided by user
         const firebaseConfig = {
             apiKey: "AIzaSyCAJUoKTzaVpMsOeYW0Ewdnk33K_1HuJhk",
             authDomain: "legallyboidik.firebaseapp.com",
@@ -531,7 +533,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // State Management
+        // Global State
         const state = {
             user: null, uid: null,
             settings: { categories: ['Drafting', 'Hearing', 'Consultation', 'Filing', 'Miscellaneous'], pfx: {MI:'BOI-MI-', IND:'BOI-IN-', ST:'BOI-ST-', REC:'BOI-RE-'}, seq: 1 },
@@ -540,40 +542,70 @@
             pdfBlobUrl: null, currentPdfInv: null
         };
 
+        // Visually Sticking & Professional Templates
         const defaultTpls = {
-            base: `<style>table { table-layout: fixed; width: 100%; border-collapse: collapse; } th, td { word-wrap: break-word; overflow-wrap: break-word; }</style><div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; line-height: 1.4; color: #1e293b; padding: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px;">
-                    <div><h1 style="font-family: 'Playfair Display', serif; font-size: 24px; color: #0f172a; margin: 0; font-weight: bold;">{{pro_name}}</h1>
-                    <p style="margin: 2px 0; color: #64748b; font-size: 11px;">Ph: {{pro_phone}} | Email: {{pro_email}} | PAN: {{pro_pan}}</p></div>
-                    <div style="text-align: right;"><h2 style="font-size: 18px; margin: 0; color: #3b82f6; text-transform: uppercase;">Invoice/Statement</h2>
-                    <p style="margin: 2px 0; font-weight: bold;">No: {{inv_no}}</p><p style="margin: 0;">Date: {{date}}</p></div>
+            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 40px; background: #fff; width: 800px; box-sizing: border-box;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px;">
+                <div style="width: 50%;">
+                    <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700; line-height: 1.2;">{{pro_name}}</h1>
+                    <p style="margin: 2px 0; color: #64748b; font-size: 13px;">{{pro_phone}} | {{pro_email}}</p>
+                    <p style="margin: 2px 0; color: #64748b; font-size: 13px;">PAN: {{pro_pan}}</p>
                 </div>
-                <div style="margin-bottom: 25px; background: #f8fafc; padding: 12px; border-radius: 8px;">
-                    <p style="margin: 0; font-weight: bold; text-transform: uppercase; font-size: 10px; color: #64748b;">Billed To:</p>
-                    <p style="margin: 2px 0 0 0; font-size: 13px; font-weight: bold;">{{client_name}}</p>
-                    <p style="margin: 2px 0 0 0; color: #475569;">Period: {{period_str}}</p>
+                <div style="text-align: right; width: 40%;">
+                    <h2 style="font-size: 28px; margin: 0 0 5px 0; color: #3b82f6; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">{{doc_title}}</h2>
+                    <table style="width: 100%; text-align: right; font-size: 13px; border-collapse: collapse;">
+                        <tr><td style="padding: 3px 0; color: #64748b;">Ref No:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{inv_no}}</td></tr>
+                        <tr><td style="padding: 3px 0; color: #64748b;">Date:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{date}}</td></tr>
+                    </table>
                 </div>
-                <table style="width: 100%; text-align: left; margin-bottom: 25px;">
-                    <thead><tr style="background: #f1f5f9;"><th style="padding: 8px; width:15%;">Date</th><th style="padding: 8px; width:25%;">Case</th><th style="padding: 8px; width:45%;">Description</th><th style="padding: 8px; text-align: right; width:15%;">Amount</th></tr></thead>
-                    <tbody>{{table_rows}}</tbody>
-                </table>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="width: 50%; font-size: 10px; color: #475569; padding-right: 15px;">
-                        <p style="margin: 0 0 4px 0; font-weight: bold; color: #1e293b; font-size: 11px;">Payment Information</p>
-                        <p style="margin: 0;">Bank: {{bank}}</p><p style="margin: 0;">A/c: {{ac}}</p><p style="margin: 0;">IFSC: {{ifsc}}</p>
-                        <div style="margin-top: 10px; {{qr_display}}"><img src="{{qr}}" style="width:80px; height:80px;"></div>
+            </div>
+            <div style="margin-bottom: 40px; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%;">
+                <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">Billed To</p>
+                <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
+                <p style="margin: 0; color: #475569; font-size: 13px;">Period: {{period_str}}</p>
+            </div>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; table-layout: fixed;">
+                <thead>
+                    <tr style="background: #3b82f6; color: white; text-align: left;">
+                        <th style="padding: 12px 15px; border-top-left-radius: 8px; border-bottom-left-radius: 8px; width: 15%; font-weight: 600;">Date</th>
+                        <th style="padding: 12px 15px; width: 25%; font-weight: 600;">Case / Ref</th>
+                        <th style="padding: 12px 15px; width: 40%; font-weight: 600;">Description</th>
+                        <th style="padding: 12px 15px; text-align: right; border-top-right-radius: 8px; border-bottom-right-radius: 8px; width: 20%; font-weight: 600;">Amount</th>
+                    </tr>
+                </thead>
+                <tbody style="color: #334155;">
+                    {{table_rows}}
+                </tbody>
+            </table>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px;">
+                <div style="width: 50%; padding-right: 20px;">
+                    <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
+                    <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
+                        <tr><td style="color: #64748b; padding: 2px 0; width: 80px;">Bank:</td><td style="font-weight: 600;">{{bank}}</td></tr>
+                        <tr><td style="color: #64748b; padding: 2px 0;">Account:</td><td style="font-weight: 600;">{{ac}}</td></tr>
+                        <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
+                    </table>
+                    <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px; display: inline-block;">
+                        <img src="{{qr}}" style="width: 90px; height: 90px; display: block;" alt="UPI QR">
                     </div>
-                    <div style="width: 45%; text-align: right;">
-                        <div style="background: #f8fafc; padding: 12px; border-radius: 8px; display: inline-block; min-width: 200px;">
-                            <p style="margin: 0; font-size: 16px; font-weight: bold; color: #0f172a;">Total: {{total}}</p>
+                </div>
+                <div style="width: 40%;">
+                    <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 40px; text-align: right;">
+                        <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">Total Amount Due</p>
+                        <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800; color: #1e3a8a;">{{total}}</p>
+                    </div>
+                    <div style="text-align: right; {{sig_display}}">
+                        <img src="{{sig}}" style="max-height: 50px; display: inline-block; margin-bottom: 5px;">
+                        <div style="border-top: 1px solid #cbd5e1; width: 200px; margin-left: auto; padding-top: 8px;">
+                            <p style="margin: 0; font-weight: 700; color: #0f172a; font-size: 12px;">Authorized Signatory</p>
+                            <p style="margin: 2px 0 0 0; color: #64748b; font-size: 10px;">{{pro_name}}</p>
                         </div>
-                        <div style="margin-top: 25px; {{sig_display}}"><img src="{{sig}}" style="max-height: 40px; display: block; margin-left: auto;"></div>
-                        <p style="margin: 5px 0 0 0; border-top: 1px solid #cbd5e1; padding-top: 5px; font-weight: bold; display: inline-block;">Authorized Signatory</p>
                     </div>
                 </div>
-            </div>`,
-            rowInv: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 8px;">{{r_date}}</td><td style="padding: 8px;">{{r_case}}</td><td style="padding: 8px;">{{r_desc}}</td><td style="padding: 8px; text-align: right; font-weight: bold;">{{r_amt}}</td></tr>`,
-            rowSt: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; background: {{r_bg}}"><td style="padding: 8px;">{{r_date}}</td><td style="padding: 8px;" colspan="2">{{r_desc}}</td><td style="padding: 8px; text-align: right; font-weight: bold; color: {{r_color}};">{{r_amt}}</td></tr>`
+            </div>
+        </div>`,
+            rowInv: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</td></tr>`,
+            rowSt: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; background: {{r_bg}};"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;" colspan="2">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</td></tr>`
         };
 
         // --- UI & Helper Functions ---
@@ -637,7 +669,6 @@
                 document.getElementById('work-case').innerHTML = opts;
             },
 
-            // Renders
             renderDash: () => {
                 let uTot = 0, pTot = 0, wTot = 0;
                 state.work.forEach(w => { wTot += w.amount; if(!w.invoice_id) uTot += w.amount; });
@@ -758,14 +789,14 @@
                         <td class="py-3 text-center flex justify-center gap-2">
                             ${!isRec ? `<button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition"><i class="fa-solid fa-eye"></i></button>` : ''}
                             ${!isRec && i.status !== 'Paid' ? `<button onclick="window.ui.openPayForInv('${i.id}')" title="Record Payment" class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition"><i class="fa-solid fa-check"></i></button>` : ''}
-                            <button onclick="window.ui.confirm('Voiding this document will delete it. If it is a Receipt, the linked invoice will be marked Unpaid. Proceed?', ()=>window.api.voidDoc('${i.id}'))" title="Void / Delete" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition"><i class="fa-solid fa-ban"></i></button>
+                            <button onclick="window.ui.confirm('Delete this document? If it is a Receipt, the linked invoice will be marked Unpaid.', ()=>window.api.voidDoc('${i.id}'))" title="Void / Delete" class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 transition"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
                 }).join('');
                 document.getElementById('table-docs').innerHTML = html || '<tr><td colspan="7" class="py-8 text-center text-slate-400 font-medium">No documents found.</td></tr>';
             },
 
-            // Settings 
+            // Settings Sync
             populateSettingsForm: () => {
                 const s = state.settings;
                 ['name','phone','email','pan','bank','ac','ifsc','upi'].forEach(k => { if(document.getElementById(`set-${k}`)) document.getElementById(`set-${k}`).value = s[k] || ''; });
@@ -786,6 +817,7 @@
                 
                 window.ui.renderCatList();
             },
+            
             renderCatList: () => {
                 const cats = state.settings.categories || [];
                 const html = cats.map(c => `<div class="flex justify-between items-center bg-slate-50 p-2 px-3 rounded-xl border border-slate-100">
@@ -992,11 +1024,10 @@
                 });
             },
 
-            // CUD Operations
             saveSettingsCore: async (data, silent = false) => {
                 try {
                     const r = doc(db, `saas_tenants/${state.uid}/settings`, 'global');
-                    await setDoc(r, data, { merge: true }); // using merge to avoid crashing if document doesn't exist yet
+                    await setDoc(r, data, { merge: true }); // using merge so it never crashes if doc is fresh
                     if(!silent) window.ui.showToast('Settings saved successfully!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
@@ -1084,7 +1115,6 @@
                     batch.set(nRef, pDoc);
                     if(invId) batch.update(doc(db, `saas_tenants/${state.uid}/invoices`, invId), { status: 'Paid', payment_date: pDoc.date, linked_receipt: nRef.id });
                     
-                    // Failsafe increment
                     batch.set(doc(db, `saas_tenants/${state.uid}/settings`, 'global'), { seq: seq + 1 }, { merge: true });
                     
                     await batch.commit();
@@ -1147,7 +1177,7 @@
                         inv.items.forEach(wId => { batch.update(doc(db, `saas_tenants/${state.uid}/workItems`, wId), { invoice_id: null }); });
                     }
                     await batch.commit();
-                    window.ui.showToast('Document voided.');
+                    window.ui.showToast('Document deleted successfully.');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
 
@@ -1175,6 +1205,11 @@
                 const tpl = s.tpl?.base || defaultTpls.base;
                 let rows = '', runBal = 0;
 
+                // Smart Title Generation
+                let docTitle = 'Invoice';
+                if(inv.type === 'ST') docTitle = 'Statement of Account';
+                if(inv.type === 'REC') docTitle = 'Payment Receipt';
+
                 if(inv.type === 'ST') {
                     const pStart = inv.period_start ? new Date(inv.period_start) : new Date(0);
                     const pEnd = inv.period_end ? new Date(inv.period_end) : new Date(inv.date);
@@ -1199,7 +1234,7 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    rows = `<tr><td colspan="4" style="padding:20px; text-align:center;"><h2>Payment Receipt</h2><p>Received with thanks: ${window.ui.fmtMoney(inv.total)}</p><p>Ref: ${inv.payment_ref||'N/A'}</p></td></tr>`;
+                    rows = `<tr><td colspan="4" style="padding:40px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
@@ -1222,7 +1257,7 @@
 
                 const map = {
                     '{{pro_name}}': s.name || 'Legal Professional', '{{pro_phone}}': s.phone || '', '{{pro_email}}': s.email || '', '{{pro_pan}}': s.pan || 'N/A',
-                    '{{inv_no}}': inv.invoice_no, '{{date}}': window.ui.fmtDate(inv.date), '{{client_name}}': c.name || 'Unknown Client',
+                    '{{doc_title}}': docTitle, '{{inv_no}}': inv.invoice_no, '{{date}}': window.ui.fmtDate(inv.date), '{{client_name}}': c.name || 'Unknown Client',
                     '{{period_str}}': inv.period_start ? `${window.ui.fmtDate(inv.period_start)} to ${window.ui.fmtDate(inv.period_end)}` : `Upto ${window.ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
                     '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
@@ -1241,21 +1276,22 @@
                 if(!inv) return;
                 
                 state.currentPdfInv = inv;
-                window.ui.showToast('Generating Engine...', 'info');
+                window.ui.showToast('Generating HD PDF Engine...', 'info');
 
                 const container = document.getElementById('pdf-root-container');
                 container.innerHTML = await window.docsHelper.generateHTML(inv);
                 
-                await new Promise(r => setTimeout(r, 400)); // DOM repaints
+                await new Promise(r => setTimeout(r, 400)); // allow DOM to paint and web fonts to process
 
+                // Ensure absolute strictness for the PDF boundary to prevent cutoff.
                 const opt = {
-                    margin: [10, 10, 15, 10],
+                    margin: [10, 10, 15, 10], // mm
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { 
                         scale: 2, 
                         useCORS: true, 
-                        windowWidth: 800, 
+                        windowWidth: 800,
                         width: 800,
                         x: 0,
                         y: 0,
@@ -1289,7 +1325,6 @@
                             document.getElementById('pdf-iframe').src = state.pdfBlobUrl;
                             window.ui.openModal('modal-pdf');
                         } else {
-                            // Download
                             const link = document.createElement('a');
                             link.href = state.pdfBlobUrl;
                             link.download = opt.filename;
