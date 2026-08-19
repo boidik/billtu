@@ -238,10 +238,11 @@
                 <!-- Clients -->
                 <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-200px)]">
                     <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-blue-500"></i> Clients</h3>
-                    <form id="form-client" class="flex gap-2 mb-4 shrink-0">
+                    <form id="form-client" class="flex flex-col md:flex-row gap-2 mb-4 shrink-0">
                         <input type="hidden" id="client-id">
                         <input type="text" id="client-name" required placeholder="Name" class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <input type="email" id="client-email" placeholder="Email" class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="email" id="client-email" placeholder="Email (Optional)" class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="tel" id="client-phone" placeholder="Phone (Optional)" class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
                         <button type="submit" class="bg-slate-800 text-white p-3 rounded-2xl font-bold hover:bg-slate-900 transition"><i class="fa-solid fa-plus"></i></button>
                     </form>
                     <div id="list-clients" class="flex-1 overflow-y-auto hide-scrollbar flex flex-col gap-3"></div>
@@ -249,10 +250,11 @@
                 <!-- Cases -->
                 <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-200px)]">
                     <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-folder-open text-amber-500"></i> Cases</h3>
-                    <form id="form-case" class="flex gap-2 mb-4 shrink-0">
+                    <form id="form-case" class="flex flex-col md:flex-row gap-2 mb-4 shrink-0">
                         <input type="hidden" id="case-id">
                         <select id="case-client" required class="flex-[1.2] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></select>
-                        <input type="text" id="case-name" required placeholder="Case Name/Ref" class="flex-[2] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="text" id="case-name" required placeholder="Case Name" class="flex-[1.5] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="text" id="case-no" placeholder="Case No. (Optional)" class="flex-[1] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
                         <button type="submit" class="bg-slate-800 text-white p-3 rounded-2xl font-bold hover:bg-slate-900 transition"><i class="fa-solid fa-plus"></i></button>
                     </form>
                     <div id="list-cases" class="flex-1 overflow-y-auto hide-scrollbar flex flex-col gap-3"></div>
@@ -589,7 +591,7 @@
                             <tr><td style="color: #64748b; padding: 2px 0;">Account:</td><td style="font-weight: 600;">{{ac}}</td></tr>
                             <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
                         </table>
-                        <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px; display: inline-block;">
+                        <div style="border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px; {{qr_display}}">
                             <img src="{{qr}}" style="width: 90px; height: 90px; display: block;" alt="UPI QR">
                         </div>
                     </div>
@@ -670,7 +672,7 @@
             },
             filterCasesForWork: () => {
                 const cId = document.getElementById('work-client').value;
-                const opts = `<option value="">Select Case...</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                const opts = `<option value="">Select Case...</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.case_no ? `${c.name} (${c.case_no})` : c.name}</option>`).join('');
                 document.getElementById('work-case').innerHTML = opts;
             },
 
@@ -716,7 +718,8 @@
             renderWork: () => {
                 const html = state.work.filter(w=>!w.invoice_id).sort((a,b)=>new Date(b.date)-new Date(a.date)).map(w => {
                     const cl = state.clients.find(c=>c.id===w.client_id)?.name||'Unknown';
-                    const ca = state.cases.find(c=>c.id===w.case_id)?.name||'General';
+                    const caObj = state.cases.find(c=>c.id===w.case_id);
+                    const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
                     return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition group">
                         <td class="py-3 pr-4">${window.ui.fmtDate(w.date)}</td>
                         <td class="py-3 pr-4"><div class="font-bold text-slate-800">${cl}</div><div class="text-xs text-slate-500">${ca}</div></td>
@@ -739,28 +742,30 @@
             renderDirectory: () => {
                 const q = document.getElementById('dir-search').value.toLowerCase();
                 
-                const cHtml = state.clients.filter(c => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q)).map(c => {
+                const cHtml = state.clients.filter(c => c.name.toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q) || (c.phone||'').includes(q)).map(c => {
                     const unb = state.work.filter(w=>w.client_id===c.id && !w.invoice_id).reduce((s,w)=>s+w.amount,0);
-                    return `<div class="p-4 bg-slate-50 rounded-2xl flex justify-between items-center group">
-                        <div><div class="font-bold text-slate-800">${c.name}</div><div class="text-xs text-slate-500">${c.email||'No email'}</div></div>
-                        <div class="flex items-center gap-3">
-                            ${unb > 0 ? `<span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-lg">Unbilled: ${window.ui.fmtMoney(unb)}</span>` : ''}
-                            <div class="opacity-0 group-hover:opacity-100 transition flex gap-2">
-                                <button onclick="window.api.editClient('${c.id}')" class="text-slate-400 hover:text-blue-500"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="window.ui.confirm('Delete client? This does not delete their work logs.', ()=>window.api.delClient('${c.id}'))" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+                    const contact = [c.email, c.phone].filter(Boolean).join(' | ') || 'No contact info';
+                    return `<div class="p-4 bg-slate-50 rounded-2xl flex flex-col md:flex-row justify-between md:items-center gap-3 group">
+                        <div><div class="font-bold text-slate-800">${c.name}</div><div class="text-xs text-slate-500">${contact}</div></div>
+                        <div class="flex flex-row items-center justify-between md:justify-end gap-3 w-full md:w-auto">
+                            ${unb > 0 ? `<span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-lg shrink-0">Unbilled: ${window.ui.fmtMoney(unb)}</span>` : '<span class="hidden md:inline"></span>'}
+                            <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex gap-2 shrink-0">
+                                <button onclick="window.api.editClient('${c.id}')" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="window.ui.confirm('Delete client? This does not delete their work logs.', ()=>window.api.delClient('${c.id}'))" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     </div>`;
                 }).join('');
                 document.getElementById('list-clients').innerHTML = cHtml || '<p class="text-sm text-slate-400 text-center py-4">No clients found.</p>';
 
-                const caHtml = state.cases.filter(c => c.name.toLowerCase().includes(q)).map(c => {
+                const caHtml = state.cases.filter(c => c.name.toLowerCase().includes(q) || (c.case_no||'').toLowerCase().includes(q)).map(c => {
                     const cl = state.clients.find(x=>x.id===c.client_id)?.name||'Unknown';
-                    return `<div class="p-4 bg-slate-50 rounded-2xl flex justify-between items-center group">
-                        <div><div class="font-bold text-slate-800">${c.name}</div><div class="text-xs text-slate-500">${cl}</div></div>
-                        <div class="opacity-0 group-hover:opacity-100 transition flex gap-2">
-                            <button onclick="window.api.editCase('${c.id}')" class="text-slate-400 hover:text-blue-500"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="window.ui.confirm('Delete case?', ()=>window.api.delCase('${c.id}'))" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+                    const caseRef = c.case_no ? `${c.name} (${c.case_no})` : c.name;
+                    return `<div class="p-4 bg-slate-50 rounded-2xl flex flex-col md:flex-row justify-between md:items-center gap-3 group">
+                        <div><div class="font-bold text-slate-800">${caseRef}</div><div class="text-xs text-slate-500">${cl}</div></div>
+                        <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex justify-end gap-2 w-full md:w-auto mt-2 md:mt-0 shrink-0">
+                            <button onclick="window.api.editCase('${c.id}')" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="window.ui.confirm('Delete case?', ()=>window.api.delCase('${c.id}'))" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>`;
                 }).join('');
@@ -922,7 +927,7 @@
                 
                 if(t === 'IND') {
                     const cId = document.getElementById('gb-client').value;
-                    const opts = `<option value="ALL">All Cases</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                    const opts = `<option value="ALL">All Cases</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.case_no ? `${c.name} (${c.case_no})` : c.name}</option>`).join('');
                     document.getElementById('gb-case').innerHTML = opts;
                 }
                 window.ui.gbFetchItems();
@@ -947,13 +952,14 @@
                 items.sort((a,b) => new Date(a.date) - new Date(b.date));
 
                 const html = items.map(w => {
-                    const ca = state.cases.find(c=>c.id===w.case_id)?.name||'General';
+                    const caObj = state.cases.find(c=>c.id===w.case_id);
+                    const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
                     return `<label class="flex justify-between items-center p-2 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl cursor-pointer transition">
                         <div class="flex items-center gap-3">
                             <input type="checkbox" value="${w.id}" data-amt="${w.amount}" onchange="window.ui.gbCalcLive()" class="gb-item-chk w-4 h-4 rounded text-blue-500 border-slate-300 focus:ring-0">
-                            <div><div class="text-xs font-bold text-slate-800">${window.ui.fmtDate(w.date)} <span class="text-slate-400 font-normal ml-2">${ca}</span></div><div class="text-xs text-slate-500 truncate w-48">${w.desc}</div></div>
+                            <div><div class="text-xs font-bold text-slate-800">${window.ui.fmtDate(w.date)} <span class="text-slate-400 font-normal ml-2">${ca}</span></div><div class="text-xs text-slate-500 truncate w-48 sm:w-auto">${w.desc}</div></div>
                         </div>
-                        <div class="text-sm font-bold text-slate-800">${window.ui.fmtMoney(w.amount)}</div>
+                        <div class="text-sm font-bold text-slate-800 shrink-0 ml-2">${window.ui.fmtMoney(w.amount)}</div>
                     </label>`;
                 }).join('');
                 document.getElementById('gb-items-list').innerHTML = html || '<p class="text-center text-xs text-slate-400 py-4">No matching work items found.</p>';
@@ -1041,28 +1047,52 @@
                 e.preventDefault();
                 try {
                     const id = document.getElementById('client-id').value;
-                    const d = { name: document.getElementById('client-name').value, email: document.getElementById('client-email').value };
+                    const d = { 
+                        name: document.getElementById('client-name').value, 
+                        email: document.getElementById('client-email').value,
+                        phone: document.getElementById('client-phone').value
+                    };
                     if(id) await setDoc(doc(db, `saas_tenants/${state.uid}/clients`, id), d);
                     else await addDoc(collection(db, `saas_tenants/${state.uid}/clients`), d);
                     document.getElementById('form-client').reset(); document.getElementById('client-id').value='';
                     window.ui.showToast('Client saved!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
-            editClient: (id) => { const c = state.clients.find(x=>x.id===id); if(c) { document.getElementById('client-id').value = c.id; document.getElementById('client-name').value = c.name; document.getElementById('client-email').value = c.email; } },
+            editClient: (id) => { 
+                const c = state.clients.find(x=>x.id===id); 
+                if(c) { 
+                    document.getElementById('client-id').value = c.id; 
+                    document.getElementById('client-name').value = c.name || ''; 
+                    document.getElementById('client-email').value = c.email || ''; 
+                    document.getElementById('client-phone').value = c.phone || ''; 
+                } 
+            },
             delClient: async (id) => { await deleteDoc(doc(db, `saas_tenants/${state.uid}/clients`, id)); window.ui.showToast('Client deleted.'); },
 
             saveCase: async (e) => {
                 e.preventDefault();
                 try {
                     const id = document.getElementById('case-id').value;
-                    const d = { client_id: document.getElementById('case-client').value, name: document.getElementById('case-name').value };
+                    const d = { 
+                        client_id: document.getElementById('case-client').value, 
+                        name: document.getElementById('case-name').value,
+                        case_no: document.getElementById('case-no').value
+                    };
                     if(id) await setDoc(doc(db, `saas_tenants/${state.uid}/cases`, id), d);
                     else await addDoc(collection(db, `saas_tenants/${state.uid}/cases`), d);
                     document.getElementById('form-case').reset(); document.getElementById('case-id').value='';
                     window.ui.showToast('Case saved!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
-            editCase: (id) => { const c = state.cases.find(x=>x.id===id); if(c) { document.getElementById('case-id').value = c.id; document.getElementById('case-client').value = c.client_id; document.getElementById('case-name').value = c.name; } },
+            editCase: (id) => { 
+                const c = state.cases.find(x=>x.id===id); 
+                if(c) { 
+                    document.getElementById('case-id').value = c.id; 
+                    document.getElementById('case-client').value = c.client_id; 
+                    document.getElementById('case-name').value = c.name || ''; 
+                    document.getElementById('case-no').value = c.case_no || ''; 
+                } 
+            },
             delCase: async (id) => { await deleteDoc(doc(db, `saas_tenants/${state.uid}/cases`, id)); window.ui.showToast('Case deleted.'); },
 
             saveWork: async (e) => {
@@ -1188,8 +1218,8 @@
 
             exportCSV: (type) => {
                 let data = [], keys = [], fname = '';
-                if(type==='clients'){ data=state.clients; keys=['name','email']; fname='Clients'; }
-                if(type==='cases'){ data=state.cases.map(c=>({name:c.name, client:state.clients.find(x=>x.id===c.client_id)?.name})); keys=['name','client']; fname='Cases'; }
+                if(type==='clients'){ data=state.clients; keys=['name','email','phone']; fname='Clients'; }
+                if(type==='cases'){ data=state.cases.map(c=>({name:c.name, case_no:c.case_no||'', client:state.clients.find(x=>x.id===c.client_id)?.name})); keys=['name','case_no','client']; fname='Cases'; }
                 if(type==='work'){ data=state.work.map(w=>({...w, client:state.clients.find(x=>x.id===w.client_id)?.name})); keys=['date','client','category','desc','amount','prepaid']; fname='WorkLogs'; }
                 if(type==='docs'){ data=state.invoices.map(i=>({...i, client:state.clients.find(x=>x.id===i.client_id)?.name})); keys=['invoice_no','date','client','type','total','status']; fname='Documents'; }
                 
@@ -1245,14 +1275,16 @@
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
                     wItems.sort((a,b) => new Date(a.date) - new Date(b.date));
                     wItems.forEach(w => {
-                        const ca = state.cases.find(x=>x.id===w.case_id)?.name||'General';
+                        const caObj = state.cases.find(x=>x.id===w.case_id);
+                        const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
                         rows += invTpl.replace('{{r_date}}',window.ui.fmtDate(w.date)).replace('{{r_case}}',ca).replace('{{r_desc}}',w.desc).replace('{{r_amt}}',window.ui.fmtMoney(w.amount));
                     });
                 }
 
                 let qrUri = '';
                 if(s.upi && inv.type !== 'ST' && inv.type !== 'REC') {
-                    const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tn=${encodeURIComponent(inv.invoice_no)}&am=${inv.total}&cu=INR`;
+                    const tNote = encodeURIComponent(`Invoice ${inv.invoice_no}`);
+                    const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tr=${inv.invoice_no}&tn=${tNote}&am=${inv.total}&cu=INR`;
                     const qD = document.createElement('div');
                     qD.style.display = 'none';
                     document.body.appendChild(qD); // Temporarily attach to DOM for safe canvas rendering
@@ -1269,7 +1301,7 @@
                     '{{period_str}}': inv.period_start ? `${window.ui.fmtDate(inv.period_start)} to ${window.ui.fmtDate(inv.period_end)}` : `Upto ${window.ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
                     '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
-                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:block;' : 'display:none;',
+                    '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:inline-block !important;' : 'display:none !important;',
                     '{{sig}}': s.sig||'', '{{sig_display}}': s.sig ? 'display:block;' : 'display:none;',
                     '{{total}}': inv.type==='ST' ? (runBal<0?window.ui.fmtMoney(Math.abs(runBal))+' (Cr)':window.ui.fmtMoney(runBal)) : window.ui.fmtMoney(inv.total)
                 };
