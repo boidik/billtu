@@ -421,6 +421,7 @@
             <div class="flex justify-between items-center p-4 border-b border-slate-100 bg-slate-50 shrink-0">
                 <h3 id="pdf-preview-title" class="font-bold text-slate-800 text-lg ml-2">Document Preview</h3>
                 <div class="flex gap-2">
+                    <button onclick="window.docsHelper.downloadPDF()" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 rounded-xl font-bold text-sm transition"><i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Download</span></button>
                     <button onclick="window.docsHelper.sharePDF()" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-4 py-2 rounded-xl font-bold text-sm transition"><i class="fa-solid fa-share-nodes"></i> <span class="hidden sm:inline">Share</span></button>
                     <button onclick="window.ui.closeModal('modal-pdf')" class="bg-slate-200 text-slate-700 hover:bg-slate-300 w-9 h-9 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-times"></i></button>
                 </div>
@@ -567,6 +568,7 @@
             <div class="pdf-page-break" style="margin-bottom: 40px; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%; page-break-inside: avoid; break-inside: avoid;">
                 <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">Billed To</p>
                 <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
+                <div style="{{client_contact_display}} margin: 0 0 5px 0; color: #475569; font-size: 12px;">{{client_contact}}</div>
                 <p style="margin: 0; color: #475569; font-size: 13px;">Period: {{period_str}}</p>
             </div>
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; table-layout: fixed; page-break-inside: auto;">
@@ -1258,7 +1260,11 @@
                     rows += stTpl.replace('{{r_bg}}','#f8fafc').replace('{{r_color}}','#1e293b').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Opening Balance</b>').replace('{{r_amt}}', window.ui.fmtMoney(runBal));
 
                     let events = [];
-                    state.work.filter(w => w.client_id === c.id && new Date(w.date) >= pStart && new Date(w.date) <= pEnd).forEach(w => events.push({type:'W', date:w.date, desc:w.desc, amt:w.amount}));
+                    state.work.filter(w => w.client_id === c.id && new Date(w.date) >= pStart && new Date(w.date) <= pEnd).forEach(w => {
+                        const caObj = state.cases.find(x=>x.id===w.case_id);
+                        const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
+                        events.push({type:'W', date:w.date, desc:`<span style="color:#0f172a; font-weight:600;">[${ca}]</span> ${w.desc}`, amt:w.amount});
+                    });
                     state.invoices.filter(i => i.type === 'REC' && i.client_id === c.id && new Date(i.date) >= pStart && new Date(i.date) <= pEnd).forEach(r => events.push({type:'P', date:r.date, desc:`Payment Received (${r.payment_ref||'N/A'})`, amt:r.total}));
                     
                     events.sort((a,b) => new Date(a.date) - new Date(b.date));
@@ -1295,9 +1301,13 @@
                     document.body.removeChild(qD); // Clean up
                 }
 
+                const contactArr = [c.email, c.phone].filter(Boolean);
+                const clientContact = contactArr.join(' | ');
+
                 const map = {
                     '{{pro_name}}': s.name || 'Legal Professional', '{{pro_phone}}': s.phone || '', '{{pro_email}}': s.email || '', '{{pro_pan}}': s.pan || 'N/A',
                     '{{doc_title}}': docTitle, '{{inv_no}}': inv.invoice_no, '{{date}}': window.ui.fmtDate(inv.date), '{{client_name}}': c.name || 'Unknown Client',
+                    '{{client_contact}}': clientContact, '{{client_contact_display}}': clientContact ? 'display:block;' : 'display:none;',
                     '{{period_str}}': inv.period_start ? `${window.ui.fmtDate(inv.period_start)} to ${window.ui.fmtDate(inv.period_end)}` : `Upto ${window.ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
                     '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
@@ -1311,6 +1321,14 @@
                 return h;
             },
             
+            downloadPDF: () => {
+                if(!state.pdfBlobUrl || !state.currentPdfInv) return;
+                const link = document.createElement('a');
+                link.href = state.pdfBlobUrl;
+                link.download = `${state.currentPdfInv.invoice_no}.pdf`;
+                link.click();
+            },
+
             processPDF: async (id, action) => {
                 const inv = state.invoices.find(i => i.id === id);
                 if(!inv) return;
