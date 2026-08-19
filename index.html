@@ -269,9 +269,9 @@
                     <h2 class="text-3xl font-serif font-bold text-slate-800">Documents</h2>
                     <p class="text-slate-500 text-sm font-medium mt-1">Invoices, statements, and receipts.</p>
                 </div>
-                <div class="flex gap-3 w-full md:w-auto">
-                    <button onclick="window.ui.openModal('modal-pay')" class="flex-1 md:flex-none py-3 px-5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm"><i class="fa-solid fa-cash-register mr-2"></i> Record Pay</button>
-                    <button onclick="window.ui.openModal('modal-bill')" class="flex-1 md:flex-none py-3 px-5 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generate Bill</button>
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <button onclick="window.ui.openModal('modal-pay')" class="w-full sm:w-auto py-3 px-5 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-cash-register mr-2"></i> Record Pay</button>
+                    <button onclick="window.ui.openModal('modal-bill')" class="w-full sm:w-auto py-3 px-5 bg-blue-500 text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generate Bill</button>
                 </div>
             </header>
 
@@ -389,9 +389,23 @@
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-95 transition-transform animate-fade-in-up">
             <h3 class="text-2xl font-serif font-bold text-slate-800 mb-3">Are you sure?</h3>
             <p id="confirm-msg" class="text-slate-500 text-sm mb-8 font-medium leading-relaxed"></p>
-            <div class="flex gap-3 justify-end">
-                <button onclick="window.ui.closeConfirm()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
-                <button id="confirm-btn-yes" onclick="window.ui.executeConfirm()" class="px-5 py-2.5 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-sm">Yes, Proceed</button>
+            <div class="flex flex-col sm:flex-row gap-3 justify-end w-full mt-4">
+                <button onclick="window.ui.closeConfirm()" class="w-full sm:w-auto px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
+                <button id="confirm-btn-yes" onclick="window.ui.executeConfirm()" class="w-full sm:w-auto px-5 py-2.5 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-sm">Yes, Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Edit Modal -->
+    <div id="modal-cat-edit" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-95 transition-transform animate-fade-in-up">
+            <h3 class="text-xl font-serif font-bold text-slate-800 mb-2">Edit Category</h3>
+            <p class="text-slate-500 text-xs mb-4">Past work logs using this category will be automatically updated.</p>
+            <input type="hidden" id="edit-cat-old">
+            <input type="text" id="edit-cat-new" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none mb-6">
+            <div class="flex flex-col sm:flex-row gap-3 justify-end w-full mt-4">
+                <button onclick="document.getElementById('modal-cat-edit').classList.add('hidden')" class="w-full sm:w-auto px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
+                <button onclick="window.ui.saveEditedCategory()" class="w-full sm:w-auto px-5 py-2.5 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition shadow-sm">Update</button>
             </div>
         </div>
     </div>
@@ -418,12 +432,12 @@
     <!-- PDF Preview Modal -->
     <div id="modal-pdf" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[1000] hidden flex flex-col items-center justify-center p-4 md:p-8">
         <div class="bg-white rounded-[2rem] w-full max-w-5xl h-full flex flex-col overflow-hidden animate-fade-in-up shadow-2xl relative">
-            <div class="flex justify-between items-center p-4 border-b border-slate-100 bg-slate-50 shrink-0">
-                <h3 id="pdf-preview-title" class="font-bold text-slate-800 text-lg ml-2">Document Preview</h3>
-                <div class="flex gap-2">
-                    <button onclick="window.docsHelper.downloadPDF()" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 rounded-xl font-bold text-sm transition"><i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Download</span></button>
-                    <button onclick="window.docsHelper.sharePDF()" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-4 py-2 rounded-xl font-bold text-sm transition"><i class="fa-solid fa-share-nodes"></i> <span class="hidden sm:inline">Share</span></button>
-                    <button onclick="window.ui.closeModal('modal-pdf')" class="bg-slate-200 text-slate-700 hover:bg-slate-300 w-9 h-9 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-times"></i></button>
+            <div class="flex flex-wrap justify-between items-center p-4 border-b border-slate-100 bg-slate-50 shrink-0 gap-3">
+                <h3 id="pdf-preview-title" class="font-bold text-slate-800 text-lg ml-2 truncate min-w-0">Document Preview</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="window.docsHelper.downloadPDF()" class="bg-blue-100 text-blue-700 hover:bg-blue-200 px-3 py-2 sm:px-4 rounded-xl font-bold text-sm transition flex items-center justify-center"><i class="fa-solid fa-download"></i> <span class="hidden sm:inline ml-2">Download</span></button>
+                    <button onclick="window.docsHelper.sharePDF()" class="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 px-3 py-2 sm:px-4 rounded-xl font-bold text-sm transition flex items-center justify-center"><i class="fa-solid fa-share-nodes"></i> <span class="hidden sm:inline ml-2">Share</span></button>
+                    <button onclick="window.ui.closeModal('modal-pdf')" class="bg-slate-200 text-slate-700 hover:bg-slate-300 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0"><i class="fa-solid fa-times"></i></button>
                 </div>
             </div>
             <div class="flex-1 bg-slate-200 relative">
@@ -510,9 +524,9 @@
                     <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Ref / Mode</label>
                     <input type="text" id="pay-ref" placeholder="e.g. NEFT/UPI Ref" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
                 </div>
-                <div class="flex gap-2 mt-2">
-                    <button onclick="window.ui.closeModal('modal-pay')" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">Cancel</button>
-                    <button onclick="window.api.savePayment()" class="flex-1 py-3 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm">Save</button>
+                <div class="flex flex-col sm:flex-row gap-2 mt-4">
+                    <button onclick="window.ui.closeModal('modal-pay')" class="w-full flex-1 py-3 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition">Cancel</button>
+                    <button onclick="window.api.savePayment()" class="w-full flex-1 py-3 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-sm">Save</button>
                 </div>
             </div>
         </div>
@@ -723,11 +737,11 @@
                     const caObj = state.cases.find(c=>c.id===w.case_id);
                     const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
                     return `<tr class="border-b border-slate-50 hover:bg-slate-50 transition group">
-                        <td class="py-3 pr-4">${window.ui.fmtDate(w.date)}</td>
-                        <td class="py-3 pr-4"><div class="font-bold text-slate-800">${cl}</div><div class="text-xs text-slate-500">${ca}</div></td>
-                        <td class="py-3 pr-4"><span class="bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-md font-bold mb-1 inline-block">${w.category}</span><div class="text-xs text-slate-600 truncate max-w-xs">${w.desc}</div></td>
-                        <td class="py-3 pr-4 text-right font-bold ${w.amount===0 ? 'text-slate-400':'text-slate-800'}">${w.amount===0 ? 'Prepaid': window.ui.fmtMoney(w.amount)}</td>
-                        <td class="py-3 text-center opacity-0 group-hover:opacity-100 transition"><button onclick="window.api.editWork('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.ui.confirm('Delete this work entry forever?', ()=>window.api.delWork('${w.id}'))" class="text-rose-500 hover:text-rose-700 mx-1"><i class="fa-solid fa-trash"></i></button></td>
+                        <td class="py-3 pr-4 whitespace-nowrap">${window.ui.fmtDate(w.date)}</td>
+                        <td class="py-3 pr-4 min-w-[150px]"><div class="font-bold text-slate-800 break-words">${cl}</div><div class="text-xs text-slate-500 break-words">${ca}</div></td>
+                        <td class="py-3 pr-4"><span class="bg-blue-50 text-blue-600 text-xs px-2 py-1 rounded-md font-bold mb-1 inline-block whitespace-nowrap">${w.category}</span><div class="text-xs text-slate-600 break-words min-w-[150px] max-w-sm">${w.desc}</div></td>
+                        <td class="py-3 pr-4 text-right font-bold whitespace-nowrap ${w.amount===0 ? 'text-slate-400':'text-slate-800'}">${w.amount===0 ? 'Prepaid': window.ui.fmtMoney(w.amount)}</td>
+                        <td class="py-3 text-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition whitespace-nowrap"><button onclick="window.api.editWork('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1 w-8 h-8 rounded-lg bg-blue-50 lg:bg-transparent"><i class="fa-solid fa-pen"></i></button><button onclick="window.ui.confirm('Delete this work entry forever?', ()=>window.api.delWork('${w.id}'))" class="text-rose-500 hover:text-rose-700 mx-1 w-8 h-8 rounded-lg bg-rose-50 lg:bg-transparent"><i class="fa-solid fa-trash"></i></button></td>
                     </tr>`;
                 }).join('');
                 document.getElementById('table-unbilled').innerHTML = html || '<tr><td colspan="5" class="py-8 text-center text-slate-400 font-medium">No unbilled work logs found.</td></tr>';
@@ -747,13 +761,13 @@
                 const cHtml = state.clients.filter(c => c.name.toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q) || (c.phone||'').includes(q)).map(c => {
                     const unb = state.work.filter(w=>w.client_id===c.id && !w.invoice_id).reduce((s,w)=>s+w.amount,0);
                     const contact = [c.email, c.phone].filter(Boolean).join(' | ') || 'No contact info';
-                    return `<div class="p-4 bg-slate-50 rounded-2xl flex flex-col md:flex-row justify-between md:items-center gap-3 group">
-                        <div><div class="font-bold text-slate-800">${c.name}</div><div class="text-xs text-slate-500">${contact}</div></div>
-                        <div class="flex flex-row items-center justify-between md:justify-end gap-3 w-full md:w-auto">
-                            ${unb > 0 ? `<span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-lg shrink-0">Unbilled: ${window.ui.fmtMoney(unb)}</span>` : '<span class="hidden md:inline"></span>'}
+                    return `<div class="p-4 bg-slate-50 rounded-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 group">
+                        <div class="min-w-0 flex-1"><div class="font-bold text-slate-800 truncate">${c.name}</div><div class="text-xs text-slate-500 truncate">${contact}</div></div>
+                        <div class="flex flex-row items-center justify-between sm:justify-end gap-3 w-full sm:w-auto shrink-0">
+                            ${unb > 0 ? `<span class="bg-amber-100 text-amber-700 text-xs font-bold px-2 py-1 rounded-lg shrink-0">Unbilled: ${window.ui.fmtMoney(unb)}</span>` : '<span class="hidden sm:inline"></span>'}
                             <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex gap-2 shrink-0">
-                                <button onclick="window.api.editClient('${c.id}')" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition"><i class="fa-solid fa-pen"></i></button>
-                                <button onclick="window.ui.confirm('Delete client? This does not delete their work logs.', ()=>window.api.delClient('${c.id}'))" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition"><i class="fa-solid fa-trash"></i></button>
+                                <button onclick="window.api.editClient('${c.id}')" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="window.ui.confirm('Delete client? This does not delete their work logs.', ()=>window.api.delClient('${c.id}'))" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                             </div>
                         </div>
                     </div>`;
@@ -763,11 +777,11 @@
                 const caHtml = state.cases.filter(c => c.name.toLowerCase().includes(q) || (c.case_no||'').toLowerCase().includes(q)).map(c => {
                     const cl = state.clients.find(x=>x.id===c.client_id)?.name||'Unknown';
                     const caseRef = c.case_no ? `${c.name} (${c.case_no})` : c.name;
-                    return `<div class="p-4 bg-slate-50 rounded-2xl flex flex-col md:flex-row justify-between md:items-center gap-3 group">
-                        <div><div class="font-bold text-slate-800">${caseRef}</div><div class="text-xs text-slate-500">${cl}</div></div>
-                        <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex justify-end gap-2 w-full md:w-auto mt-2 md:mt-0 shrink-0">
-                            <button onclick="window.api.editCase('${c.id}')" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="window.ui.confirm('Delete case?', ()=>window.api.delCase('${c.id}'))" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition"><i class="fa-solid fa-trash"></i></button>
+                    return `<div class="p-4 bg-slate-50 rounded-2xl flex flex-col sm:flex-row justify-between sm:items-center gap-3 group">
+                        <div class="min-w-0 flex-1"><div class="font-bold text-slate-800 truncate">${caseRef}</div><div class="text-xs text-slate-500 truncate">${cl}</div></div>
+                        <div class="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition flex justify-end gap-2 w-full sm:w-auto mt-2 sm:mt-0 shrink-0">
+                            <button onclick="window.api.editCase('${c.id}')" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="window.ui.confirm('Delete case?', ()=>window.api.delCase('${c.id}'))" class="w-8 h-8 rounded-lg bg-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 transition flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>`;
                 }).join('');
@@ -956,12 +970,15 @@
                 const html = items.map(w => {
                     const caObj = state.cases.find(c=>c.id===w.case_id);
                     const ca = caObj ? (caObj.case_no ? `${caObj.name} (${caObj.case_no})` : caObj.name) : 'General';
-                    return `<label class="flex justify-between items-center p-2 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl cursor-pointer transition">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" value="${w.id}" data-amt="${w.amount}" onchange="window.ui.gbCalcLive()" class="gb-item-chk w-4 h-4 rounded text-blue-500 border-slate-300 focus:ring-0">
-                            <div><div class="text-xs font-bold text-slate-800">${window.ui.fmtDate(w.date)} <span class="text-slate-400 font-normal ml-2">${ca}</span></div><div class="text-xs text-slate-500 truncate w-48 sm:w-auto">${w.desc}</div></div>
+                    return `<label class="flex justify-between items-center p-3 hover:bg-slate-50 border border-transparent hover:border-slate-100 rounded-xl cursor-pointer transition gap-3">
+                        <div class="flex items-start gap-3 flex-1 min-w-0">
+                            <input type="checkbox" value="${w.id}" data-amt="${w.amount}" onchange="window.ui.gbCalcLive()" class="gb-item-chk w-4 h-4 rounded text-blue-500 border-slate-300 focus:ring-0 mt-0.5 shrink-0">
+                            <div class="min-w-0 flex-1">
+                                <div class="text-xs font-bold text-slate-800 break-words">${window.ui.fmtDate(w.date)} <span class="text-slate-400 font-normal ml-1 sm:ml-2 break-words inline-block">${ca}</span></div>
+                                <div class="text-xs text-slate-500 break-words mt-1 line-clamp-2">${w.desc}</div>
+                            </div>
                         </div>
-                        <div class="text-sm font-bold text-slate-800 shrink-0 ml-2">${window.ui.fmtMoney(w.amount)}</div>
+                        <div class="text-sm font-bold text-slate-800 shrink-0 whitespace-nowrap mt-0.5">${window.ui.fmtMoney(w.amount)}</div>
                     </label>`;
                 }).join('');
                 document.getElementById('gb-items-list').innerHTML = html || '<p class="text-center text-xs text-slate-400 py-4">No matching work items found.</p>';
