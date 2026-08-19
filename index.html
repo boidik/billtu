@@ -99,6 +99,9 @@
             <button onclick="window.ui.switchTab('settings')" class="nav-btn flex-1 md:flex-none flex items-center md:justify-start justify-center gap-3 p-3 md:px-5 rounded-2xl text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition font-medium">
                 <i class="fa-solid fa-sliders text-lg"></i> <span class="hidden lg:block text-sm">Settings</span>
             </button>
+            <button onclick="window.api.logout()" class="nav-btn md:hidden flex-1 md:flex-none flex items-center justify-center gap-3 p-3 rounded-2xl text-rose-500 hover:bg-rose-50 transition font-medium" title="Logout">
+                <i class="fa-solid fa-arrow-right-from-bracket text-lg"></i>
+            </button>
         </div>
 
         <div class="hidden md:flex mt-auto w-full px-4">
@@ -564,20 +567,20 @@
                 <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
                 <p style="margin: 0; color: #475569; font-size: 13px;">Period: {{period_str}}</p>
             </div>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; table-layout: fixed;">
-                <thead>
-                    <tr style="background: #3b82f6; color: white; text-align: left;">
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; table-layout: fixed; page-break-inside: auto;">
+                <thead style="display: table-header-group; page-break-inside: avoid; break-inside: avoid; page-break-after: avoid;">
+                    <tr class="pdf-page-break" style="background: #3b82f6; color: white; text-align: left; page-break-inside: avoid; break-inside: avoid;">
                         <th style="padding: 12px 15px; border-top-left-radius: 8px; border-bottom-left-radius: 8px; width: 15%; font-weight: 600;">Date</th>
                         <th style="padding: 12px 15px; width: 25%; font-weight: 600;">Case / Ref</th>
                         <th style="padding: 12px 15px; width: 40%; font-weight: 600;">Description</th>
                         <th style="padding: 12px 15px; text-align: right; border-top-right-radius: 8px; border-bottom-right-radius: 8px; width: 20%; font-weight: 600;">Amount</th>
                     </tr>
                 </thead>
-                <tbody style="color: #334155;">
+                <tbody style="color: #334155; page-break-inside: auto;">
                     {{table_rows}}
                 </tbody>
             </table>
-            <div class="pdf-page-break" style="page-break-inside: avoid; break-inside: avoid;">
+            <div class="pdf-page-break" style="page-break-inside: avoid; break-inside: avoid; page-break-before: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px;">
                     <div style="width: 50%; padding-right: 20px;">
                         <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
@@ -1251,10 +1254,13 @@
                 if(s.upi && inv.type !== 'ST' && inv.type !== 'REC') {
                     const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tn=${encodeURIComponent(inv.invoice_no)}&am=${inv.total}&cu=INR`;
                     const qD = document.createElement('div');
+                    qD.style.display = 'none';
+                    document.body.appendChild(qD); // Temporarily attach to DOM for safe canvas rendering
                     new QRCode(qD, { text: str, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.L });
-                    await new Promise(res => setTimeout(res, 150)); 
+                    await new Promise(res => setTimeout(res, 250)); 
                     const cNode = qD.querySelector('canvas');
                     if(cNode) qrUri = cNode.toDataURL();
+                    document.body.removeChild(qD); // Clean up
                 }
 
                 const map = {
