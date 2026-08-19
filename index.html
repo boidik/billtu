@@ -238,24 +238,24 @@
                 <!-- Clients -->
                 <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-200px)]">
                     <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-users text-blue-500"></i> Clients</h3>
-                    <form id="form-client" class="flex flex-col md:flex-row gap-2 mb-4 shrink-0">
+                    <form id="form-client" class="flex flex-wrap gap-2 mb-4 shrink-0">
                         <input type="hidden" id="client-id">
-                        <input type="text" id="client-name" required placeholder="Name" class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <input type="email" id="client-email" placeholder="Email (Optional)" class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <input type="tel" id="client-phone" placeholder="Phone (Optional)" class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <button type="submit" class="bg-slate-800 text-white p-3 rounded-2xl font-bold hover:bg-slate-900 transition"><i class="fa-solid fa-plus"></i></button>
+                        <input type="text" id="client-name" required placeholder="Name" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="email" id="client-email" placeholder="Email (Optional)" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="tel" id="client-phone" placeholder="Phone (Optional)" class="flex-1 min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <button type="submit" class="flex-1 sm:flex-none min-w-[60px] bg-slate-800 text-white p-3 px-5 rounded-2xl font-bold hover:bg-slate-900 transition flex items-center justify-center shrink-0"><i class="fa-solid fa-plus"></i> <span class="sm:hidden ml-2">Add</span></button>
                     </form>
                     <div id="list-clients" class="flex-1 overflow-y-auto hide-scrollbar flex flex-col gap-3"></div>
                 </div>
                 <!-- Cases -->
                 <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col h-[calc(100vh-200px)]">
                     <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fa-solid fa-folder-open text-amber-500"></i> Cases</h3>
-                    <form id="form-case" class="flex flex-col md:flex-row gap-2 mb-4 shrink-0">
+                    <form id="form-case" class="flex flex-wrap gap-2 mb-4 shrink-0">
                         <input type="hidden" id="case-id">
-                        <select id="case-client" required class="flex-[1.2] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></select>
-                        <input type="text" id="case-name" required placeholder="Case Name" class="flex-[1.5] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <input type="text" id="case-no" placeholder="Case No. (Optional)" class="flex-[1] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
-                        <button type="submit" class="bg-slate-800 text-white p-3 rounded-2xl font-bold hover:bg-slate-900 transition"><i class="fa-solid fa-plus"></i></button>
+                        <select id="case-client" required class="flex-[1.2] min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></select>
+                        <input type="text" id="case-name" required placeholder="Case Name" class="flex-[1.5] min-w-[140px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <input type="text" id="case-no" placeholder="Case No. (Optional)" class="flex-1 min-w-[120px] bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none">
+                        <button type="submit" class="flex-1 sm:flex-none min-w-[60px] bg-slate-800 text-white p-3 px-5 rounded-2xl font-bold hover:bg-slate-900 transition flex items-center justify-center shrink-0"><i class="fa-solid fa-plus"></i> <span class="sm:hidden ml-2">Add</span></button>
                     </form>
                     <div id="list-cases" class="flex-1 overflow-y-auto hide-scrollbar flex flex-col gap-3"></div>
                 </div>
