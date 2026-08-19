@@ -35,102 +35,118 @@
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
         .animate-fade-in-up-delay-1 { animation: fadeInUp 0.5s ease-out 0.1s forwards; opacity: 0; }
-        .animate-fade-in-up-delay-2 { animation: fadeInUp 0.5s ease-out 0.2s forwards; opacity: 0; }
-
-        /* PDF Root specific sizing to guarantee A4 */
-        #pdf-root-container { position: absolute; left: -10000px; top: 0; width: 800px; background: white; z-index: -9999; }
+        
+        /* PDF Root strictly 800px to guarantee A4 rendering without scaling cutoffs */
+        #pdf-root-container { position: absolute; left: -10000px; top: 0; width: 800px; background: white; z-index: -9999; overflow: visible; }
         .pdf-template-style table { width: 100%; border-collapse: collapse; }
         .pdf-template-style th, .pdf-template-style td { padding: 12px; border-bottom: 1px solid #e2e8f0; text-align: left; }
         .pdf-template-style th { font-weight: bold; color: #475569; }
         .pdf-template-style tr { page-break-inside: avoid !important; }
     </style>
 </head>
-<body class="h-[100dvh] overflow-hidden flex bg-bgmain">
+<body class="h-[100dvh] overflow-hidden flex bg-bgmain relative">
+
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="absolute inset-0 bg-bgmain z-[150] flex flex-col items-center justify-center transition-opacity duration-500">
+        <svg class="w-24 h-24 mb-6 shadow-xl rounded-[28px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g-login" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0f172a" /><stop offset="100%" stop-color="#3b82f6" /></linearGradient></defs><rect width="100" height="100" rx="28" fill="url(#g-login)"/><path d="M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h1 class="text-4xl font-serif font-bold text-slate-800 mb-2">Boidik Legal Cloud</h1>
+        <p class="text-slate-500 mb-10 font-medium">Secure Practice Management</p>
+        
+        <button onclick="window.authHelper.loginWithGoogle()" class="px-8 py-4 bg-white border border-slate-200 rounded-2xl shadow-sm flex items-center gap-4 hover:bg-slate-50 transition active:scale-95 font-bold text-slate-700 text-lg">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-6 h-6" alt="Google">
+            Sign in with Google
+        </button>
+        <button onclick="window.authHelper.loginAnonymously()" class="mt-6 text-sm font-semibold text-slate-400 hover:text-brand transition">Continue as Guest (Local Testing)</button>
+        <div id="login-error" class="mt-6 text-rose-500 text-sm font-semibold hidden text-center max-w-xs"></div>
+    </div>
 
     <!-- Sidebar -->
-    <nav class="w-20 md:w-64 flex-shrink-0 border-r border-slate-200 bg-white/50 backdrop-blur-md flex flex-col items-center md:items-start transition-all duration-300">
+    <nav class="w-20 md:w-64 flex-shrink-0 border-r border-slate-200 bg-white/50 backdrop-blur-md flex flex-col items-center md:items-start transition-all duration-300 z-40">
         <div class="h-20 w-full flex items-center justify-center md:justify-start md:px-8 border-b border-slate-100">
-            <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="gx" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#0f172a" /><stop offset="100%" stop-color="#3b82f6" /></linearGradient></defs><rect width="100" height="100" rx="28" fill="url(#gx)"/><path d="M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span class="hidden md:block ml-3 font-serif font-semibold text-lg text-slate-800">Boidik Legal</span>
+            <svg class="w-10 h-10 shadow-md rounded-2xl" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="28" fill="url(#g-login)"/><path d="M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="hidden md:block ml-3 font-serif font-bold text-xl text-slate-800 tracking-tight">Boidik Legal</span>
         </div>
         <div class="flex-1 w-full py-6 flex flex-col gap-2 px-3">
-            <button onclick="window.ui.switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-chart-pie md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Dashboard</span></button>
-            <button onclick="window.ui.switchTab('logs')" id="nav-logs" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-clock md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Work Logs</span></button>
-            <button onclick="window.ui.switchTab('directory')" id="nav-directory" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-folder-open md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Directory</span></button>
-            <button onclick="window.ui.switchTab('docs')" id="nav-docs" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-file-invoice-dollar md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Documents</span></button>
-            <button onclick="window.ui.switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group mt-auto active:scale-95"><i class="fa-solid fa-gear md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-medium">Settings</span></button>
+            <button onclick="window.ui.switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-chart-pie md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-semibold">Dashboard</span></button>
+            <button onclick="window.ui.switchTab('logs')" id="nav-logs" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-clock md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-semibold">Work Logs</span></button>
+            <button onclick="window.ui.switchTab('directory')" id="nav-directory" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-folder-open md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-semibold">Directory</span></button>
+            <button onclick="window.ui.switchTab('docs')" id="nav-docs" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group active:scale-95"><i class="fa-solid fa-file-invoice-dollar md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-semibold">Documents</span></button>
+            <button onclick="window.ui.switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center p-3 rounded-2xl text-slate-500 hover:bg-slate-100 transition-colors group mt-auto active:scale-95"><i class="fa-solid fa-gear md:mr-3 text-lg group-hover:text-brand"></i> <span class="hidden md:block font-semibold">Settings</span></button>
+            <button onclick="window.authHelper.logout()" class="nav-btn w-full flex items-center p-3 rounded-2xl text-rose-400 hover:bg-rose-50 transition-colors group active:scale-95"><i class="fa-solid fa-arrow-right-from-bracket md:mr-3 text-lg"></i> <span class="hidden md:block font-semibold">Log Out</span></button>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main class="flex-1 h-full overflow-y-auto hide-scrollbar p-4 md:p-8 relative">
+    <!-- Main Content Area -->
+    <main class="flex-1 h-full overflow-y-auto hide-scrollbar p-4 md:p-8 relative z-30">
         
-        <!-- Loading Overlay -->
-        <div id="loading-overlay" class="absolute inset-0 bg-bgmain z-50 flex flex-col items-center justify-center transition-opacity duration-300">
+        <!-- Loading Data Overlay -->
+        <div id="loading-overlay" class="absolute inset-0 bg-bgmain z-50 flex flex-col items-center justify-center transition-opacity duration-300 hidden">
             <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand mb-4"></i>
-            <p class="text-slate-500 font-medium">Syncing Secure Cloud...</p>
+            <p class="text-slate-500 font-bold">Syncing Secure Cloud...</p>
         </div>
 
+        <!-- Dashboard View -->
         <section id="view-dashboard" class="view-section hidden h-full flex flex-col gap-6 animate-fade-in-up">
             <header class="flex justify-between items-center mb-2">
-                <h1 class="text-3xl font-serif font-semibold text-slate-800">Overview</h1>
+                <h1 class="text-3xl font-serif font-bold text-slate-800">Overview</h1>
             </header>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                    <span class="text-slate-400 font-semibold text-sm mb-2"><i class="fa-solid fa-hourglass-half mr-2"></i>Total Unbilled</span>
-                    <span id="dash-unbilled" class="text-3xl font-bold text-slate-700">₹0</span>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                    <span class="text-slate-400 font-bold text-sm mb-2 uppercase tracking-wide"><i class="fa-solid fa-hourglass-half mr-2"></i>Total Unbilled</span>
+                    <span id="dash-unbilled" class="text-4xl font-bold text-slate-800">₹0</span>
                 </div>
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between">
-                    <span class="text-rose-400 font-semibold text-sm mb-2"><i class="fa-solid fa-money-bill-wave mr-2"></i>Outstanding Debt</span>
-                    <span id="dash-debt" class="text-3xl font-bold text-slate-700">₹0</span>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                    <span class="text-rose-400 font-bold text-sm mb-2 uppercase tracking-wide"><i class="fa-solid fa-money-bill-wave mr-2"></i>Outstanding Debt</span>
+                    <span id="dash-debt" class="text-4xl font-bold text-slate-800">₹0</span>
                 </div>
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between bg-gradient-to-br from-brand/10 to-brand/5">
-                    <span class="text-brand font-semibold text-sm mb-2"><i class="fa-solid fa-coins mr-2"></i>Collected This Month</span>
-                    <span id="dash-collected" class="text-3xl font-bold text-brand">₹0</span>
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col justify-between bg-gradient-to-br from-brand/10 to-brand/5 hover:shadow-md transition">
+                    <span class="text-brand font-bold text-sm mb-2 uppercase tracking-wide"><i class="fa-solid fa-coins mr-2"></i>Collected This Month</span>
+                    <span id="dash-collected" class="text-4xl font-bold text-brand">₹0</span>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-[300px]">
                 <div class="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col">
-                    <h3 class="font-semibold text-slate-700 mb-4">Revenue vs Work</h3>
+                    <h3 class="font-bold text-slate-700 mb-4">Revenue vs Work (6 Months)</h3>
                     <div class="flex-1 relative w-full h-full"><canvas id="chart-revenue"></canvas></div>
                 </div>
                 <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex flex-col">
-                    <h3 class="font-semibold text-slate-700 mb-4">Work Breakdown</h3>
+                    <h3 class="font-bold text-slate-700 mb-4">Lifetime Work Breakdown</h3>
                     <div class="flex-1 relative w-full h-full flex items-center justify-center"><canvas id="chart-category"></canvas></div>
                 </div>
             </div>
         </section>
 
+        <!-- Logs View -->
         <section id="view-logs" class="view-section hidden h-full flex flex-col animate-fade-in-up">
-            <header class="mb-6"><h1 class="text-3xl font-serif font-semibold text-slate-800">Time & Logs</h1></header>
+            <header class="mb-6"><h1 class="text-3xl font-serif font-bold text-slate-800">Time & Logs</h1></header>
             
             <div class="flex flex-col lg:flex-row gap-6 flex-1 h-full overflow-hidden">
                 <!-- Log Form -->
                 <div class="w-full lg:w-1/3 bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex flex-col h-fit">
-                    <h3 class="font-semibold text-slate-700 mb-4" id="log-form-title">Quick Log</h3>
+                    <h3 class="font-bold text-slate-800 mb-4 text-lg" id="log-form-title">Quick Log</h3>
                     <input type="hidden" id="log-id">
                     
                     <div class="space-y-4">
-                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Date</label><input type="date" id="log-date" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"></div>
-                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Client</label><select id="log-client" onchange="window.logsHelper.updateCaseDropdown()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"><option value="">Select Client...</option></select></div>
-                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Case/Matter</label><select id="log-case" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"><option value="">Select Case...</option></select></div>
-                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Category</label><select id="log-category" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"></select></div>
-                        <div><label class="text-xs font-semibold text-slate-500 ml-1">Description</label><textarea id="log-desc" rows="3" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm resize-none"></textarea></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Date</label><input type="date" id="log-date" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm font-medium"></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Client</label><select id="log-client" onchange="window.logsHelper.updateCaseDropdown()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm font-medium"><option value="">Select Client...</option></select></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Case/Matter</label><select id="log-case" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm font-medium"><option value="">Select Case...</option></select></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Category</label><select id="log-category" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm font-medium"></select></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Description</label><textarea id="log-desc" rows="3" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm font-medium resize-none"></textarea></div>
                         <div class="flex gap-4">
-                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500 ml-1">Amount (₹)</label><input type="number" id="log-amount" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm"></div>
+                            <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Amount (₹)</label><input type="number" id="log-amount" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm font-bold text-slate-800"></div>
                             <div class="flex items-center mt-6">
                                 <label class="flex items-center cursor-pointer">
                                     <input type="checkbox" id="log-prepaid" class="sr-only peer">
                                     <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-                                    <span class="ml-2 text-sm font-medium text-slate-600">Prepaid</span>
+                                    <span class="ml-2 text-sm font-bold text-slate-600">Prepaid</span>
                                 </label>
                             </div>
                         </div>
                         <div class="pt-2 flex gap-2">
-                            <button onclick="window.logsHelper.saveLog()" class="flex-1 bg-brand text-white py-3 rounded-2xl font-semibold hover:bg-blue-600 transition shadow-sm active:scale-95">Save Log</button>
-                            <button onclick="window.logsHelper.clearForm()" class="px-4 bg-slate-100 text-slate-600 rounded-2xl font-semibold hover:bg-slate-200 transition"><i class="fa-solid fa-rotate-left"></i></button>
+                            <button onclick="window.logsHelper.saveLog()" class="flex-1 bg-brand text-white py-3 rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm active:scale-95">Save Log</button>
+                            <button onclick="window.logsHelper.clearForm()" class="px-4 bg-slate-100 text-slate-600 rounded-2xl font-bold hover:bg-slate-200 transition active:scale-95"><i class="fa-solid fa-rotate-left"></i></button>
                         </div>
                     </div>
                 </div>
@@ -138,11 +154,11 @@
                 <!-- Unbilled Table -->
                 <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
                     <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                        <h3 class="font-semibold text-slate-700">Unbilled Work</h3>
+                        <h3 class="font-bold text-slate-800">Unbilled Work</h3>
                     </div>
                     <div class="flex-1 w-full overflow-x-auto hide-scrollbar">
                         <table class="w-full min-w-[600px] text-sm text-left text-slate-500">
-                            <thead class="text-xs text-slate-400 uppercase bg-slate-50">
+                            <thead class="text-xs text-slate-400 uppercase tracking-wider bg-slate-50 font-bold">
                                 <tr>
                                     <th class="px-4 py-3">Date</th>
                                     <th class="px-4 py-3">Client & Case</th>
@@ -152,7 +168,7 @@
                                 </tr>
                             </thead>
                             <tbody id="table-logs" class="divide-y divide-slate-100">
-                                <!-- Populated by JS -->
+                                <!-- Populated dynamically -->
                             </tbody>
                         </table>
                     </div>
@@ -160,61 +176,57 @@
             </div>
         </section>
 
+        <!-- Directory View -->
         <section id="view-directory" class="view-section hidden h-full flex flex-col animate-fade-in-up">
             <header class="mb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-4">
-                <h1 class="text-3xl font-serif font-semibold text-slate-800">Directory</h1>
-                <input type="text" id="dir-search" onkeyup="window.directoryHelper.render()" placeholder="Search clients or cases..." class="w-full md:w-64 p-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm shadow-sm">
+                <h1 class="text-3xl font-serif font-bold text-slate-800">Directory</h1>
+                <input type="text" id="dir-search" onkeyup="window.directoryHelper.render()" placeholder="Search clients or cases..." class="w-full md:w-72 p-3 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand outline-none text-sm shadow-sm font-medium">
             </header>
 
             <div class="flex flex-col lg:flex-row gap-6 flex-1 h-full overflow-hidden">
-                <!-- Clients Column -->
                 <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
                     <div class="p-4 border-b border-slate-100 bg-slate-50/50">
                         <div class="flex gap-2">
-                            <input type="text" id="add-client-name" placeholder="New Client Name..." class="flex-1 p-2 bg-white border border-slate-200 rounded-xl outline-none text-sm">
-                            <input type="email" id="add-client-email" placeholder="Email (opt)" class="w-1/3 p-2 bg-white border border-slate-200 rounded-xl outline-none text-sm hidden md:block">
-                            <button onclick="window.directoryHelper.addClient()" class="px-4 bg-brand text-white rounded-xl font-semibold hover:bg-blue-600 transition active:scale-95"><i class="fa-solid fa-plus"></i></button>
+                            <input type="text" id="add-client-name" placeholder="New Client Name..." class="flex-1 p-3 bg-white border border-slate-200 rounded-xl outline-none text-sm font-medium">
+                            <input type="email" id="add-client-email" placeholder="Email (opt)" class="w-1/3 p-3 bg-white border border-slate-200 rounded-xl outline-none text-sm font-medium hidden md:block">
+                            <button onclick="window.directoryHelper.addClient()" class="px-5 bg-brand text-white rounded-xl font-bold hover:bg-blue-600 transition active:scale-95"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
-                    <div class="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar" id="list-clients">
-                        <!-- Populated by JS -->
-                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar" id="list-clients"></div>
                 </div>
 
-                <!-- Cases Column -->
                 <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col overflow-hidden">
                     <div class="p-4 border-b border-slate-100 bg-slate-50/50">
                         <div class="flex gap-2">
-                            <select id="add-case-client" class="w-1/3 p-2 bg-white border border-slate-200 rounded-xl outline-none text-sm"><option value="">Client...</option></select>
-                            <input type="text" id="add-case-name" placeholder="Case Name..." class="flex-1 p-2 bg-white border border-slate-200 rounded-xl outline-none text-sm">
-                            <button onclick="window.directoryHelper.addCase()" class="px-4 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-700 transition active:scale-95"><i class="fa-solid fa-plus"></i></button>
+                            <select id="add-case-client" class="w-1/3 p-3 bg-white border border-slate-200 rounded-xl outline-none text-sm font-medium"><option value="">Client...</option></select>
+                            <input type="text" id="add-case-name" placeholder="Case Name..." class="flex-1 p-3 bg-white border border-slate-200 rounded-xl outline-none text-sm font-medium">
+                            <button onclick="window.directoryHelper.addCase()" class="px-5 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 transition active:scale-95"><i class="fa-solid fa-plus"></i></button>
                         </div>
                     </div>
-                    <div class="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar" id="list-cases">
-                         <!-- Populated by JS -->
-                    </div>
+                    <div class="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar" id="list-cases"></div>
                 </div>
             </div>
         </section>
 
+        <!-- Documents View -->
         <section id="view-docs" class="view-section hidden h-full flex flex-col animate-fade-in-up">
             <header class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                <h1 class="text-3xl font-serif font-semibold text-slate-800">Documents</h1>
-                <div class="flex gap-2">
-                    <button onclick="window.docsHelper.openPayModal()" class="px-5 py-3 bg-white border border-emerald-200 text-emerald-600 rounded-2xl font-semibold hover:bg-emerald-50 transition shadow-sm active:scale-95"><i class="fa-solid fa-money-check-dollar mr-2"></i>Record Pay</button>
-                    <button onclick="window.docsHelper.openBillModal()" class="px-5 py-3 bg-brand text-white rounded-2xl font-semibold hover:bg-blue-600 transition shadow-sm active:scale-95"><i class="fa-solid fa-file-invoice mr-2"></i>Generate Bill</button>
+                <h1 class="text-3xl font-serif font-bold text-slate-800">Documents</h1>
+                <div class="flex gap-3">
+                    <button onclick="window.docsHelper.openPayModal()" class="px-6 py-3 bg-white border-2 border-emerald-400 text-emerald-600 rounded-2xl font-bold hover:bg-emerald-50 transition shadow-sm active:scale-95"><i class="fa-solid fa-money-check-dollar mr-2"></i>Record Pay</button>
+                    <button onclick="window.docsHelper.openBillModal()" class="px-6 py-3 bg-brand text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-sm active:scale-95"><i class="fa-solid fa-file-invoice mr-2"></i>Generate Bill</button>
                 </div>
             </header>
 
             <div class="bg-white rounded-3xl shadow-sm border border-slate-100 flex flex-col flex-1 overflow-hidden">
                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-wrap gap-3">
-                    <select id="doc-f-client" onchange="window.docsHelper.render()" class="p-2 bg-white border border-slate-200 rounded-xl text-sm outline-none"><option value="">All Clients</option></select>
-                    <select id="doc-f-type" onchange="window.docsHelper.render()" class="p-2 bg-white border border-slate-200 rounded-xl text-sm outline-none"><option value="">All Types</option><option value="MI">MI (Monthly)</option><option value="IND">IND (Individual)</option><option value="ST">ST (Statement)</option><option value="REC">REC (Receipt)</option></select>
-                    <input type="text" id="doc-f-search" onkeyup="window.docsHelper.render()" placeholder="Search Ref..." class="p-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-32 md:w-48">
+                    <select id="doc-f-client" onchange="window.docsHelper.render()" class="p-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-brand"><option value="">All Clients</option></select>
+                    <select id="doc-f-type" onchange="window.docsHelper.render()" class="p-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-brand"><option value="">All Types</option><option value="MI">MI (Monthly)</option><option value="IND">IND (Individual)</option><option value="ST">ST (Statement)</option><option value="REC">REC (Receipt)</option></select>
+                    <input type="text" id="doc-f-search" onkeyup="window.docsHelper.render()" placeholder="Search Ref..." class="p-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-brand w-32 md:w-48">
                 </div>
                 <div class="flex-1 w-full overflow-x-auto hide-scrollbar">
-                    <table class="w-full min-w-[700px] text-sm text-left text-slate-500">
-                        <thead class="text-xs text-slate-400 uppercase bg-slate-50">
+                    <table class="w-full min-w-[750px] text-sm text-left text-slate-500">
+                        <thead class="text-xs text-slate-400 uppercase tracking-wider bg-slate-50 font-bold">
                             <tr>
                                 <th class="px-4 py-3">Doc Ref</th>
                                 <th class="px-4 py-3">Date</th>
@@ -224,48 +236,46 @@
                                 <th class="px-4 py-3 text-right">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="table-documents" class="divide-y divide-slate-100">
-                             <!-- Populated by JS -->
-                        </tbody>
+                        <tbody id="table-documents" class="divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- Settings View -->
         <section id="view-settings" class="view-section hidden h-full overflow-y-auto hide-scrollbar animate-fade-in-up pb-20">
-            <header class="mb-6"><h1 class="text-3xl font-serif font-semibold text-slate-800">Master Records</h1></header>
+            <header class="mb-6"><h1 class="text-3xl font-serif font-bold text-slate-800">Master Records</h1></header>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl">
-                
                 <!-- Profile & Payment -->
                 <div class="space-y-6">
                     <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                        <h3 class="font-semibold text-slate-700 mb-4 border-b pb-2">Professional Profile</h3>
-                        <div class="space-y-3">
-                            <div><label class="text-xs font-semibold text-slate-500">Name / Firm Name</label><input type="text" id="set-name" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
-                            <div class="flex gap-2">
-                                <div class="flex-1"><label class="text-xs font-semibold text-slate-500">Email</label><input type="email" id="set-email" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
-                                <div class="flex-1"><label class="text-xs font-semibold text-slate-500">Phone</label><input type="text" id="set-phone" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                        <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2 text-lg">Professional Profile</h3>
+                        <div class="space-y-4">
+                            <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Name / Firm Name</label><input type="text" id="set-name" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium"></div>
+                            <div class="flex gap-3">
+                                <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Email</label><input type="email" id="set-email" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium"></div>
+                                <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Phone</label><input type="text" id="set-phone" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium"></div>
                             </div>
-                            <div><label class="text-xs font-semibold text-slate-500">PAN Number</label><input type="text" id="set-pan" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm uppercase"></div>
+                            <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">PAN Number</label><input type="text" id="set-pan" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold uppercase"></div>
                             <div>
-                                <label class="text-xs font-semibold text-slate-500">Signature Image</label>
-                                <input type="file" id="set-sig-file" accept="image/*" class="text-xs w-full mb-1" onchange="window.settingsHelper.processSig(this)">
+                                <label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Signature Image</label>
+                                <input type="file" id="set-sig-file" accept="image/*" class="text-xs w-full mt-1 mb-2 font-medium" onchange="window.settingsHelper.processSig(this)">
                                 <input type="hidden" id="set-sig">
-                                <img id="sig-preview" src="" class="h-12 object-contain hidden border border-dashed border-slate-300 p-1 rounded bg-slate-50">
+                                <img id="sig-preview" src="" class="h-16 object-contain hidden border border-dashed border-slate-300 p-1 rounded-lg bg-slate-50">
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                        <h3 class="font-semibold text-slate-700 mb-4 border-b pb-2">Payment Details</h3>
-                        <div class="space-y-3">
-                            <div><label class="text-xs font-semibold text-slate-500">Bank Name</label><input type="text" id="set-bank" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
-                            <div class="flex gap-2">
-                                <div class="flex-1"><label class="text-xs font-semibold text-slate-500">Account No.</label><input type="text" id="set-ac" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
-                                <div class="flex-1"><label class="text-xs font-semibold text-slate-500">IFSC Code</label><input type="text" id="set-ifsc" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm uppercase"></div>
+                        <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2 text-lg">Payment Details</h3>
+                        <div class="space-y-4">
+                            <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Bank Name</label><input type="text" id="set-bank" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium"></div>
+                            <div class="flex gap-3">
+                                <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Account No.</label><input type="text" id="set-ac" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold"></div>
+                                <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">IFSC Code</label><input type="text" id="set-ifsc" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold uppercase"></div>
                             </div>
-                            <div><label class="text-xs font-semibold text-slate-500">UPI ID</label><input type="text" id="set-upi" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                            <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">UPI ID</label><input type="text" id="set-upi" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium"></div>
                         </div>
                     </div>
                 </div>
@@ -273,27 +283,25 @@
                 <!-- Config & Categories -->
                 <div class="space-y-6">
                     <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                        <h3 class="font-semibold text-slate-700 mb-4 border-b pb-2">Document Prefixes & Seq</h3>
-                        <div class="flex gap-2 mb-3">
-                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500">MI Prefix</label><input type="text" id="set-p-mi" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
-                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500">IND Prefix</label><input type="text" id="set-p-ind" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                        <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2 text-lg">Document Prefixes & Seq</h3>
+                        <div class="flex gap-3 mb-4">
+                            <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">MI Prefix</label><input type="text" id="set-p-mi" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-center"></div>
+                            <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">IND Prefix</label><input type="text" id="set-p-ind" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-center"></div>
                         </div>
-                        <div class="flex gap-2 mb-3">
-                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500">ST Prefix</label><input type="text" id="set-p-st" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
-                            <div class="flex-1"><label class="text-xs font-semibold text-slate-500">REC Prefix</label><input type="text" id="set-p-rec" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm"></div>
+                        <div class="flex gap-3 mb-4">
+                            <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">ST Prefix</label><input type="text" id="set-p-st" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-center"></div>
+                            <div class="flex-1"><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">REC Prefix</label><input type="text" id="set-p-rec" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-center"></div>
                         </div>
-                        <div><label class="text-xs font-semibold text-slate-500">Next Sequence No.</label><input type="number" id="set-seq" class="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono"></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Next Sequence No.</label><input type="number" id="set-seq" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-lg font-mono font-bold text-center text-brand"></div>
                     </div>
 
                     <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                        <h3 class="font-semibold text-slate-700 mb-4 border-b pb-2">Work Categories</h3>
-                        <div class="flex gap-2 mb-3">
-                            <input type="text" id="set-cat-new" placeholder="New category..." class="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:border-brand">
-                            <button onclick="window.settingsHelper.addCategory()" class="px-4 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700">Add</button>
+                        <h3 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2 text-lg">Work Categories</h3>
+                        <div class="flex gap-2 mb-4">
+                            <input type="text" id="set-cat-new" placeholder="New category..." class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium outline-none focus:ring-2 focus:ring-brand">
+                            <button onclick="window.settingsHelper.addCategory()" class="px-5 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700 active:scale-95 transition">Add</button>
                         </div>
-                        <div id="set-cat-list" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
-                            <!-- Populated by JS -->
-                        </div>
+                        <div id="set-cat-list" class="flex flex-wrap gap-2 max-h-48 overflow-y-auto"></div>
                     </div>
                     
                     <button onclick="window.settingsHelper.saveGlobal()" class="w-full py-4 bg-brand text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-md active:scale-95 text-lg">Save Core Settings</button>
@@ -301,125 +309,122 @@
                 
                 <!-- Templates -->
                 <div class="md:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h3 class="font-semibold text-slate-700">PDF HTML Templates Engine</h3>
-                        <button onclick="window.settingsHelper.resetTpl()" class="text-xs text-rose-500 font-semibold px-2 py-1 bg-rose-50 rounded">Reset Defaults</button>
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
+                        <h3 class="font-bold text-slate-800 text-lg">PDF HTML Templates Engine</h3>
+                        <button onclick="window.settingsHelper.resetTpl()" class="text-xs text-rose-500 font-bold px-3 py-1.5 bg-rose-50 rounded-lg hover:bg-rose-100 transition">Reset Defaults</button>
                     </div>
-                    <p class="text-xs text-slate-400 mb-3">Edit the raw HTML structure for the generated PDFs. Internal CSS only. Placeholders like <code>{{name}}</code> will be replaced.</p>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div><label class="text-xs font-semibold text-slate-500">Invoice (MI/IND)</label><textarea id="tpl-inv" rows="5" class="w-full p-2 bg-slate-900 text-green-400 font-mono text-[10px] rounded-xl"></textarea></div>
-                        <div><label class="text-xs font-semibold text-slate-500">Statement (ST)</label><textarea id="tpl-st" rows="5" class="w-full p-2 bg-slate-900 text-green-400 font-mono text-[10px] rounded-xl"></textarea></div>
+                    <p class="text-xs text-slate-500 mb-4 font-medium">Edit the raw HTML structure for the generated PDFs. Internal CSS only. Placeholders like <code>{{client_name}}</code> will be replaced.</p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Invoice (MI/IND)</label><textarea id="tpl-inv" rows="8" class="w-full mt-1 p-3 bg-slate-900 text-green-400 font-mono text-xs rounded-xl shadow-inner focus:ring-2 focus:ring-brand outline-none hide-scrollbar"></textarea></div>
+                        <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Statement (ST)</label><textarea id="tpl-st" rows="8" class="w-full mt-1 p-3 bg-slate-900 text-green-400 font-mono text-xs rounded-xl shadow-inner focus:ring-2 focus:ring-brand outline-none hide-scrollbar"></textarea></div>
                     </div>
-                    <button onclick="window.settingsHelper.saveTpl()" class="mt-4 px-6 py-2 bg-slate-800 text-white rounded-xl text-sm font-semibold hover:bg-slate-700">Save Templates</button>
+                    <button onclick="window.settingsHelper.saveTpl()" class="mt-6 px-8 py-3 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-700 shadow-sm active:scale-95 transition">Save Templates</button>
                 </div>
             </div>
         </section>
-
     </main>
 
     
     <!-- Toast Container -->
-    <div id="toast-container" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2"></div>
+    <div id="toast-container" class="fixed top-6 right-6 z-[9999] flex flex-col gap-3"></div>
 
     <!-- Confirm Modal -->
-    <div id="modal-confirm" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[999] hidden flex items-center justify-center">
-        <div class="bg-white rounded-3xl shadow-xl w-full max-w-sm p-6 transform scale-95 transition-transform animate-fade-in-up">
-            <h3 class="text-xl font-serif font-semibold text-slate-800 mb-2">Confirm Action</h3>
-            <p id="confirm-msg" class="text-slate-500 text-sm mb-6">Are you sure?</p>
+    <div id="modal-confirm" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[999] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 transform scale-95 transition-transform animate-fade-in-up">
+            <h3 class="text-2xl font-serif font-bold text-slate-800 mb-3">Are you sure?</h3>
+            <p id="confirm-msg" class="text-slate-500 text-sm mb-8 font-medium leading-relaxed"></p>
             <div class="flex gap-3 justify-end">
-                <button onclick="window.ui.closeConfirm()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl font-medium hover:bg-slate-200">Cancel</button>
-                <button id="confirm-btn-yes" class="px-4 py-2 bg-rose-500 text-white rounded-xl font-medium hover:bg-rose-600">Yes, Proceed</button>
+                <button onclick="window.ui.closeConfirm()" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
+                <button id="confirm-btn-yes" class="px-5 py-2.5 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition shadow-sm">Yes, Proceed</button>
             </div>
         </div>
     </div>
 
-    <!-- PDF Generation Root (Hidden offscreen, strictly 800px wide) -->
+    <!-- PDF Generation Root (Strictly hidden and sized for perfect A4 scale) -->
     <div id="pdf-root-container"></div>
 
     <!-- PDF Preview Modal -->
-    <div id="modal-pdf" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex flex-col items-center justify-center p-4">
-        <div class="w-full max-w-4xl bg-white rounded-t-2xl p-4 flex justify-between items-center">
-            <h3 class="font-bold text-slate-800">Document Preview</h3>
-            <button onclick="document.getElementById('modal-pdf').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+    <div id="modal-pdf" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-[200] hidden flex flex-col items-center justify-center p-4 md:p-8">
+        <div class="w-full max-w-4xl bg-white rounded-t-3xl p-5 flex justify-between items-center shadow-lg">
+            <h3 class="font-bold text-slate-800 text-lg">Document Preview</h3>
+            <button onclick="document.getElementById('modal-pdf').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-2xl transition"><i class="fa-solid fa-circle-xmark"></i></button>
         </div>
-        <iframe id="pdf-frame" class="w-full max-w-4xl h-[80vh] bg-slate-100 rounded-b-2xl border-none"></iframe>
+        <iframe id="pdf-frame" class="w-full max-w-4xl h-[80vh] bg-slate-100 rounded-b-3xl border-none shadow-2xl"></iframe>
     </div>
 
     <!-- Generate Bill Modal -->
-    <div id="modal-bill" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-[2.5rem] shadow-xl w-full max-w-3xl flex flex-col max-h-[90vh]">
+    <div id="modal-bill" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-3xl flex flex-col max-h-[90vh] animate-fade-in-up">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="text-2xl font-serif font-bold text-slate-800">Generate Bill</h3>
-                <button onclick="document.getElementById('modal-bill').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-2xl"><i class="fa-solid fa-circle-xmark"></i></button>
+                <h3 class="text-2xl font-serif font-bold text-slate-800">Generate Document</h3>
+                <button onclick="document.getElementById('modal-bill').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-2xl transition"><i class="fa-solid fa-circle-xmark"></i></button>
             </div>
             
             <div class="p-6 overflow-y-auto hide-scrollbar flex-1 space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
-                        <label class="text-xs font-semibold text-slate-500">Bill Type</label>
-                        <select id="bill-type" onchange="window.docsHelper.onBillTypeChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Document Type</label>
+                        <select id="bill-type" onchange="window.docsHelper.onBillTypeChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none font-bold text-slate-700 focus:ring-2 focus:ring-brand">
                             <option value="MI">Monthly Retainer (MI)</option>
                             <option value="IND">Individual Case (IND)</option>
                             <option value="ST">Statement of Account (ST)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs font-semibold text-slate-500">Client</label>
-                        <select id="bill-client" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none"><option value="">Select...</option></select>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Client</label>
+                        <select id="bill-client" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none font-medium focus:ring-2 focus:ring-brand"><option value="">Select...</option></select>
                     </div>
                     <div id="bill-case-container" class="hidden">
-                        <label class="text-xs font-semibold text-slate-500">Case</label>
-                        <select id="bill-case" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none"><option value="">Select Client First...</option></select>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Specific Case</label>
+                        <select id="bill-case" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none font-medium focus:ring-2 focus:ring-brand"><option value="">Select Client First...</option></select>
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-xs font-semibold text-slate-500">Period Start</label><input type="date" id="bill-start" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm"></div>
-                    <div><label class="text-xs font-semibold text-slate-500">Period End</label><input type="date" id="bill-end" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm"></div>
+                <div class="grid grid-cols-2 gap-5">
+                    <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Period Start (Optional)</label><input type="date" id="bill-start" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm font-medium focus:ring-2 focus:ring-brand"></div>
+                    <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Period End</label><input type="date" id="bill-end" onchange="window.docsHelper.onBillFiltersChange()" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-2xl outline-none text-sm font-medium focus:ring-2 focus:ring-brand"></div>
                 </div>
 
-                <div id="bill-rebill-container" class="flex items-center">
-                    <label class="flex items-center cursor-pointer">
+                <div id="bill-rebill-container" class="flex items-center bg-amber-50 p-3 rounded-2xl border border-amber-100">
+                    <label class="flex items-center cursor-pointer w-full">
                         <input type="checkbox" id="bill-rebill" onchange="window.docsHelper.onBillFiltersChange()" class="sr-only peer">
-                        <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand"></div>
-                        <span class="ml-2 text-sm font-medium text-slate-600">Include previously billed un-paid items</span>
+                        <div class="w-11 h-6 bg-amber-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-amber-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                        <span class="ml-3 text-sm font-bold text-amber-800">Include previously billed, but UNPAID items (Re-bill)</span>
                     </label>
                 </div>
 
                 <!-- Live Item Selection -->
                 <div id="bill-items-wrapper" class="border border-slate-200 rounded-2xl p-4 bg-slate-50 hidden">
                     <div class="flex justify-between items-center mb-3">
-                        <h4 class="font-semibold text-slate-700 text-sm">Select Items to Include</h4>
-                        <span id="bill-live-total" class="font-bold text-brand">₹0</span>
+                        <h4 class="font-bold text-slate-700">Select Items to Include</h4>
+                        <span id="bill-live-total" class="font-bold text-2xl text-brand">₹0</span>
                     </div>
-                    <div id="bill-items-list" class="space-y-2 max-h-48 overflow-y-auto hide-scrollbar text-sm">
-                        <!-- Populated dynamically based on filters -->
-                    </div>
+                    <div id="bill-items-list" class="space-y-2 max-h-48 overflow-y-auto hide-scrollbar text-sm"></div>
                 </div>
             </div>
             
             <div class="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-[2.5rem]">
-                <button onclick="window.docsHelper.generate()" class="w-full py-4 bg-brand text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-md active:scale-95">Generate Document</button>
+                <button onclick="window.docsHelper.generate()" class="w-full py-4 bg-brand text-white rounded-2xl font-bold hover:bg-blue-600 transition shadow-md active:scale-95 text-lg">Generate Document</button>
             </div>
         </div>
     </div>
 
     <!-- Direct Pay Modal -->
-    <div id="modal-pay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-[2.5rem] shadow-xl w-full max-w-sm flex flex-col">
+    <div id="modal-pay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm flex flex-col animate-fade-in-up">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center">
                 <h3 class="text-xl font-serif font-bold text-slate-800">Record Payment</h3>
-                <button onclick="document.getElementById('modal-pay').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="document.getElementById('modal-pay').classList.add('hidden')" class="text-slate-400 hover:text-rose-500 text-2xl transition"><i class="fa-solid fa-circle-xmark"></i></button>
             </div>
-            <div class="p-6 space-y-4">
+            <div class="p-6 space-y-5">
                 <input type="hidden" id="pay-inv-id">
-                <div><label class="text-xs font-semibold text-slate-500">Client</label><select id="pay-client" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"><option value="">Select...</option></select></div>
-                <div><label class="text-xs font-semibold text-slate-500">Amount Received (₹)</label><input type="number" id="pay-amount" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-bold text-brand"></div>
-                <div><label class="text-xs font-semibold text-slate-500">Date Received</label><input type="date" id="pay-date" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm"></div>
-                <div><label class="text-xs font-semibold text-slate-500">Reference (e.g., NEFT/UPI/Cash)</label><input type="text" id="pay-ref" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm uppercase"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Client</label><select id="pay-client" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium focus:ring-2 focus:ring-brand"><option value="">Select...</option></select></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Amount Received (₹)</label><input type="number" id="pay-amount" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-lg font-bold text-brand focus:ring-2 focus:ring-brand"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Date Received</label><input type="date" id="pay-date" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium focus:ring-2 focus:ring-brand"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase tracking-wide ml-1">Reference (NEFT/UPI/Cash)</label><input type="text" id="pay-ref" class="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-bold uppercase focus:ring-2 focus:ring-brand"></div>
             </div>
             <div class="p-6 border-t border-slate-100 bg-slate-50/50 rounded-b-[2.5rem]">
-                <button onclick="window.docsHelper.processPayment()" class="w-full py-3 bg-emerald-500 text-white rounded-xl font-bold hover:bg-emerald-600 transition shadow-md active:scale-95">Save & Generate Receipt</button>
+                <button onclick="window.docsHelper.processPayment()" class="w-full py-4 bg-emerald-500 text-white rounded-2xl font-bold hover:bg-emerald-600 transition shadow-md active:scale-95 text-lg">Save & Generate Receipt</button>
             </div>
         </div>
     </div>
@@ -427,20 +432,40 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, collection, onSnapshot, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'boidik-legal';
-        const fCfgStr = typeof __firebase_config !== 'undefined' ? __firebase_config : '{"apiKey":"AIzaSyCAJUoKTzaVpMsOeYW0Ewdnk33K_1HuJhk","authDomain":"legallyboidik.firebaseapp.com","projectId":"legallyboidik","storageBucket":"legallyboidik.firebasestorage.app","appId":"1:34600326596:web:6c4264f2d11de5db758091"}';
-        const app = initializeApp(JSON.parse(fCfgStr));
+        // Using the user-provided Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAJUoKTzaVpMsOeYW0Ewdnk33K_1HuJhk",
+            authDomain: "legallyboidik.firebaseapp.com",
+            projectId: "legallyboidik",
+            storageBucket: "legallyboidik.firebasestorage.app",
+            messagingSenderId: "34600326596",
+            appId: "1:34600326596:web:6c4264f2d11de5db758091",
+            measurementId: "G-QFK7B9N06J"
+        };
+        
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         
         let userId = null;
         let authReady = false;
+        let listeners = [];
 
-        // Global State
+        // Global Application State
         const state = { invoices: [], clients: [], cases: [], workItems: [], settings: {} };
+
+        // Webhook Logger Tool
+        window.logger = {
+            log: (level, msg) => {
+                const url = "https://script.google.com/macros/s/AKfycbz_webhook_placeholder/exec"; // Placeholder for Apps Script Webhook
+                try {
+                    fetch(url, { method: 'POST', mode: 'no-cors', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ email: auth.currentUser?.email || 'Anonymous', timestamp: new Date().toISOString(), level: level, message: msg }) }).catch(()=>null);
+                } catch(e){}
+            }
+        };
 
         window.ui = {
             fmtMoney: (amt) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(amt||0),
@@ -452,12 +477,19 @@
                 document.getElementById(`view-${tabId}`).classList.remove('hidden');
                 document.getElementById(`nav-${tabId}`).classList.add('bg-slate-100', 'text-brand');
                 
-                if(tabId === 'dashboard') window.dashboardHelper.render();
-                if(tabId === 'docs') window.docsHelper.render();
+                window.ui.refreshCurrentView();
             },
-            getTenantPath: (colName) => `artifacts/${appId}/users/${userId}/${colName}`,
+            refreshCurrentView: () => {
+                if(!document.getElementById('view-dashboard').classList.contains('hidden')) window.dashboardHelper.render();
+                if(!document.getElementById('view-logs').classList.contains('hidden')) window.logsHelper.render();
+                if(!document.getElementById('view-directory').classList.contains('hidden')) window.directoryHelper.render();
+                if(!document.getElementById('view-docs').classList.contains('hidden')) window.docsHelper.render();
+            },
+            getTenantPath: (colName) => `saas_tenants/${userId}/${colName}`,
             populateSelects: () => {
                 const cOpts = '<option value="">Select...</option>' + state.clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                
+                // Preserve current selections
                 const currentLogClient = document.getElementById('log-client').value;
                 const currentBillClient = document.getElementById('bill-client').value;
                 const currentPayClient = document.getElementById('pay-client').value;
@@ -471,31 +503,33 @@
                 if(currentLogClient) document.getElementById('log-client').value = currentLogClient;
                 if(currentBillClient) document.getElementById('bill-client').value = currentBillClient;
                 if(currentPayClient) document.getElementById('pay-client').value = currentPayClient;
+                
                 window.logsHelper.updateCaseDropdown();
 
-                // Categories
+                // Categories logic
                 const cats = state.settings.categories || ['Consultation', 'Drafting', 'Filing', 'Appearance'];
                 const currentCat = document.getElementById('log-category').value;
                 document.getElementById('log-category').innerHTML = cats.map(c => `<option value="${c}">${c}</option>`).join('');
-                if(currentCat && cats.includes(currentCat)) document.getElementById('log-category').value = currentCat;
+                if(currentCat && cats.includes(currentCat)) {
+                    document.getElementById('log-category').value = currentCat;
+                } else if(cats.length > 0) {
+                    document.getElementById('log-category').value = cats[0];
+                }
                 window.settingsHelper.renderCategories();
             },
             showToast: (msg, type='info') => {
                 const c = document.getElementById('toast-container');
                 const t = document.createElement('div');
                 const colors = type==='error'?'bg-rose-500 text-white':type==='success'?'bg-emerald-500 text-white':'bg-slate-800 text-white';
-                t.className = `px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-medium transform transition-all duration-300 translate-x-full opacity-0 ${colors}`;
-                t.innerHTML = `<i class="fa-solid fa-${type==='error'?'circle-exclamation':type==='success'?'circle-check':'info-circle'}"></i> <span>${msg}</span>`;
+                t.className = `px-5 py-4 rounded-2xl shadow-xl flex items-center gap-3 text-sm font-bold transform transition-all duration-300 translate-x-full opacity-0 ${colors}`;
+                t.innerHTML = `<i class="fa-solid fa-${type==='error'?'circle-exclamation text-lg':type==='success'?'circle-check text-lg':'info-circle text-lg'}"></i> <span>${msg}</span>`;
                 c.appendChild(t);
                 
-                requestAnimationFrame(() => {
-                    t.classList.remove('translate-x-full', 'opacity-0');
-                });
-                
+                requestAnimationFrame(() => t.classList.remove('translate-x-full', 'opacity-0'));
                 setTimeout(() => {
                     t.classList.add('translate-x-full', 'opacity-0');
                     setTimeout(() => t.remove(), 300);
-                }, 3000);
+                }, 4000);
             },
             confirmAction: null,
             confirm: (msg, callback) => {
@@ -509,51 +543,72 @@
             }
         };
 
-        // Attach confirm listener
+        // Attach confirm listener manually
         document.getElementById('confirm-btn-yes').addEventListener('click', () => {
             if(window.ui.confirmAction) window.ui.confirmAction();
             window.ui.closeConfirm();
         });
 
 
+        window.authHelper = {
+            loginWithGoogle: async () => {
+                try {
+                    const provider = new GoogleAuthProvider();
+                    await signInWithPopup(auth, provider);
+                    window.logger.log('INFO', 'Google Login Success');
+                } catch(err) {
+                    console.error("Google Auth Error:", err);
+                    document.getElementById('login-error').innerText = "Google Sign-In blocked by browser environment. Please use Guest mode.";
+                    document.getElementById('login-error').classList.remove('hidden');
+                }
+            },
+            loginAnonymously: async () => {
+                try {
+                    await signInAnonymously(auth);
+                    window.logger.log('INFO', 'Anonymous Login Success');
+                } catch(err) {
+                    document.getElementById('login-error').innerText = err.message;
+                    document.getElementById('login-error').classList.remove('hidden');
+                }
+            },
+            logout: async () => {
+                window.ui.confirm('Are you sure you want to log out?', async () => {
+                    listeners.forEach(unsub => unsub()); // Clear DB listeners
+                    await signOut(auth);
+                    window.location.reload();
+                });
+            }
+        }
+
+
         window.dashboardHelper = {
             revChart: null, catChart: null,
             render: () => {
+                if(!authReady) return;
                 const now = new Date();
-                let unbilled = 0;
-                let debt = 0;
-                let collected = 0;
-                let revData = {}; let catData = {};
+                let unbilled = 0, debt = 0, collected = 0;
+                let revData = {}, catData = {};
 
-                // Init last 6 months
                 for(let i=5; i>=0; i--) {
                     const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
                     const k = d.toLocaleString('default', { month: 'short', year: '2-digit' });
                     revData[k] = { work: 0, rev: 0 };
                 }
 
-                // Process Work Items
                 state.workItems.forEach(w => {
                     if(!w.invoice_id) unbilled += w.amount || 0;
-                    debt += w.amount || 0; // Total work done
-
+                    debt += w.amount || 0; 
                     const d = new Date(w.date);
                     const k = d.toLocaleString('default', { month: 'short', year: '2-digit' });
                     if(revData[k]) revData[k].work += w.amount || 0;
-
-                    if(w.category) {
-                        catData[w.category] = (catData[w.category] || 0) + (w.amount || 0);
-                    }
+                    if(w.category) catData[w.category] = (catData[w.category] || 0) + (w.amount || 0);
                 });
 
-                // Process Invoices/Receipts
                 state.invoices.forEach(i => {
                     if(i.type === 'REC' || i.status === 'Paid') {
-                        debt -= i.total || 0; // Paid off work
+                        debt -= i.total || 0; 
                         const d = new Date(i.payment_date || i.date);
-                        if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-                            collected += i.total || 0;
-                        }
+                        if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) collected += i.total || 0;
                         const k = d.toLocaleString('default', { month: 'short', year: '2-digit' });
                         if(revData[k]) revData[k].rev += i.total || 0;
                     }
@@ -563,9 +618,11 @@
                 document.getElementById('dash-debt').innerText = ui.fmtMoney(debt > 0 ? debt : 0);
                 document.getElementById('dash-collected').innerText = ui.fmtMoney(collected);
 
-                // Charts
                 if(window.dashboardHelper.revChart) window.dashboardHelper.revChart.destroy();
                 if(window.dashboardHelper.catChart) window.dashboardHelper.catChart.destroy();
+
+                Chart.defaults.font.family = '"Plus Jakarta Sans", sans-serif';
+                Chart.defaults.color = '#64748b';
 
                 const ctxR = document.getElementById('chart-revenue').getContext('2d');
                 window.dashboardHelper.revChart = new Chart(ctxR, {
@@ -573,11 +630,11 @@
                     data: {
                         labels: Object.keys(revData),
                         datasets: [
-                            { label: 'Work Logged', data: Object.values(revData).map(v=>v.work), backgroundColor: '#cbd5e1', borderRadius: 4 },
-                            { label: 'Revenue Collected', data: Object.values(revData).map(v=>v.rev), backgroundColor: '#3b82f6', borderRadius: 4 }
+                            { label: 'Work Logged (₹)', data: Object.values(revData).map(v=>v.work), backgroundColor: '#cbd5e1', borderRadius: 6 },
+                            { label: 'Revenue Collected (₹)', data: Object.values(revData).map(v=>v.rev), backgroundColor: '#3b82f6', borderRadius: 6 }
                         ]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }, plugins: { legend: { position: 'top' } } }
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: {display: false} }, x: { grid: { display: false }, border: {display: false} } }, plugins: { legend: { position: 'top' } } }
                 });
 
                 const ctxC = document.getElementById('chart-category').getContext('2d');
@@ -596,50 +653,48 @@
             render: () => {
                 const q = document.getElementById('dir-search').value.toLowerCase();
                 
-                // Clients
                 const cl = state.clients.filter(c => c.name.toLowerCase().includes(q));
                 document.getElementById('list-clients').innerHTML = cl.map(c => {
                     const unb = state.workItems.filter(w => w.client_id === c.id && !w.invoice_id).reduce((s,w)=>s+w.amount,0);
                     return `
-                    <div class="p-3 border border-slate-100 rounded-xl bg-white hover:border-brand/30 transition shadow-sm">
+                    <div class="p-4 border border-slate-100 rounded-2xl bg-white hover:border-brand/50 hover:shadow-md transition">
                         <div class="flex justify-between items-start">
-                            <div><h4 class="font-bold text-slate-800">${c.name}</h4><p class="text-xs text-slate-400 mt-1">${c.email||'No email'}</p></div>
-                            <span class="text-xs font-semibold px-2 py-1 rounded bg-slate-100 ${unb>0?'text-rose-500':'text-slate-500'}">Unbilled: ${ui.fmtMoney(unb)}</span>
+                            <div><h4 class="font-bold text-slate-800 text-lg">${c.name}</h4><p class="text-xs font-semibold text-slate-400 mt-1"><i class="fa-solid fa-envelope mr-1"></i>${c.email||'No email'}</p></div>
+                            <span class="text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100 ${unb>0?'text-rose-500':'text-slate-400'}">Unbilled: ${ui.fmtMoney(unb)}</span>
                         </div>
                     </div>`;
-                }).join('') || '<p class="text-xs text-slate-400 text-center py-4">No clients found.</p>';
+                }).join('') || '<p class="text-sm font-semibold text-slate-400 text-center py-8">No clients found.</p>';
 
-                // Cases
                 const ca = state.cases.filter(c => c.name.toLowerCase().includes(q) || (state.clients.find(x=>x.id===c.client_id)?.name||'').toLowerCase().includes(q));
                 document.getElementById('list-cases').innerHTML = ca.map(c => {
                     const cli = state.clients.find(x=>x.id===c.client_id);
                     return `
-                    <div class="p-3 border border-slate-100 rounded-xl bg-white hover:border-brand/30 transition shadow-sm">
-                        <h4 class="font-bold text-slate-800">${c.name}</h4>
+                    <div class="p-4 border border-slate-100 rounded-2xl bg-white hover:border-brand/50 hover:shadow-md transition">
+                        <h4 class="font-bold text-slate-800 text-lg">${c.name}</h4>
                         <div class="flex justify-between items-center mt-2">
-                            <span class="text-xs font-medium text-slate-500"><i class="fa-solid fa-user mr-1"></i>${cli?cli.name:'Unknown'}</span>
+                            <span class="text-xs font-bold text-brand bg-blue-50 px-2 py-1 rounded"><i class="fa-solid fa-user mr-1"></i>${cli?cli.name:'Unknown Client'}</span>
                         </div>
                     </div>`;
-                }).join('') || '<p class="text-xs text-slate-400 text-center py-4">No cases found.</p>';
+                }).join('') || '<p class="text-sm font-semibold text-slate-400 text-center py-8">No cases found.</p>';
             },
             addClient: async () => {
                 const n = document.getElementById('add-client-name').value;
                 const e = document.getElementById('add-client-email').value;
-                if(!n) return ui.showToast('Name required', 'error');
+                if(!n) return ui.showToast('Client Name is required', 'error');
                 try {
                     await addDoc(collection(db, ui.getTenantPath('clients')), { name: n, email: e, created: new Date().toISOString() });
                     document.getElementById('add-client-name').value = ''; document.getElementById('add-client-email').value = '';
-                    ui.showToast('Client added', 'success');
+                    ui.showToast('Client successfully added', 'success');
                 } catch(err) { ui.showToast(err.message, 'error'); }
             },
             addCase: async () => {
                 const c = document.getElementById('add-case-client').value;
                 const n = document.getElementById('add-case-name').value;
-                if(!c || !n) return ui.showToast('Client and Case Name required', 'error');
+                if(!c || !n) return ui.showToast('Select a client and enter a Case Name', 'error');
                 try {
                     await addDoc(collection(db, ui.getTenantPath('cases')), { client_id: c, name: n, created: new Date().toISOString() });
                     document.getElementById('add-case-name').value = '';
-                    ui.showToast('Case added', 'success');
+                    ui.showToast('Case successfully added', 'success');
                 } catch(err) { ui.showToast(err.message, 'error'); }
             }
         };
@@ -649,7 +704,7 @@
                 const cid = document.getElementById('log-client').value;
                 const cSel = document.getElementById('log-case');
                 const currVal = cSel.value;
-                cSel.innerHTML = '<option value="">Select Case...</option>' + state.cases.filter(c => c.client_id === cid).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                cSel.innerHTML = '<option value="">Select Case (General if empty)...</option>' + state.cases.filter(c => c.client_id === cid).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                 if(currVal) cSel.value = currVal;
             },
             saveLog: async () => {
@@ -664,12 +719,12 @@
                     prepaid: document.getElementById('log-prepaid').checked,
                     invoice_id: null
                 };
-                if(!d.date || !d.client_id || !d.category) return ui.showToast('Missing required fields', 'error');
+                if(!d.date || !d.client_id || !d.category || (!d.amount && !d.prepaid)) return ui.showToast('Missing required fields or Amount', 'error');
                 try {
                     if(id) await updateDoc(doc(db, ui.getTenantPath('workItems'), id), d);
                     else await addDoc(collection(db, ui.getTenantPath('workItems')), d);
                     window.logsHelper.clearForm();
-                    ui.showToast('Log saved', 'success');
+                    ui.showToast('Work Log Saved Successfully', 'success');
                 } catch(e) { ui.showToast(e.message, 'error'); }
             },
             clearForm: () => {
@@ -694,11 +749,11 @@
                 document.getElementById('log-desc').value = w.desc || '';
                 document.getElementById('log-amount').value = w.amount;
                 document.getElementById('log-prepaid').checked = w.prepaid || false;
-                document.getElementById('log-form-title').innerText = 'Edit Log';
+                document.getElementById('log-form-title').innerText = 'Edit Log Entry';
             },
             delLog: (id) => {
-                ui.confirm('Delete this unbilled work item?', async () => {
-                    try { await deleteDoc(doc(db, ui.getTenantPath('workItems'), id)); ui.showToast('Deleted', 'success'); }
+                ui.confirm('Are you sure you want to permanently delete this unbilled work entry?', async () => {
+                    try { await deleteDoc(doc(db, ui.getTenantPath('workItems'), id)); ui.showToast('Work Log Deleted', 'success'); }
                     catch(e) { ui.showToast(e.message, 'error'); }
                 });
             },
@@ -710,23 +765,22 @@
                     const c = state.clients.find(x=>x.id===w.client_id);
                     const ca = state.cases.find(x=>x.id===w.case_id);
                     return `
-                    <tr class="hover:bg-slate-50 transition group">
-                        <td class="px-4 py-3 whitespace-nowrap">${ui.fmtDate(w.date)}</td>
-                        <td class="px-4 py-3">
-                            <div class="font-semibold text-slate-800">${c?c.name:'-'}</div>
-                            <div class="text-xs">${ca?ca.name:'General'}</div>
+                    <tr class="hover:bg-slate-50 transition group border-b border-slate-50 last:border-0">
+                        <td class="px-4 py-4 whitespace-nowrap font-medium text-slate-600">${ui.fmtDate(w.date)}</td>
+                        <td class="px-4 py-4">
+                            <div class="font-bold text-slate-800">${c?c.name:'-'}</div>
+                            <div class="text-xs font-semibold text-brand mt-0.5">${ca?ca.name:'General Matter'}</div>
                         </td>
-                        <td class="px-4 py-3 max-w-[200px] truncate">
-                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-slate-200 text-slate-700 mr-1">${w.category}</span>
-                            ${w.desc}
+                        <td class="px-4 py-4 max-w-[250px]">
+                            <div class="truncate font-medium text-slate-700" title="${w.desc}"><span class="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-700 mr-2">${w.category}</span>${w.desc}</div>
                         </td>
-                        <td class="px-4 py-3 font-semibold ${w.prepaid?'text-emerald-500':'text-slate-700'}">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td>
-                        <td class="px-4 py-3 text-right opacity-0 group-hover:opacity-100 transition">
-                            <button onclick="window.logsHelper.editLog('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-1"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="window.logsHelper.delLog('${w.id}')" class="text-slate-400 hover:text-rose-500 mx-1"><i class="fa-solid fa-trash"></i></button>
+                        <td class="px-4 py-4 font-bold ${w.prepaid?'text-emerald-500':'text-slate-800 text-base'}">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td>
+                        <td class="px-4 py-4 text-right opacity-0 group-hover:opacity-100 transition">
+                            <button onclick="window.logsHelper.editLog('${w.id}')" class="text-blue-500 hover:text-blue-700 mx-2 transition"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="window.logsHelper.delLog('${w.id}')" class="text-slate-300 hover:text-rose-500 mx-2 transition"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
-                }).join('') || '<tr><td colspan="5" class="text-center py-8 text-slate-400">No unbilled logs.</td></tr>';
+                }).join('') || '<tr><td colspan="5" class="text-center py-12 text-slate-400 font-semibold"><i class="fa-solid fa-box-open text-3xl mb-3 block opacity-50"></i>No unbilled logs. Great job!</td></tr>';
             }
         };
 
@@ -764,9 +818,9 @@
                     prefs: { MI: document.getElementById('set-p-mi').value, IND: document.getElementById('set-p-ind').value, ST: document.getElementById('set-p-st').value, REC: document.getElementById('set-p-rec').value }
                 };
                 try {
-                    // Use setDoc with merge:true to ensure it works on fresh accounts
+                    // Safe setDoc with merge guarantees save on brand new accounts
                     await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), d, { merge: true }); 
-                    ui.showToast('Core Settings Saved', 'success'); 
+                    ui.showToast('Core Settings Saved to Cloud', 'success'); 
                 } catch(e) { ui.showToast(e.message, 'error'); }
             },
             processSig: (inp) => {
@@ -794,10 +848,10 @@
             renderCategories: () => {
                 const cats = state.settings.categories || ['Consultation', 'Drafting', 'Filing', 'Appearance'];
                 document.getElementById('set-cat-list').innerHTML = cats.map((c, i) => `
-                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-full text-sm text-slate-700 border border-slate-200">
+                    <div class="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-xl text-sm font-bold text-slate-700 border border-slate-200">
                         <span>${c}</span>
-                        <button onclick="window.settingsHelper.editCategory(${i})" class="text-blue-400 hover:text-blue-600 ml-1"><i class="fa-solid fa-pen text-xs"></i></button>
-                        <button onclick="window.settingsHelper.delCategory(${i})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-xmark"></i></button>
+                        <button onclick="window.settingsHelper.editCategory(${i})" class="text-blue-400 hover:text-blue-600 ml-2 transition" title="Edit"><i class="fa-solid fa-pen text-xs"></i></button>
+                        <button onclick="window.settingsHelper.delCategory(${i})" class="text-slate-300 hover:text-rose-500 transition" title="Delete"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 `).join('');
             },
@@ -805,68 +859,67 @@
                 const val = document.getElementById('set-cat-new').value.trim();
                 if(!val) return;
                 let cats = state.settings.categories || ['Consultation', 'Drafting', 'Filing', 'Appearance'];
-                if(cats.includes(val)) return ui.showToast('Category exists', 'error');
+                if(cats.includes(val)) return ui.showToast('Category already exists', 'error');
                 cats.push(val);
                 try {
                     await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), { categories: cats }, { merge: true });
                     document.getElementById('set-cat-new').value = '';
-                } catch(e) { ui.showToast('Failed to add category', 'error'); }
+                    ui.showToast('Category Added', 'success');
+                } catch(e) { ui.showToast('Failed to save to cloud', 'error'); }
             },
             delCategory: (idx) => {
-                ui.confirm('Delete category?', async () => {
+                ui.confirm('Delete this category?', async () => {
                     let cats = state.settings.categories || [];
                     cats.splice(idx, 1);
                     await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), { categories: cats }, { merge: true });
+                    ui.showToast('Category Deleted', 'success');
                 });
             },
             editCategory: (idx) => {
                 let cats = state.settings.categories || [];
                 const oldVal = cats[idx];
-                const newVal = prompt('Rename category:', oldVal);
+                const newVal = prompt('Rename category (This will update past records):', oldVal);
                 if(newVal && newVal.trim() !== '' && newVal !== oldVal) {
                     cats[idx] = newVal.trim();
-                    // Batch update old work items
                     const batch = writeBatch(db);
                     state.workItems.forEach(w => {
-                        if(w.category === oldVal) {
-                            batch.update(doc(db, ui.getTenantPath('workItems'), w.id), { category: newVal.trim() });
-                        }
+                        if(w.category === oldVal) batch.update(doc(db, ui.getTenantPath('workItems'), w.id), { category: newVal.trim() });
                     });
                     batch.set(doc(db, ui.getTenantPath('settings'), 'global'), { categories: cats }, { merge: true });
-                    batch.commit().then(() => ui.showToast('Category renamed', 'success')).catch(e => ui.showToast('Error', 'error'));
+                    batch.commit().then(() => ui.showToast('Category renamed successfully', 'success')).catch(e => ui.showToast('Error saving changes', 'error'));
                 }
             },
             defaultTpl: {
-                inv: `<div class="pdf-template-style" style="padding: 20px; font-family: sans-serif; color: #1e293b; background: white;">
+                inv: `<div class="pdf-template-style" style="padding: 20px 40px; font-family: sans-serif; color: #1e293b; background: white;">
     <div style="display:flex;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:20px;margin-bottom:20px;">
-        <div><h1 style="margin:0;color:#0f172a;font-size:24px;">{{pro_name}}</h1><p style="margin:5px 0 0;font-size:12px;color:#64748b;">{{pro_phone}} | {{pro_email}}<br>PAN: {{pro_pan}}</p></div>
-        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:20px;">INVOICE</h2><p style="margin:5px 0 0;font-size:12px;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
+        <div><h1 style="margin:0;color:#0f172a;font-size:28px;">{{pro_name}}</h1><p style="margin:8px 0 0;font-size:12px;color:#64748b;">Phone: {{pro_phone}} | Email: {{pro_email}}<br>PAN: <b>{{pro_pan}}</b></p></div>
+        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:24px;letter-spacing:1px;">INVOICE</h2><p style="margin:8px 0 0;font-size:13px;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
     </div>
-    <div style="margin-bottom:30px;">
-        <h3 style="margin:0 0 10px;font-size:14px;color:#64748b;">BILL TO</h3>
-        <p style="margin:0;font-weight:bold;font-size:16px;">{{client_name}}</p>
-        <p style="margin:5px 0 0;font-size:14px;">Period: {{period_str}}</p>
+    <div style="margin-bottom:40px;">
+        <h3 style="margin:0 0 10px;font-size:12px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">Billed To</h3>
+        <p style="margin:0;font-weight:bold;font-size:18px;">{{client_name}}</p>
+        <p style="margin:5px 0 0;font-size:13px;color:#64748b;">Period: {{period_str}}</p>
     </div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:30px;">
-        <thead><tr style="background:#f8fafc;"><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;">Date</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;">Description</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;">Amount</th></tr></thead>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:40px;">
+        <thead><tr style="background:#f8fafc;"><th style="padding:12px 15px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:13px;text-transform:uppercase;">Date</th><th style="padding:12px 15px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:13px;text-transform:uppercase;">Description</th><th style="padding:12px 15px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:13px;text-transform:uppercase;">Amount</th></tr></thead>
         <tbody>{{table_rows}}</tbody>
     </table>
-    <div style="display:flex;justify-content:space-between;">
-        <div style="width:40%;"><p style="font-size:12px;color:#64748b;margin:0 0 5px;">Bank: {{bank}}<br>A/c: {{ac}}<br>IFSC: {{ifsc}}</p><img src="{{qr}}" style="width:100px;height:100px;{{qr_display}}"></div>
-        <div style="width:40%;text-align:right;"><h3 style="margin:0;font-size:20px;color:#0f172a;padding-top:10px;border-top:2px solid #e2e8f0;">Total: {{total}}</h3><br><br><img src="{{sig}}" style="height:50px;{{sig_display}}"></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+        <div style="width:40%;"><p style="font-size:12px;color:#64748b;margin:0 0 10px;line-height:1.5;"><b>Bank Transfer Details:</b><br>Bank: {{bank}}<br>A/c No: {{ac}}<br>IFSC: {{ifsc}}</p><img src="{{qr}}" style="width:110px;height:110px;border:1px solid #e2e8f0;padding:5px;border-radius:10px;{{qr_display}}"></div>
+        <div style="width:40%;text-align:right;"><h3 style="margin:0;font-size:24px;color:#0f172a;padding-top:15px;border-top:2px solid #e2e8f0;">Total Due: {{total}}</h3><br><br><img src="{{sig}}" style="height:60px;margin-left:auto;{{sig_display}}"></div>
     </div>
 </div>`,
-                st: `<div class="pdf-template-style" style="padding: 20px; font-family: sans-serif; color: #1e293b; background: white;">
+                st: `<div class="pdf-template-style" style="padding: 20px 40px; font-family: sans-serif; color: #1e293b; background: white;">
     <div style="display:flex;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:20px;margin-bottom:20px;">
-        <div><h1 style="margin:0;color:#0f172a;font-size:24px;">{{pro_name}}</h1></div>
-        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:20px;">STATEMENT OF ACCOUNT</h2><p style="margin:5px 0 0;font-size:12px;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
+        <div><h1 style="margin:0;color:#0f172a;font-size:28px;">{{pro_name}}</h1></div>
+        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:20px;letter-spacing:1px;">STATEMENT OF ACCOUNT</h2><p style="margin:8px 0 0;font-size:13px;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
     </div>
-    <div style="margin-bottom:20px;"><p style="margin:0;font-weight:bold;font-size:16px;">{{client_name}}</p><p style="margin:5px 0 0;font-size:14px;">Period: {{period_str}}</p></div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:30px;">
-        <thead><tr style="background:#f8fafc;"><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;">Date</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;">Details</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;">Debit</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;">Credit</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;">Balance</th></tr></thead>
+    <div style="margin-bottom:30px;"><p style="margin:0;font-weight:bold;font-size:18px;">{{client_name}}</p><p style="margin:5px 0 0;font-size:13px;color:#64748b;">Period: {{period_str}}</p></div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:40px;">
+        <thead><tr style="background:#f8fafc;"><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:12px;">Date</th><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:12px;">Details</th><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:12px;">Debit (Work)</th><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:12px;">Credit (Paid)</th><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:12px;">Balance</th></tr></thead>
         <tbody>{{table_rows}}</tbody>
     </table>
-    <div style="text-align:right;"><h3 style="margin:0;font-size:18px;">Closing Balance: {{total}}</h3><p style="font-size:12px;color:#64748b;">(Positive balance indicates amount due)</p></div>
+    <div style="text-align:right;"><h3 style="margin:0;font-size:20px;color:#0f172a;">Closing Balance: {{total}}</h3><p style="font-size:12px;color:#64748b;margin-top:5px;">(Positive balance indicates amount due)</p><br><br><img src="{{sig}}" style="height:60px;margin-left:auto;{{sig_display}}"></div>
 </div>`
             },
             loadTplText: () => {
@@ -878,11 +931,11 @@
                 const t = { inv: document.getElementById('tpl-inv').value, st: document.getElementById('tpl-st').value };
                 try {
                     await setDoc(doc(db, ui.getTenantPath('settings'), 'global'), { templates: t }, { merge: true });
-                    ui.showToast('Templates saved', 'success');
+                    ui.showToast('Templates saved securely', 'success');
                 } catch(e) { ui.showToast(e.message, 'error'); }
             },
             resetTpl: () => {
-                ui.confirm('Reset to defaults? Custom edits will be lost.', () => {
+                ui.confirm('Reset templates to defaults? All custom HTML edits will be permanently lost.', () => {
                     document.getElementById('tpl-inv').value = window.settingsHelper.defaultTpl.inv;
                     document.getElementById('tpl-st').value = window.settingsHelper.defaultTpl.st;
                 });
@@ -901,41 +954,41 @@
                 document.getElementById('table-documents').innerHTML = f.map(i => {
                     const c = state.clients.find(x=>x.id===i.client_id);
                     const isPaid = i.status === 'Paid' || i.type === 'REC';
-                    const sCol = isPaid ? 'text-emerald-500 bg-emerald-50' : 'text-amber-600 bg-amber-50';
+                    const sCol = isPaid ? 'text-emerald-600 bg-emerald-100 border border-emerald-200' : 'text-amber-700 bg-amber-100 border border-amber-200';
                     return `
-                    <tr class="hover:bg-slate-50 transition group">
-                        <td class="px-4 py-3 font-mono text-xs font-bold text-slate-700">${i.invoice_no}</td>
-                        <td class="px-4 py-3">${ui.fmtDate(i.date)}</td>
-                        <td class="px-4 py-3 font-semibold text-slate-800">${c?c.name:'-'}</td>
-                        <td class="px-4 py-3 font-bold">${ui.fmtMoney(i.total)}</td>
-                        <td class="px-4 py-3"><span class="px-2 py-1 rounded text-xs font-bold ${sCol}">${i.status || (i.type==='REC'?'Paid':'Unpaid')}</span></td>
-                        <td class="px-4 py-3 text-right opacity-0 group-hover:opacity-100 transition">
-                            <button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" class="text-blue-500 hover:text-blue-700 mx-1" title="Preview"><i class="fa-solid fa-eye"></i></button>
-                            <button onclick="window.docsHelper.processPDF('${i.id}', 'download')" class="text-slate-400 hover:text-brand mx-1" title="Download"><i class="fa-solid fa-download"></i></button>
-                            <button onclick="window.docsHelper.processPDF('${i.id}', 'share')" class="text-indigo-400 hover:text-indigo-600 mx-1" title="Share"><i class="fa-solid fa-share-nodes"></i></button>
-                            ${!isPaid && i.type !== 'ST' ? `<button onclick="window.docsHelper.openPayModal('${i.id}')" class="text-emerald-500 hover:text-emerald-600 mx-1 font-semibold text-xs ml-2 border border-emerald-200 px-2 py-1 rounded">Mark Paid</button>` : ''}
-                            <button onclick="window.docsHelper.voidDoc('${i.id}')" class="text-slate-300 hover:text-rose-500 mx-1 ml-2" title="Delete/Void"><i class="fa-solid fa-trash"></i></button>
+                    <tr class="hover:bg-slate-50 transition group border-b border-slate-50 last:border-0">
+                        <td class="px-4 py-4 font-mono text-xs font-bold text-slate-800">${i.invoice_no}</td>
+                        <td class="px-4 py-4 font-medium text-slate-600">${ui.fmtDate(i.date)}</td>
+                        <td class="px-4 py-4 font-bold text-slate-800">${c?c.name:'-'}</td>
+                        <td class="px-4 py-4 font-bold text-base text-slate-800">${ui.fmtMoney(i.total)}</td>
+                        <td class="px-4 py-4"><span class="px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wide ${sCol}">${i.status || (i.type==='REC'?'Paid':'Unpaid')}</span></td>
+                        <td class="px-4 py-4 text-right opacity-0 group-hover:opacity-100 transition">
+                            <button onclick="window.docsHelper.processPDF('${i.id}', 'preview')" class="text-blue-500 hover:text-blue-700 mx-1 transition" title="Preview"><i class="fa-solid fa-eye text-lg"></i></button>
+                            <button onclick="window.docsHelper.processPDF('${i.id}', 'download')" class="text-slate-400 hover:text-brand mx-1 transition" title="Download"><i class="fa-solid fa-download text-lg"></i></button>
+                            <button onclick="window.docsHelper.processPDF('${i.id}', 'share')" class="text-indigo-400 hover:text-indigo-600 mx-1 transition" title="Share"><i class="fa-solid fa-share-nodes text-lg"></i></button>
+                            ${!isPaid && i.type !== 'ST' ? `<button onclick="window.docsHelper.openPayModal('${i.id}')" class="text-emerald-500 hover:text-emerald-600 mx-2 font-bold text-xs border-2 border-emerald-200 px-3 py-1.5 rounded-xl hover:bg-emerald-50 transition">Mark Paid</button>` : ''}
+                            <button onclick="window.docsHelper.voidDoc('${i.id}')" class="text-slate-300 hover:text-rose-500 mx-2 transition" title="Delete/Void"><i class="fa-solid fa-trash text-lg"></i></button>
                         </td>
                     </tr>`;
-                }).join('') || '<tr><td colspan="6" class="text-center py-8 text-slate-400">No documents found.</td></tr>';
+                }).join('') || '<tr><td colspan="6" class="text-center py-12 text-slate-400 font-semibold"><i class="fa-solid fa-file-invoice text-3xl mb-3 block opacity-50"></i>No documents generated yet.</td></tr>';
             },
             voidDoc: (id) => {
-                ui.confirm('Delete this document? If it is a receipt, the linked invoice will become unpaid.', async () => {
+                ui.confirm('Are you sure you want to permanently delete this document? \n\nIf this is a Payment Receipt, the linked invoice will automatically become Unpaid.', async () => {
                     const docToVoid = state.invoices.find(i => i.id === id);
                     if(!docToVoid) return;
                     try {
                         const batch = writeBatch(db);
-                        // If receipt, unlink and mark invoice unpaid
+                        // If it's a receipt, unlink and mark original invoice unpaid
                         if(docToVoid.type === 'REC' && docToVoid.linked_invoice_id) {
                             batch.update(doc(db, ui.getTenantPath('invoices'), docToVoid.linked_invoice_id), { status: 'Unpaid', payment_ref: null, payment_date: null });
                         }
-                        // Free work items
+                        // Free up work items if it's an invoice
                         if(docToVoid.items) {
                             docToVoid.items.forEach(wi => batch.update(doc(db, ui.getTenantPath('workItems'), wi), { invoice_id: null }));
                         }
                         batch.delete(doc(db, ui.getTenantPath('invoices'), id));
                         await batch.commit();
-                        ui.showToast('Document Deleted', 'success');
+                        ui.showToast('Document Deleted Successfully', 'success');
                     } catch(e) { ui.showToast(e.message, 'error'); }
                 });
             },
@@ -952,6 +1005,7 @@
             },
             onBillFiltersChange: () => {
                 const t = document.getElementById('bill-type').value, cid = document.getElementById('bill-client').value, start = document.getElementById('bill-start').value, end = document.getElementById('bill-end').value;
+                
                 if(t==='IND') {
                     const cSel = document.getElementById('bill-case');
                     const curr = cSel.value;
@@ -960,8 +1014,7 @@
                 }
                 
                 if(!cid || !end) { document.getElementById('bill-items-wrapper').classList.add('hidden'); return; }
-                
-                if(t==='ST') return; // ST doesn't select items
+                if(t==='ST') return; // ST doesn't select items interactively
                 
                 document.getElementById('bill-items-wrapper').classList.remove('hidden');
                 const rebill = document.getElementById('bill-rebill').checked;
@@ -970,7 +1023,6 @@
                 let items = state.workItems.filter(w => w.client_id === cid && w.date <= end && (!start || w.date >= start));
                 if(t==='IND' && caseId) items = items.filter(w => w.case_id === caseId);
                 
-                // Filter unbilled, OR previously billed but unpaid if rebill is checked
                 items = items.filter(w => {
                     if(!w.invoice_id) return true;
                     if(rebill) { const inv = state.invoices.find(i => i.id === w.invoice_id); return inv && inv.status !== 'Paid'; }
@@ -978,11 +1030,11 @@
                 });
 
                 document.getElementById('bill-items-list').innerHTML = items.map(w => `
-                    <label class="flex justify-between items-center p-2 hover:bg-slate-100 rounded cursor-pointer border-b border-slate-100">
-                        <div class="flex items-center"><input type="checkbox" class="bill-item-cb w-4 h-4 text-brand rounded mr-3" value="${w.id}" data-amt="${w.prepaid?0:w.amount}" checked onchange="window.docsHelper.calcBillTotal()"><span class="text-xs text-slate-500 mr-2">${ui.fmtDate(w.date)}</span><span class="truncate max-w-[200px]">${w.desc}</span></div>
-                        <span class="font-semibold text-slate-700">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</span>
+                    <label class="flex justify-between items-center p-3 hover:bg-slate-100 rounded-xl cursor-pointer border-b border-slate-100 last:border-0 transition">
+                        <div class="flex items-center"><input type="checkbox" class="bill-item-cb w-5 h-5 text-brand rounded border-slate-300 mr-4 focus:ring-brand" value="${w.id}" data-amt="${w.prepaid?0:w.amount}" checked onchange="window.docsHelper.calcBillTotal()"><span class="text-xs font-bold text-slate-400 mr-3 w-16">${ui.fmtDate(w.date)}</span><span class="truncate max-w-[250px] font-medium text-slate-700">${w.desc}</span></div>
+                        <span class="font-bold text-slate-800">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</span>
                     </label>
-                `).join('') || '<p class="text-xs text-slate-400 p-2">No work items found for these filters.</p>';
+                `).join('') || '<p class="text-sm font-semibold text-slate-400 p-4 text-center">No work items found matching criteria.</p>';
                 window.docsHelper.calcBillTotal();
             },
             calcBillTotal: () => {
@@ -991,7 +1043,7 @@
             },
             generate: async () => {
                 const t = document.getElementById('bill-type').value, cid = document.getElementById('bill-client').value, start = document.getElementById('bill-start').value, end = document.getElementById('bill-end').value;
-                if(!cid || !end) return ui.showToast('Client and End Date required', 'error');
+                if(!cid || !end) return ui.showToast('Client and End Date are mandatory', 'error');
 
                 const s = state.settings;
                 const pref = s.prefs?.[t] || `${t}-`;
@@ -1005,13 +1057,12 @@
 
                 if(t !== 'ST') {
                     const sel = Array.from(document.querySelectorAll('.bill-item-cb:checked'));
-                    if(sel.length === 0) return ui.showToast('Select at least one item', 'error');
+                    if(sel.length === 0) return ui.showToast('Select at least one work item to bill', 'error');
                     payload.items = sel.map(cb => cb.value);
                     payload.total = sel.reduce((s, cb) => s + parseFloat(cb.dataset.amt), 0);
                     payload.items.forEach(id => batch.update(doc(db, ui.getTenantPath('workItems'), id), { invoice_id: invRef.id }));
                 } else {
-                    // Statement Logic handled at render time. Just save bounds.
-                    payload.total = 0; // calc later
+                    payload.total = 0; // Evaluated dynamically at render time
                 }
 
                 batch.set(invRef, payload);
@@ -1020,7 +1071,7 @@
                 try {
                     await batch.commit();
                     document.getElementById('modal-bill').classList.add('hidden');
-                    ui.showToast('Generated ' + invNo, 'success');
+                    ui.showToast(`Document ${invNo} Generated`, 'success');
                     window.docsHelper.processPDF(invRef.id, 'preview');
                 } catch(e) { ui.showToast(e.message, 'error'); }
             },
@@ -1044,7 +1095,7 @@
                 const d = document.getElementById('pay-date').value;
                 const r = document.getElementById('pay-ref').value;
 
-                if(!cid || !amt || !d) return ui.showToast('Fill required fields', 'error');
+                if(!cid || !amt || !d) return ui.showToast('Please fill all required payment fields', 'error');
 
                 const s = state.settings;
                 const pref = s.prefs?.REC || 'REC-';
@@ -1062,7 +1113,7 @@
                 try {
                     await batch.commit();
                     document.getElementById('modal-pay').classList.add('hidden');
-                    ui.showToast('Payment Recorded', 'success');
+                    ui.showToast(`Payment ${recNo} Recorded`, 'success');
                 } catch(e) { ui.showToast(e.message, 'error'); }
             },
             generateHTML: async (inv) => {
@@ -1076,7 +1127,7 @@
                 if(inv.type !== 'ST' && inv.type !== 'REC') {
                     const items = (inv.items || []).map(id => state.workItems.find(w => w.id === id)).filter(Boolean);
                     items.sort((a,b) => a.date.localeCompare(b.date));
-                    rows = items.map(w => `<tr><td style="padding:10px;border-bottom:1px solid #e2e8f0;">${ui.fmtDate(w.date)}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;">${w.desc}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td></tr>`).join('');
+                    rows = items.map(w => `<tr style="page-break-inside: avoid !important;"><td style="padding:15px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#64748b;">${ui.fmtDate(w.date)}</td><td style="padding:15px;border-bottom:1px solid #e2e8f0;font-size:14px;color:#334155;"><b>${w.category}</b>: ${w.desc}</td><td style="padding:15px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:14px;font-weight:bold;">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td></tr>`).join('');
                 } else if(inv.type === 'ST') {
                     const allW = state.workItems.filter(w => w.client_id === inv.client_id && w.date <= inv.period_end);
                     const allR = state.invoices.filter(i => i.type === 'REC' && i.client_id === inv.client_id && i.date <= inv.period_end);
@@ -1091,30 +1142,30 @@
                     let events = [];
                     if(inv.period_start) events.push({ date: inv.period_start, desc: 'Opening Balance', dr: 0, cr: 0, isOp: true });
                     
-                    allW.filter(w => !inv.period_start || w.date >= inv.period_start).forEach(w => events.push({ date: w.date, desc: `Work: ${w.desc}`, dr: w.prepaid?0:w.amount, cr: 0 }));
-                    allR.filter(i => !inv.period_start || i.date >= inv.period_start).forEach(i => events.push({ date: i.date, desc: `Receipt: ${i.invoice_no} ${i.payment_ref?`(${i.payment_ref})`:''}`, dr: 0, cr: i.total }));
+                    allW.filter(w => !inv.period_start || w.date >= inv.period_start).forEach(w => events.push({ date: w.date, desc: `Work Logged: ${w.desc}`, dr: w.prepaid?0:w.amount, cr: 0 }));
+                    allR.filter(i => !inv.period_start || i.date >= inv.period_start).forEach(i => events.push({ date: i.date, desc: `Payment Received: ${i.invoice_no} ${i.payment_ref?`(${i.payment_ref})`:''}`, dr: 0, cr: i.total }));
                     
                     events.sort((a,b) => a.date.localeCompare(b.date));
 
                     rows = events.map(e => {
                         if(!e.isOp) runBal += e.dr - e.cr;
-                        return `<tr><td style="padding:10px;border-bottom:1px solid #e2e8f0;">${ui.fmtDate(e.date)}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;">${e.desc}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;">${e.dr?ui.fmtMoney(e.dr):'-'}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;">${e.cr?ui.fmtMoney(e.cr):'-'}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:bold;">${runBal<0?ui.fmtMoney(Math.abs(runBal))+' (Cr)':ui.fmtMoney(runBal)}</td></tr>`;
+                        return `<tr style="page-break-inside: avoid !important;"><td style="padding:12px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#64748b;">${ui.fmtDate(e.date)}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#334155;">${e.desc}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:13px;">${e.dr?ui.fmtMoney(e.dr):'-'}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:13px;color:#10b981;">${e.cr?ui.fmtMoney(e.cr):'-'}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:bold;font-size:13px;">${runBal<0?ui.fmtMoney(Math.abs(runBal))+' (Cr)':ui.fmtMoney(runBal)}</td></tr>`;
                     }).join('');
                 }
 
-                // QR Code for Invoices
                 let qrUri = '';
                 if(s.upi && inv.type !== 'ST' && inv.type !== 'REC') {
                     const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tn=${encodeURIComponent(inv.invoice_no)}&am=${inv.total}&cu=INR`;
                     const qD = document.createElement('div');
                     new QRCode(qD, { text: str, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.L });
-                    await new Promise(res => setTimeout(res, 100)); // wait for render
-                    qrUri = qD.querySelector('canvas').toDataURL();
+                    await new Promise(res => setTimeout(res, 150)); // allow canvas to render
+                    const cNode = qD.querySelector('canvas');
+                    if(cNode) qrUri = cNode.toDataURL();
                 }
 
                 const map = {
-                    '{{pro_name}}': s.name || 'Legal Professional', '{{pro_phone}}': s.phone || '', '{{pro_email}}': s.email || '', '{{pro_pan}}': s.pan || '',
-                    '{{inv_no}}': inv.invoice_no, '{{date}}': ui.fmtDate(inv.date), '{{client_name}}': c.name || 'Unknown',
+                    '{{pro_name}}': s.name || 'Legal Professional', '{{pro_phone}}': s.phone || '', '{{pro_email}}': s.email || '', '{{pro_pan}}': s.pan || 'N/A',
+                    '{{inv_no}}': inv.invoice_no, '{{date}}': ui.fmtDate(inv.date), '{{client_name}}': c.name || 'Unknown Client',
                     '{{period_str}}': inv.period_start ? `${ui.fmtDate(inv.period_start)} to ${ui.fmtDate(inv.period_end)}` : `Upto ${ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
                     '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
@@ -1135,17 +1186,17 @@
                 const container = document.getElementById('pdf-root-container');
                 container.innerHTML = html;
 
-                // html2pdf strict config for A4 fitting via out-of-bounds hidden container
+                // Strict A4 formatting parameters
                 const opt = {
                     margin: [15, 15, 20, 15],
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, windowWidth: 800 },
+                    html2canvas: { scale: 2, useCORS: true, windowWidth: 800, logging: false },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                     pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.avoid-break'] }
                 };
 
-                ui.showToast('Generating PDF...', 'info');
+                ui.showToast('Generating PDF Engine...', 'info');
                 try {
                     const worker = html2pdf().set(opt).from(container);
                     
@@ -1153,7 +1204,7 @@
                         await worker.save();
                         ui.showToast('Downloaded PDF', 'success');
                     } else {
-                        // Directly fetch blob to prevent iFrame/Share empty data string errors
+                        // Secure Blob Generation Strategy
                         await worker.toPdf().get('pdf').then(async (pdf) => {
                             const pdfBlob = pdf.output('blob');
                             
@@ -1164,12 +1215,11 @@
                             } else if (action === 'share') {
                                 const file = new File([pdfBlob], `${inv.invoice_no}.pdf`, { type: 'application/pdf' });
                                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                                    await navigator.share({
-                                        title: `Document ${inv.invoice_no}`,
-                                        files: [file]
-                                    });
+                                    try {
+                                        await navigator.share({ title: `Document ${inv.invoice_no}`, files: [file] });
+                                    } catch(e) { ui.showToast('Share cancelled', 'info'); }
                                 } else {
-                                    ui.showToast('Native sharing not supported. Downloading...', 'info');
+                                    ui.showToast('Native sharing not supported here. Downloading...', 'info');
                                     await worker.save();
                                 }
                             }
@@ -1177,60 +1227,61 @@
                     }
                 } catch(err) {
                     console.error(err);
-                    ui.showToast('PDF Generation failed', 'error');
+                    ui.showToast('PDF Engine Error. Try again.', 'error');
                 }
             }
         };
 
 
         const initDataListeners = () => {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            
             const cols = ['invoices', 'clients', 'cases', 'workItems'];
             cols.forEach(cName => {
-                onSnapshot(collection(db, ui.getTenantPath(cName)), (snap) => {
+                const unsub = onSnapshot(collection(db, ui.getTenantPath(cName)), (snap) => {
                     state[cName] = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     window.ui.populateSelects();
-                    if(!document.getElementById('view-dashboard').classList.contains('hidden')) window.dashboardHelper.render();
-                    if(!document.getElementById('view-logs').classList.contains('hidden')) window.logsHelper.render();
-                    if(!document.getElementById('view-directory').classList.contains('hidden')) window.directoryHelper.render();
-                    if(!document.getElementById('view-docs').classList.contains('hidden')) window.docsHelper.render();
-                }, (err) => { console.error(`Error syncing ${cName}:`, err); });
+                    window.ui.refreshCurrentView();
+                }, (err) => { 
+                    console.error(`Sync err ${cName}:`, err);
+                    if(err.code === 'permission-denied') ui.showToast('Database permission denied. Check your Firestore Rules.', 'error');
+                });
+                listeners.push(unsub);
             });
 
-            onSnapshot(doc(db, ui.getTenantPath('settings'), 'global'), (snap) => {
+            const unsubSettings = onSnapshot(doc(db, ui.getTenantPath('settings'), 'global'), (snap) => {
                 if(snap.exists()) {
                     state.settings = snap.data();
                     window.settingsHelper.populateForm();
-                    window.ui.populateSelects(); // Categories might update
+                    window.ui.populateSelects(); 
                 }
-                
-                // Hide loader
-                document.getElementById('loading-overlay').classList.add('opacity-0');
-                setTimeout(() => document.getElementById('loading-overlay').classList.add('hidden'), 300);
-            }, (err) => { console.error('Settings error:', err); });
+                setTimeout(() => document.getElementById('loading-overlay').classList.add('hidden'), 500);
+            }, (err) => { 
+                console.error('Settings err:', err);
+                setTimeout(() => document.getElementById('loading-overlay').classList.add('hidden'), 500);
+            });
+            listeners.push(unsubSettings);
         };
 
         const boot = async () => {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
+            // Listen for Auth State changes
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    authReady = true;
+                    document.getElementById('login-overlay').classList.add('opacity-0');
+                    setTimeout(() => document.getElementById('login-overlay').classList.add('hidden'), 500);
+                    
+                    initDataListeners();
+                    window.ui.switchTab('dashboard');
                 } else {
-                    await signInAnonymously(auth);
+                    authReady = false;
+                    document.getElementById('login-overlay').classList.remove('hidden');
+                    setTimeout(() => document.getElementById('login-overlay').classList.remove('opacity-0'), 10);
                 }
-                
-                userId = auth.currentUser.uid;
-                authReady = true;
-                
-                // Start Default view
-                window.ui.switchTab('dashboard');
-                initDataListeners();
-
-            } catch (err) {
-                console.error("Auth Failed:", err);
-                document.getElementById('loading-overlay').innerHTML = `<div class="text-rose-500 font-bold p-4 bg-white rounded shadow text-center">Authentication Failed.<br><span class="text-xs text-slate-500">${err.message}</span></div>`;
-            }
+            });
         };
 
-        // Attach main startup
         window.addEventListener('DOMContentLoaded', boot);
 
     </script>
