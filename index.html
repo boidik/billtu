@@ -547,7 +547,7 @@
 
         // Visually Sticking & Professional Templates
         const defaultTpls = {
-            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 40px; background: #fff; width: 800px; box-sizing: border-box;">
+            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 40px 50px; background: #fff; width: 800px; margin: 0 auto; box-sizing: border-box;">
             <div class="pdf-page-break" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
                 <div style="width: 50%;">
                     <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700; line-height: 1.2;">{{pro_name}}</h1>
@@ -1293,9 +1293,9 @@
 
                 // Ensure absolute strictness for the PDF boundary to prevent cutoff.
                 const opt = {
-                    margin: [10, 10, 15, 10], // mm
+                    margin: [15, 0, 15, 0], // mm (Top, Right, Bottom, Left). Zero side margins force perfect edge-to-edge centering.
                     filename: `${inv.invoice_no}.pdf`,
-                    image: { type: 'jpeg', quality: 0.98 },
+                    image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
                         scale: 2, 
                         useCORS: true, 
@@ -1304,7 +1304,8 @@
                         x: 0,
                         y: 0,
                         scrollX: 0,
-                        scrollY: 0
+                        scrollY: 0,
+                        backgroundColor: '#ffffff'
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                     pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.pdf-page-break'] }
