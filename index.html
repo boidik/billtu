@@ -340,8 +340,8 @@
     </div>
 
     <!-- PDF Generation Root (Invisible but active in DOM to prevent Blank rendering by html2canvas) -->
-    <div id="pdf-wrapper" class="fixed top-0 left-0 w-[800px] h-[1122px] overflow-hidden z-[-9999] opacity-[0.001] pointer-events-none">
-        <div id="pdf-root-container" class="w-[800px] bg-white text-black min-h-[1122px]"></div>
+    <div id="pdf-wrapper" class="fixed top-0 left-0 w-[800px] min-h-[1122px] overflow-hidden z-[-9999] opacity-[0.001] pointer-events-none">
+        <div id="pdf-root-container" class="w-[800px] bg-white text-black min-h-[1122px]" style="box-sizing: border-box;"></div>
     </div>
 
     <!-- PDF Preview Modal -->
@@ -874,36 +874,36 @@
                 }
             },
             defaultTpl: {
-                inv: `<div class="pdf-template-style" style="padding: 20px 40px; font-family: sans-serif; color: #1e293b; background: white;">
+                inv: `<div class="pdf-template-style" style="padding: 30px 40px; font-family: sans-serif; color: #1e293b; background: white; box-sizing: border-box; width: 100%;">
     <div style="display:flex;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:20px;margin-bottom:20px;">
-        <div><h1 style="margin:0;color:#0f172a;font-size:28px;">{{pro_name}}</h1><p style="margin:8px 0 0;font-size:12px;color:#64748b;">Phone: {{pro_phone}} | Email: {{pro_email}}<br>PAN: <b>{{pro_pan}}</b></p></div>
-        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:24px;letter-spacing:1px;">INVOICE</h2><p style="margin:8px 0 0;font-size:13px;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
+        <div style="max-width: 60%;"><h1 style="margin:0;color:#0f172a;font-size:24px;line-height:1.2;">{{pro_name}}</h1><p style="margin:8px 0 0;font-size:11px;color:#64748b;line-height:1.5;">Phone: {{pro_phone}} | Email: {{pro_email}}<br>PAN: <b>{{pro_pan}}</b></p></div>
+        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:20px;letter-spacing:1px;">INVOICE</h2><p style="margin:8px 0 0;font-size:11px;line-height:1.5;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
     </div>
-    <div style="margin-bottom:40px;">
-        <h3 style="margin:0 0 10px;font-size:12px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">Billed To</h3>
-        <p style="margin:0;font-weight:bold;font-size:18px;">{{client_name}}</p>
-        <p style="margin:5px 0 0;font-size:13px;color:#64748b;">Period: {{period_str}}</p>
+    <div style="margin-bottom:30px;">
+        <h3 style="margin:0 0 8px;font-size:10px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">Billed To</h3>
+        <p style="margin:0;font-weight:bold;font-size:16px;color:#0f172a;">{{client_name}}</p>
+        <p style="margin:4px 0 0;font-size:11px;color:#64748b;">Period: {{period_str}}</p>
     </div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:40px;">
-        <thead><tr style="background:#f8fafc;"><th style="padding:12px 15px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:13px;text-transform:uppercase;">Date</th><th style="padding:12px 15px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:13px;text-transform:uppercase;">Description</th><th style="padding:12px 15px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:13px;text-transform:uppercase;">Amount</th></tr></thead>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:30px;table-layout:fixed;">
+        <thead><tr style="background:#f8fafc;"><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:11px;text-transform:uppercase;width:20%;">Date</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:11px;text-transform:uppercase;width:55%;">Description</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:11px;text-transform:uppercase;width:25%;">Amount</th></tr></thead>
         <tbody>{{table_rows}}</tbody>
     </table>
     <div style="display:flex;justify-content:space-between;align-items:flex-end;">
-        <div style="width:40%;"><p style="font-size:12px;color:#64748b;margin:0 0 10px;line-height:1.5;"><b>Bank Transfer Details:</b><br>Bank: {{bank}}<br>A/c No: {{ac}}<br>IFSC: {{ifsc}}</p><img src="{{qr}}" style="width:110px;height:110px;border:1px solid #e2e8f0;padding:5px;border-radius:10px;{{qr_display}}"></div>
-        <div style="width:40%;text-align:right;"><h3 style="margin:0;font-size:24px;color:#0f172a;padding-top:15px;border-top:2px solid #e2e8f0;">Total Due: {{total}}</h3><br><br><img src="{{sig}}" style="height:60px;margin-left:auto;{{sig_display}}"></div>
+        <div style="width:45%;"><p style="font-size:11px;color:#64748b;margin:0 0 10px;line-height:1.5;"><b>Bank Transfer Details:</b><br>Bank: {{bank}}<br>A/c No: {{ac}}<br>IFSC: {{ifsc}}</p><img src="{{qr}}" style="width:90px;height:90px;border:1px solid #e2e8f0;padding:5px;border-radius:8px;{{qr_display}}"></div>
+        <div style="width:45%;text-align:right;"><h3 style="margin:0;font-size:20px;color:#0f172a;padding-top:15px;border-top:2px solid #e2e8f0;">Total Due: {{total}}</h3><br><br><img src="{{sig}}" style="height:50px;object-fit:contain;margin-left:auto;{{sig_display}}"></div>
     </div>
 </div>`,
-                st: `<div class="pdf-template-style" style="padding: 20px 40px; font-family: sans-serif; color: #1e293b; background: white;">
+                st: `<div class="pdf-template-style" style="padding: 30px 40px; font-family: sans-serif; color: #1e293b; background: white; box-sizing: border-box; width: 100%;">
     <div style="display:flex;justify-content:space-between;border-bottom:2px solid #e2e8f0;padding-bottom:20px;margin-bottom:20px;">
-        <div><h1 style="margin:0;color:#0f172a;font-size:28px;">{{pro_name}}</h1></div>
-        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:20px;letter-spacing:1px;">STATEMENT OF ACCOUNT</h2><p style="margin:8px 0 0;font-size:13px;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
+        <div style="max-width: 60%;"><h1 style="margin:0;color:#0f172a;font-size:24px;line-height:1.2;">{{pro_name}}</h1><p style="margin:8px 0 0;font-size:11px;color:#64748b;line-height:1.5;">Phone: {{pro_phone}} | Email: {{pro_email}}<br>PAN: <b>{{pro_pan}}</b></p></div>
+        <div style="text-align:right;"><h2 style="margin:0;color:#3b82f6;font-size:18px;letter-spacing:1px;">STATEMENT OF ACCOUNT</h2><p style="margin:8px 0 0;font-size:11px;line-height:1.5;"><b>{{inv_no}}</b><br>Date: {{date}}</p></div>
     </div>
-    <div style="margin-bottom:30px;"><p style="margin:0;font-weight:bold;font-size:18px;">{{client_name}}</p><p style="margin:5px 0 0;font-size:13px;color:#64748b;">Period: {{period_str}}</p></div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:40px;">
-        <thead><tr style="background:#f8fafc;"><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:12px;">Date</th><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:12px;">Details</th><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:12px;">Debit (Work)</th><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:12px;">Credit (Paid)</th><th style="padding:12px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:12px;">Balance</th></tr></thead>
+    <div style="margin-bottom:30px;"><h3 style="margin:0 0 8px;font-size:10px;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;">Statement For</h3><p style="margin:0;font-weight:bold;font-size:16px;color:#0f172a;">{{client_name}}</p><p style="margin:4px 0 0;font-size:11px;color:#64748b;">Period: {{period_str}}</p></div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:30px;table-layout:fixed;">
+        <thead><tr style="background:#f8fafc;"><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:10px;width:15%;">Date</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:left;font-size:10px;width:35%;">Details</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:10px;width:15%;">Debit</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:10px;width:15%;">Credit</th><th style="padding:10px;border-bottom:2px solid #cbd5e1;text-align:right;font-size:10px;width:20%;">Balance</th></tr></thead>
         <tbody>{{table_rows}}</tbody>
     </table>
-    <div style="text-align:right;"><h3 style="margin:0;font-size:20px;color:#0f172a;">Closing Balance: {{total}}</h3><p style="font-size:12px;color:#64748b;margin-top:5px;">(Positive balance indicates amount due)</p><br><br><img src="{{sig}}" style="height:60px;margin-left:auto;{{sig_display}}"></div>
+    <div style="text-align:right;"><h3 style="margin:0;font-size:18px;color:#0f172a;">Closing Balance: {{total}}</h3><p style="font-size:10px;color:#64748b;margin-top:5px;">(Positive balance indicates amount due)</p><br><br><img src="{{sig}}" style="height:50px;object-fit:contain;margin-left:auto;{{sig_display}}"></div>
 </div>`
             },
             loadTplText: () => {
@@ -1110,7 +1110,7 @@
                 if(inv.type !== 'ST' && inv.type !== 'REC') {
                     const items = (inv.items || []).map(id => state.workItems.find(w => w.id === id)).filter(Boolean);
                     items.sort((a,b) => a.date.localeCompare(b.date));
-                    rows = items.map(w => `<tr style="page-break-inside: avoid !important;"><td style="padding:15px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#64748b;">${ui.fmtDate(w.date)}</td><td style="padding:15px;border-bottom:1px solid #e2e8f0;font-size:14px;color:#334155;"><b>${w.category}</b>: ${w.desc}</td><td style="padding:15px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:14px;font-weight:bold;">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td></tr>`).join('');
+                    rows = items.map(w => `<tr style="page-break-inside: avoid !important;"><td style="padding:12px 10px;border-bottom:1px solid #e2e8f0;font-size:11px;color:#64748b;vertical-align:top;">${ui.fmtDate(w.date)}</td><td style="padding:12px 10px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#334155;vertical-align:top;word-wrap:break-word;"><b>${w.category}</b>: ${w.desc}</td><td style="padding:12px 10px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:12px;font-weight:bold;vertical-align:top;">${w.prepaid?'Prepaid':ui.fmtMoney(w.amount)}</td></tr>`).join('');
                 } else if(inv.type === 'ST') {
                     const allW = state.workItems.filter(w => w.client_id === inv.client_id && w.date <= inv.period_end);
                     const allR = state.invoices.filter(i => i.type === 'REC' && i.client_id === inv.client_id && i.date <= inv.period_end);
@@ -1132,7 +1132,7 @@
 
                     rows = events.map(e => {
                         if(!e.isOp) runBal += e.dr - e.cr;
-                        return `<tr style="page-break-inside: avoid !important;"><td style="padding:12px;border-bottom:1px solid #e2e8f0;font-size:12px;color:#64748b;">${ui.fmtDate(e.date)}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;font-size:13px;color:#334155;">${e.desc}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:13px;">${e.dr?ui.fmtMoney(e.dr):'-'}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:13px;color:#10b981;">${e.cr?ui.fmtMoney(e.cr):'-'}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:bold;font-size:13px;">${runBal<0?ui.fmtMoney(Math.abs(runBal))+' (Cr)':ui.fmtMoney(runBal)}</td></tr>`;
+                        return `<tr style="page-break-inside: avoid !important;"><td style="padding:10px;border-bottom:1px solid #e2e8f0;font-size:11px;color:#64748b;vertical-align:top;">${ui.fmtDate(e.date)}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;font-size:11px;color:#334155;vertical-align:top;word-wrap:break-word;">${e.desc}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:11px;vertical-align:top;">${e.dr?ui.fmtMoney(e.dr):'-'}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;font-size:11px;color:#10b981;vertical-align:top;">${e.cr?ui.fmtMoney(e.cr):'-'}</td><td style="padding:10px;border-bottom:1px solid #e2e8f0;text-align:right;font-weight:bold;font-size:11px;vertical-align:top;">${runBal<0?ui.fmtMoney(Math.abs(runBal))+' (Cr)':ui.fmtMoney(runBal)}</td></tr>`;
                     }).join('');
                 }
 
@@ -1159,7 +1159,7 @@
 
                 let h = tpl;
                 for(let [k,v] of Object.entries(map)) h = h.replaceAll(k, v);
-                return h;
+                return `<div style="width: 800px; max-width: 800px; overflow: hidden; box-sizing: border-box; background: white;">${h}</div>`;
             },
             processPDF: async (id, action) => {
                 const inv = state.invoices.find(i => i.id === id);
@@ -1175,10 +1175,10 @@
                 await new Promise(r => setTimeout(r, 400)); 
 
                 const opt = {
-                    margin: [15, 15, 20, 15],
+                    margin: [10, 10, 15, 10], // smaller margins for more room
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true },
+                    html2canvas: { scale: 2, useCORS: true, windowWidth: 800, width: 800 }, // Explicitly enforce canvas boundaries
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                     pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.avoid-break'] }
                 };
