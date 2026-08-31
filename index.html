@@ -327,6 +327,24 @@
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">UPI ID (For QR)</label><input type="text" id="set-upi" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></div>
                     </div>
                 </div>
+
+                <!-- Clerk Settings -->
+                <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 mt-4">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-50 pb-3 flex items-center justify-between">
+                        Clerk Details & Clerkage
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Clerk Name</label><input type="text" id="set-clerk-name" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Clerk PAN</label><input type="text" id="set-clerk-pan" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Clerk Bank Name</label><input type="text" id="set-clerk-bank" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Clerk Account No.</label><input type="text" id="set-clerk-ac" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Clerk IFSC Code</label><input type="text" id="set-clerk-ifsc" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Default Clerkage %</label>
+                            <input type="number" step="0.1" id="set-clerk-pct" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none" placeholder="e.g. 10">
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Numbering -->
                 <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
@@ -476,17 +494,26 @@
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Period From</label><input type="date" id="gb-from" onchange="window.ui.gbFetchItems()" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></div>
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Period To (Max Date)</label><input type="date" id="gb-to" onchange="window.ui.gbFetchItems()" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none"></div>
                     </div>
-                    <label id="gb-rebill-wrapper" class="flex items-center gap-3 p-3 bg-amber-50 rounded-2xl cursor-pointer">
-                        <input type="checkbox" id="gb-rebill" onchange="window.ui.gbFetchItems()" class="w-5 h-5 rounded text-amber-500 border-none focus:ring-0">
-                        <span class="text-sm font-bold text-amber-800">Include previously billed items (Re-bill)</span>
-                    </label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <label id="gb-rebill-wrapper" class="flex-1 flex items-center gap-3 p-3 bg-amber-50 rounded-2xl cursor-pointer">
+                            <input type="checkbox" id="gb-rebill" onchange="window.ui.gbFetchItems()" class="w-5 h-5 rounded text-amber-500 border-none focus:ring-0">
+                            <span class="text-sm font-bold text-amber-800">Include previously billed items (Re-bill)</span>
+                        </label>
+                        <label id="gb-clerkage-wrapper" class="flex-1 flex items-center gap-3 p-3 bg-blue-50 rounded-2xl cursor-pointer hidden">
+                            <input type="checkbox" id="gb-clerkage" onchange="window.ui.gbCalcLive()" class="w-5 h-5 rounded text-blue-500 border-none focus:ring-0">
+                            <span class="text-sm font-bold text-blue-800">Apply Clerkage (<span id="gb-clerkage-label-pct">10</span>%)</span>
+                        </label>
+                    </div>
                     <div class="mt-4 border border-slate-100 rounded-2xl overflow-hidden">
-                        <div class="bg-slate-50 px-4 py-3 border-b border-slate-100 flex justify-between items-center">
+                        <div class="bg-slate-50 px-4 py-3 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" id="gb-check-all" onchange="window.ui.gbToggleAll()" class="w-4 h-4 rounded text-blue-500 border-none focus:ring-0">
                                 <span class="text-xs font-bold text-slate-600 uppercase">Select All / None</span>
                             </label>
-                            <span class="text-xs font-bold text-slate-500">Live Total: <span id="gb-live-total" class="text-blue-600 text-base">₹0.00</span></span>
+                            <div class="text-xs font-bold text-slate-500 text-right w-full sm:w-auto">
+                                <span id="gb-live-breakdown" class="mr-2 text-slate-400"></span>
+                                Live Total: <span id="gb-live-total" class="text-blue-600 text-base">₹0.00</span>
+                            </div>
                         </div>
                         <div id="gb-items-list" class="max-h-60 overflow-y-auto bg-white p-2 flex flex-col gap-1 hide-scrollbar">
                             <!-- Items inject here -->
@@ -600,18 +627,31 @@
             </table>
             <div class="pdf-page-break" style="page-break-inside: avoid; break-inside: avoid; page-break-before: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px;">
-                    <div style="width: 50%; padding-right: 20px;">
-                        <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
-                        <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-                            <tr><td style="color: #64748b; padding: 2px 0; width: 80px;">Bank:</td><td style="font-weight: 600;">{{bank}}</td></tr>
-                            <tr><td style="color: #64748b; padding: 2px 0;">Account:</td><td style="font-weight: 600;">{{ac}}</td></tr>
-                            <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
-                        </table>
-                        <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px;">
-                            <img src="{{qr}}" style="width: 90px; height: 90px; display: block;" alt="UPI QR">
+                    <div style="width: 60%; display: flex; gap: 20px;">
+                        <div style="flex: 1;">
+                            <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
+                            <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
+                                <tr><td style="color: #64748b; padding: 2px 0; width: 60px;">Name:</td><td style="font-weight: 600;">{{pro_name}}</td></tr>
+                                <tr><td style="color: #64748b; padding: 2px 0;">Bank:</td><td style="font-weight: 600;">{{bank}}</td></tr>
+                                <tr><td style="color: #64748b; padding: 2px 0;">A/C:</td><td style="font-weight: 600;">{{ac}}</td></tr>
+                                <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
+                            </table>
+                            <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px;">
+                                <img src="{{qr}}" style="width: 90px; height: 90px; display: block;" alt="UPI QR">
+                            </div>
+                        </div>
+                        <div style="flex: 1; {{clerk_display}}">
+                            <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Clerk Details</p>
+                            <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
+                                <tr><td style="color: #64748b; padding: 2px 0; width: 60px;">Name:</td><td style="font-weight: 600;">{{clerk_name}}</td></tr>
+                                <tr><td style="color: #64748b; padding: 2px 0;">Bank:</td><td style="font-weight: 600;">{{clerk_bank}}</td></tr>
+                                <tr><td style="color: #64748b; padding: 2px 0;">A/C:</td><td style="font-weight: 600;">{{clerk_ac}}</td></tr>
+                                <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{clerk_ifsc}}</td></tr>
+                                <tr><td style="color: #64748b; padding: 2px 0;">PAN:</td><td style="font-weight: 600;">{{clerk_pan}}</td></tr>
+                            </table>
                         </div>
                     </div>
-                    <div style="width: 40%;">
+                    <div style="width: 35%;">
                         <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 40px; text-align: right;">
                             <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">Total Amount Due</p>
                             <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800; color: #1e3a8a;">{{total}}</p>
@@ -834,7 +874,9 @@
             // Settings Sync
             populateSettingsForm: () => {
                 const s = state.settings;
-                ['name','phone','email','pan','bank','ac','ifsc','upi'].forEach(k => { if(document.getElementById(`set-${k}`)) document.getElementById(`set-${k}`).value = s[k] || ''; });
+                ['name','phone','email','pan','bank','ac','ifsc','upi','clerk_name','clerk_pan','clerk_bank','clerk_ac','clerk_ifsc','clerk_pct'].forEach(k => { 
+                    if(document.getElementById(`set-${k.replace('_','-')}`)) document.getElementById(`set-${k.replace('_','-')}`).value = s[k] || ''; 
+                });
                 ['mi','ind','st','rec'].forEach(k => { if(document.getElementById(`set-pfx-${k}`) && s.pfx) document.getElementById(`set-pfx-${k}`).value = s.pfx[k.toUpperCase()] || ''; });
                 document.getElementById('set-seq').value = s.seq || 1;
                 
@@ -851,6 +893,7 @@
                 });
                 
                 window.ui.renderCatList();
+                window.ui.gbFiltersChanged(); // update clerkage pct dynamically in modal if open
             },
             
             renderCatList: () => {
@@ -914,9 +957,12 @@
             },
             saveSettings: () => {
                 const s = { pfx: {} };
-                ['name','phone','email','pan','bank','ac','ifsc','upi'].forEach(k => { s[k] = document.getElementById(`set-${k}`).value; });
+                ['name','phone','email','pan','bank','ac','ifsc','upi','clerk_name','clerk_pan','clerk_bank','clerk_ac','clerk_ifsc'].forEach(k => { 
+                    s[k] = document.getElementById(`set-${k.replace('_','-')}`).value; 
+                });
                 ['mi','ind','st','rec'].forEach(k => { s.pfx[k.toUpperCase()] = document.getElementById(`set-pfx-${k}`).value; });
                 s.seq = parseInt(document.getElementById('set-seq').value) || 1;
+                s.clerk_pct = parseFloat(document.getElementById('set-clerk-pct').value) || 0;
                 
                 const file = document.getElementById('set-sig-file').files[0];
                 if(file) {
@@ -950,6 +996,12 @@
                 document.getElementById('gb-case-wrapper').style.display = t === 'IND' ? 'block' : 'none';
                 document.getElementById('gb-rebill-wrapper').style.display = t === 'ST' ? 'none' : 'flex';
                 
+                // Clerkage Visibility logic
+                const cPct = parseFloat(state.settings.clerk_pct) || 0;
+                const canClerkage = (t === 'MI' || t === 'IND') && cPct > 0;
+                document.getElementById('gb-clerkage-wrapper').style.display = canClerkage ? 'flex' : 'none';
+                if (cPct > 0) document.getElementById('gb-clerkage-label-pct').innerText = cPct;
+
                 if(t === 'IND') {
                     const cId = document.getElementById('gb-client').value;
                     const opts = `<option value="ALL">All Cases</option>` + state.cases.filter(c => c.client_id === cId).map(c => `<option value="${c.id}">${c.name}${c.ref?` (${c.ref})`:''}</option>`).join('');
@@ -996,9 +1048,21 @@
                 window.ui.gbCalcLive();
             },
             gbCalcLive: () => {
-                let tot = 0;
-                document.querySelectorAll('.gb-item-chk:checked').forEach(cb => { tot += parseFloat(cb.dataset.amt); });
-                document.getElementById('gb-live-total').innerText = window.ui.fmtMoney(tot);
+                let sub = 0;
+                document.querySelectorAll('.gb-item-chk:checked').forEach(cb => { sub += parseFloat(cb.dataset.amt); });
+                
+                let clerkAmt = 0;
+                const applyClerkage = document.getElementById('gb-clerkage').checked;
+                const cPct = parseFloat(state.settings.clerk_pct) || 0;
+                
+                if (applyClerkage && cPct > 0 && sub > 0) {
+                    clerkAmt = sub * (cPct / 100);
+                    document.getElementById('gb-live-breakdown').innerText = `Sub: ${window.ui.fmtMoney(sub)} + Clerk: ${window.ui.fmtMoney(clerkAmt)}`;
+                } else {
+                    document.getElementById('gb-live-breakdown').innerText = '';
+                }
+
+                document.getElementById('gb-live-total').innerText = window.ui.fmtMoney(sub + clerkAmt);
             },
             openPayForInv: (invId) => {
                 const inv = state.invoices.find(i=>i.id===invId);
@@ -1202,8 +1266,15 @@
                     const sel = Array.from(document.querySelectorAll('.gb-item-chk:checked')).map(cb => cb.value);
                     if(sel.length === 0 && t !== 'ST') return window.ui.showToast('Select items to bill', 'error');
 
-                    let tot = 0;
-                    sel.forEach(id => { const w = state.work.find(x=>x.id===id); if(w) tot+=w.amount; });
+                    let sub = 0;
+                    sel.forEach(id => { const w = state.work.find(x=>x.id===id); if(w) sub+=w.amount; });
+                    
+                    let clerkAmt = 0;
+                    const applyClerkage = document.getElementById('gb-clerkage').checked;
+                    const cPct = parseFloat(state.settings.clerk_pct) || 0;
+                    if (applyClerkage && cPct > 0 && sub > 0) {
+                        clerkAmt = sub * (cPct / 100);
+                    }
 
                     const seq = state.settings.seq || 1;
                     const pfx = state.settings.pfx ? state.settings.pfx[t] : `BOI-${t}-`;
@@ -1213,7 +1284,12 @@
                         date: new Date().toISOString().split('T')[0], type: t, client_id: cId,
                         period_start: document.getElementById('gb-from').value || null,
                         period_end: document.getElementById('gb-to').value || null,
-                        items: sel, total: tot, invoice_no: docNo, status: 'Unpaid'
+                        items: sel, 
+                        subtotal: sub,
+                        clerkage_pct: applyClerkage ? cPct : 0,
+                        clerkage_amt: clerkAmt,
+                        total: sub + clerkAmt, 
+                        invoice_no: docNo, status: 'Unpaid'
                     };
 
                     const batch = writeBatch(db);
@@ -1325,6 +1401,12 @@
                         const caName = ca ? `${ca.name}${ca.ref? `<br><span style="font-size: 10px; color: #64748b;">Ref: ${ca.ref}</span>`:''}` : 'General';
                         rows += invTpl.replace('{{r_date}}',window.ui.fmtDate(w.date)).replace('{{r_case}}',caName).replace('{{r_desc}}',w.desc).replace('{{r_amt}}',window.ui.fmtMoney(w.amount));
                     });
+
+                    // Add Clerkage Rows if applicable
+                    if (inv.clerkage_amt > 0) {
+                        rows += invTpl.replace('{{r_date}}','').replace('{{r_case}}','').replace('{{r_desc}}','<div style="text-align:right; font-weight:700;">Professional Fees Subtotal</div>').replace('{{r_amt}}', window.ui.fmtMoney(inv.subtotal));
+                        rows += invTpl.replace('{{r_date}}','').replace('{{r_case}}','').replace('{{r_desc}}',`<div style="text-align:right; font-weight:700;">Clerkage @ ${inv.clerkage_pct}%</div>`).replace('{{r_amt}}', window.ui.fmtMoney(inv.clerkage_amt));
+                    }
                 }
 
                 let qrUri = '';
@@ -1347,6 +1429,8 @@
                     '{{period_str}}': inv.period_start ? `${window.ui.fmtDate(inv.period_start)} to ${window.ui.fmtDate(inv.period_end)}` : `Upto ${window.ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
                     '{{bank}}': s.bank||'', '{{ac}}': s.ac||'', '{{ifsc}}': s.ifsc||'',
+                    '{{clerk_display}}': inv.clerkage_amt > 0 ? 'display:block;' : 'display:none;',
+                    '{{clerk_name}}': s.clerk_name || 'N/A', '{{clerk_bank}}': s.clerk_bank || 'N/A', '{{clerk_ac}}': s.clerk_ac || 'N/A', '{{clerk_ifsc}}': s.clerk_ifsc || 'N/A', '{{clerk_pan}}': s.clerk_pan || 'N/A',
                     '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:inline-block;' : 'display:none;',
                     '{{sig}}': s.sig||'', '{{sig_display}}': s.sig ? 'display:block;' : 'display:none;',
                     '{{total}}': inv.type==='ST' ? (runBal<0?window.ui.fmtMoney(Math.abs(runBal))+' (Cr)':window.ui.fmtMoney(runBal)) : window.ui.fmtMoney(inv.total)
