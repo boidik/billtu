@@ -68,7 +68,10 @@
                     <input type="email" id="auth-email" required class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-100 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Password</label>
+                    <div class="flex justify-between items-center mb-1 mx-2">
+                        <label class="block text-xs font-bold text-slate-500">Password</label>
+                        <button type="button" onclick="window.api.resetPassword()" class="text-xs font-bold text-blue-500 hover:text-blue-700 transition">Forgot?</button>
+                    </div>
                     <input type="password" id="auth-password" required class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-100 outline-none">
                 </div>
                 <div class="flex gap-2 mt-2">
@@ -581,7 +584,7 @@
     <!-- Javascript Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc, getDocs, writeBatch, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Configuration provided by user
@@ -1124,6 +1127,15 @@
                 try {
                     window.ui.showToast('Creating office workspace...', 'info');
                     await createUserWithEmailAndPassword(auth, e, p);
+                } catch(err) { window.ui.showToast(err.message, 'error'); window.api.logError(err.message); }
+            },
+            resetPassword: async () => {
+                const e = document.getElementById('auth-email').value;
+                if(!e) return window.ui.showToast('Please enter your Office Email first', 'error');
+                try {
+                    window.ui.showToast('Sending password reset link...', 'info');
+                    await sendPasswordResetEmail(auth, e);
+                    window.ui.showToast('Reset link sent to your email!', 'success');
                 } catch(err) { window.ui.showToast(err.message, 'error'); window.api.logError(err.message); }
             },
             loginGoogle: async () => {
