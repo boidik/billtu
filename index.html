@@ -607,7 +607,7 @@
                 </div>
             </div>
             <div class="pdf-page-break" style="margin-bottom: 40px; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%; page-break-inside: avoid; break-inside: avoid;">
-                <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">Billed To</p>
+                <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">{{billed_to_label}}</p>
                 <h3 style="margin: 0 0 3px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
                 <p style="margin: 0 0 6px 0; color: #475569; font-size: 12px; font-weight: 500;">{{client_contact}}</p>
                 <p style="margin: 0; color: #475569; font-size: 12px;">Period: {{period_str}}</p>
@@ -653,7 +653,7 @@
                     </div>
                     <div style="width: 35%;">
                         <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 40px; text-align: right;">
-                            <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">Total Amount Due</p>
+                            <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">{{total_label}}</p>
                             <p style="margin: 5px 0 0 0; font-size: 28px; font-weight: 800; color: #1e3a8a;">{{total}}</p>
                         </div>
                         <div style="text-align: right; {{sig_display}}">
@@ -1425,6 +1425,7 @@
                 const map = {
                     '{{pro_name}}': s.name || 'Legal Professional', '{{pro_phone}}': s.phone || '', '{{pro_email}}': s.email || '', '{{pro_pan}}': s.pan || 'N/A',
                     '{{doc_title}}': docTitle, '{{inv_no}}': inv.invoice_no, '{{date}}': window.ui.fmtDate(inv.date), '{{client_name}}': c.name || 'Unknown Client',
+                    '{{billed_to_label}}': inv.type === 'REC' ? 'Received From' : 'Billed To',
                     '{{client_contact}}': contactStr,
                     '{{period_str}}': inv.period_start ? `${window.ui.fmtDate(inv.period_start)} to ${window.ui.fmtDate(inv.period_end)}` : `Upto ${window.ui.fmtDate(inv.date)}`,
                     '{{table_rows}}': rows,
@@ -1433,6 +1434,7 @@
                     '{{clerk_name}}': s.clerk_name || 'N/A', '{{clerk_bank}}': s.clerk_bank || 'N/A', '{{clerk_ac}}': s.clerk_ac || 'N/A', '{{clerk_ifsc}}': s.clerk_ifsc || 'N/A', '{{clerk_pan}}': s.clerk_pan || 'N/A',
                     '{{qr}}': qrUri, '{{qr_display}}': qrUri ? 'display:inline-block;' : 'display:none;',
                     '{{sig}}': s.sig||'', '{{sig_display}}': s.sig ? 'display:block;' : 'display:none;',
+                    '{{total_label}}': inv.type === 'REC' ? 'Amount Received' : 'Total Amount Due',
                     '{{total}}': inv.type==='ST' ? (runBal<0?window.ui.fmtMoney(Math.abs(runBal))+' (Cr)':window.ui.fmtMoney(runBal)) : window.ui.fmtMoney(inv.total)
                 };
 
