@@ -54,18 +54,37 @@
 <body class="h-[100dvh] w-full flex flex-col md:flex-row antialiased">
 
     <!-- Auth Overlay -->
-    <div id="auth-screen" class="fixed inset-0 bg-slate-900 z-[1000] flex flex-col items-center justify-center p-6">
-        <div class="bg-white rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl text-center transform animate-fade-in-up">
-            <div class="w-20 h-20 bg-gradient-to-br from-slate-900 to-blue-500 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg">
+    <div id="auth-screen" class="fixed inset-0 bg-slate-900 z-[1000] flex flex-col items-center justify-center p-6 overflow-y-auto">
+        <div class="bg-white rounded-[2.5rem] p-8 md:p-10 w-full max-w-md shadow-2xl text-center transform animate-fade-in-up my-auto">
+            <div class="w-20 h-20 bg-gradient-to-br from-slate-900 to-blue-500 rounded-3xl mx-auto mb-6 flex items-center justify-center shadow-lg shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" viewBox="0 0 100 100"><path d="M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
             <h1 class="text-3xl font-serif font-bold text-slate-800 mb-2">Boidik Cloud</h1>
-            <p class="text-slate-500 mb-8 font-medium">Professional Legal Practice Management</p>
+            <p class="text-slate-500 mb-6 font-medium">Professional Legal Practice Management</p>
             
-            <button onclick="window.api.loginGoogle()" class="w-full py-4 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition shadow-md mb-4">
+            <form id="form-auth-email" class="flex flex-col gap-3 mb-5 w-full text-left" onsubmit="event.preventDefault();">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Office Email</label>
+                    <input type="email" id="auth-email" required class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-100 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Password</label>
+                    <input type="password" id="auth-password" required class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium focus:ring-2 focus:ring-blue-100 outline-none">
+                </div>
+                <div class="flex gap-2 mt-2">
+                    <button type="button" onclick="window.api.loginEmail()" class="flex-[1.5] py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-2xl font-bold transition shadow-sm">Sign In</button>
+                    <button type="button" onclick="window.api.signupEmail()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold transition">Create</button>
+                </div>
+            </form>
+
+            <div class="flex items-center gap-3 w-full mb-5 opacity-50">
+                <div class="flex-1 h-px bg-slate-300"></div><span class="text-xs font-bold text-slate-500 uppercase tracking-wider">or</span><div class="flex-1 h-px bg-slate-300"></div>
+            </div>
+
+            <button onclick="window.api.loginGoogle()" class="w-full py-3.5 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl font-bold flex items-center justify-center gap-3 transition shadow-md mb-3">
                 <i class="fa-brands fa-google text-lg"></i> Sign in with Google
             </button>
-            <button onclick="window.api.loginGuest()" class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-bold transition">
+            <button onclick="window.api.loginGuest()" class="w-full py-3 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-2xl font-bold transition border border-slate-200">
                 Continue as Guest
             </button>
         </div>
@@ -562,7 +581,7 @@
     <!-- Javascript Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc, getDocs, writeBatch, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase Configuration provided by user
@@ -1087,6 +1106,25 @@
                         body: JSON.stringify({ email: state.user?.email || 'Guest', time: new Date().toISOString(), level: 'ERROR', message: msg })
                     });
                 } catch(e){}
+            },
+            loginEmail: async () => {
+                const e = document.getElementById('auth-email').value;
+                const p = document.getElementById('auth-password').value;
+                if(!e || !p) return window.ui.showToast('Please enter email and password', 'error');
+                try {
+                    window.ui.showToast('Signing in securely...', 'info');
+                    await signInWithEmailAndPassword(auth, e, p);
+                } catch(err) { window.ui.showToast(err.message, 'error'); window.api.logError(err.message); }
+            },
+            signupEmail: async () => {
+                const e = document.getElementById('auth-email').value;
+                const p = document.getElementById('auth-password').value;
+                if(!e || !p) return window.ui.showToast('Please enter email and password', 'error');
+                if(p.length < 6) return window.ui.showToast('Password must be at least 6 characters', 'error');
+                try {
+                    window.ui.showToast('Creating office workspace...', 'info');
+                    await createUserWithEmailAndPassword(auth, e, p);
+                } catch(err) { window.ui.showToast(err.message, 'error'); window.api.logError(err.message); }
             },
             loginGoogle: async () => {
                 try {
