@@ -1428,7 +1428,8 @@
                     state.work.filter(w => w.client_id === c.id && new Date(w.date) >= pStart && new Date(w.date) <= pEnd).forEach(w => {
                         const ca = state.cases.find(x=>x.id===w.case_id);
                         const caName = ca ? `${ca.name}${ca.ref? ` (${ca.ref})`:''}` : 'General';
-                        events.push({type:'W', date:w.date, desc:`<b>[${caName}]</b> ${w.desc}`, amt:w.amount});
+                        const formattedDesc = `<b>[${caName}]</b> <span style="font-size: 10px; color: #3b82f6; font-weight: 700; text-transform: uppercase; margin-left: 4px;">${w.category}</span><br>${w.desc}`;
+                        events.push({type:'W', date:w.date, desc:formattedDesc, amt:w.amount});
                     });
                     state.invoices.filter(i => i.type === 'REC' && i.client_id === c.id && new Date(i.date) >= pStart && new Date(i.date) <= pEnd).forEach(r => events.push({type:'P', date:r.date, desc:`Payment Received (${r.payment_ref||'N/A'})`, amt:r.total}));
                     
@@ -1440,8 +1441,7 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    // Receipts don't need a table of work. They just get a big clean "Payment Received" box.
-                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:30px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
+                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
@@ -1449,7 +1449,8 @@
                     wItems.forEach(w => {
                         const ca = state.cases.find(x=>x.id===w.case_id);
                         const caName = ca ? `${ca.name}${ca.ref? `<br><span style="font-size: 10px; color: #64748b;">Ref: ${ca.ref}</span>`:''}` : 'General';
-                        rows += invTpl.replace('{{r_date}}',window.ui.fmtDate(w.date)).replace('{{r_case}}',caName).replace('{{r_desc}}',w.desc).replace('{{r_amt}}',window.ui.fmtMoney(w.amount));
+                        const formattedDesc = `<span style="font-size: 10px; color: #3b82f6; font-weight: 700; text-transform: uppercase;">${w.category}</span><br>${w.desc}`;
+                        rows += invTpl.replace('{{r_date}}',window.ui.fmtDate(w.date)).replace('{{r_case}}',caName).replace('{{r_desc}}',formattedDesc).replace('{{r_amt}}',window.ui.fmtMoney(w.amount));
                     });
 
                     // Add Clerkage Rows if applicable
