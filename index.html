@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Boidik Legal Cloud</title>
     
-    <!-- Favicon (Properly URL-encoded SVG for broad browser support) -->
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230f172a' /%3E%3Cstop offset='100%25' stop-color='%233b82f6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cpath d='M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <link rel="shortcut icon" href="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230f172a' /%3E%3Cstop offset='100%25' stop-color='%233b82f6' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='28' fill='url(%23g)'/%3E%3Cpath d='M 35 20 L 35 80 M 25 25 L 65 25 M 25 42 L 55 42 M 35 25 C 60 25, 60 52, 35 52 M 35 52 C 65 52, 65 80, 35 80 M 45 52 L 65 80' fill='none' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 
@@ -23,11 +23,9 @@
                     colors: { brand: '#FDFBF7', primary: '#3b82f6' },
                     animation: {
                         'fade-in-up': 'fadeInUp 0.4s ease-out forwards',
-                        'slide-in-right': 'slideInRight 0.3s ease-out forwards',
                     },
                     keyframes: {
-                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(15px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        slideInRight: { '0%': { opacity: '0', transform: 'translateX(30px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } }
+                        fadeInUp: { '0%': { opacity: '0', transform: 'translateY(15px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     }
                 }
             }
@@ -43,10 +41,8 @@
         body { background-color: #FDFBF7; color: #0f172a; overflow: hidden; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .glass-panel { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.5); }
-        .animate-fade-in-up-delay { animation-delay: 0.1s; opacity: 0; }
         
-        /* PDF specific resets to prevent main app styles from bleeding into the pdf */
+        /* PDF specific resets */
         #pdf-wrapper * { box-sizing: border-box !important; }
         .pdf-page-break { page-break-inside: avoid !important; break-inside: avoid !important; }
     </style>
@@ -412,7 +408,7 @@
                         <button type="button" onclick="window.ui.resetTemplates()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg font-bold transition">Reset Defaults</button>
                     </div>
                     <div class="space-y-4">
-                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Base Layout & CSS</label><textarea id="tpl-base" rows="4" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Base Layout & CSS (Flexbox Version)</label><textarea id="tpl-base" rows="4" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Invoice Data Rows</label><textarea id="tpl-row-inv" rows="2" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Statement Ledger Rows</label><textarea id="tpl-row-st" rows="2" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                     </div>
@@ -587,7 +583,7 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, addDoc, getDocs, writeBatch, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration provided by user
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCAJUoKTzaVpMsOeYW0Ewdnk33K_1HuJhk",
             authDomain: "legallyboidik.firebaseapp.com",
@@ -611,7 +607,7 @@
             pdfBlobUrl: null, currentPdfInv: null
         };
 
-        // Visually Sticking & Professional Templates
+        // NEW: Flexbox-Based Resilient PDF Templates to completely stop rows from slicing in half
         const defaultTpls = {
             base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 40px 50px; background: #fff; width: 800px; margin: 0 auto; box-sizing: border-box;">
             <div class="pdf-page-break" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
@@ -634,19 +630,19 @@
                 <p style="margin: 0 0 6px 0; color: #475569; font-size: 12px; font-weight: 500;">{{client_contact}}</p>
                 <p style="margin: 0; color: #475569; font-size: 12px;">Period: {{period_str}}</p>
             </div>
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; table-layout: fixed; page-break-inside: auto;">
-                <thead style="display: table-header-group; page-break-inside: avoid; break-inside: avoid; page-break-after: avoid;">
-                    <tr class="pdf-page-break" style="background: #3b82f6; color: white; text-align: left; page-break-inside: avoid; break-inside: avoid;">
-                        <th style="padding: 12px 15px; border-top-left-radius: 8px; border-bottom-left-radius: 8px; width: 15%; font-weight: 600;">Date</th>
-                        <th style="padding: 12px 15px; width: 25%; font-weight: 600;">Case / Ref</th>
-                        <th style="padding: 12px 15px; width: 40%; font-weight: 600;">Description</th>
-                        <th style="padding: 12px 15px; text-align: right; border-top-right-radius: 8px; border-bottom-right-radius: 8px; width: 20%; font-weight: 600;">Amount</th>
-                    </tr>
-                </thead>
-                <tbody style="color: #334155; page-break-inside: auto;">
+            
+            <div style="width: 100%; margin-bottom: 40px; display: flex; flex-direction: column;">
+                <div class="pdf-page-break" style="display: flex; background: #3b82f6; color: white; text-align: left; border-radius: 8px; page-break-inside: avoid; break-inside: avoid;">
+                    <div style="padding: 12px 15px; width: 15%; font-weight: 600; box-sizing: border-box;">Date</div>
+                    <div style="padding: 12px 15px; width: 25%; font-weight: 600; box-sizing: border-box;">Case / Ref</div>
+                    <div style="padding: 12px 15px; width: 40%; font-weight: 600; box-sizing: border-box;">Description</div>
+                    <div style="padding: 12px 15px; text-align: right; width: 20%; font-weight: 600; box-sizing: border-box;">Amount</div>
+                </div>
+                <div style="color: #334155; display: flex; flex-direction: column;">
                     {{table_rows}}
-                </tbody>
-            </table>
+                </div>
+            </div>
+
             <div class="pdf-page-break" style="page-break-inside: avoid; break-inside: avoid; page-break-before: auto;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px;">
                     <div style="width: 60%; display: flex; gap: 20px;">
@@ -689,8 +685,17 @@
                 </div>
             </div>
         </div>`,
-            rowInv: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</td></tr>`,
-            rowSt: `<tr class="pdf-page-break" style="border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; page-break-inside: avoid; break-inside: avoid;"><td style="padding: 12px 15px; vertical-align: top;">{{r_date}}</td><td style="padding: 12px 15px; vertical-align: top; color: #475569; word-wrap: break-word;" colspan="2">{{r_desc}}</td><td style="padding: 12px 15px; vertical-align: top; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</td></tr>`
+            rowInv: `<div class="pdf-page-break" style="display: flex; border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid; width: 100%;">
+                <div style="padding: 12px 15px; width: 15%; box-sizing: border-box;">{{r_date}}</div>
+                <div style="padding: 12px 15px; width: 25%; font-weight: 500; color: #0f172a; word-wrap: break-word; box-sizing: border-box;">{{r_case}}</div>
+                <div style="padding: 12px 15px; width: 40%; color: #475569; word-wrap: break-word; box-sizing: border-box;">{{r_desc}}</div>
+                <div style="padding: 12px 15px; width: 20%; text-align: right; font-weight: 700; color: #0f172a; box-sizing: border-box;">{{r_amt}}</div>
+            </div>`,
+            rowSt: `<div class="pdf-page-break" style="display: flex; border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; page-break-inside: avoid; break-inside: avoid; width: 100%;">
+                <div style="padding: 12px 15px; width: 15%; box-sizing: border-box;">{{r_date}}</div>
+                <div style="padding: 12px 15px; width: 65%; color: #475569; word-wrap: break-word; box-sizing: border-box;">{{r_desc}}</div>
+                <div style="padding: 12px 15px; width: 20%; text-align: right; font-weight: 700; color: {{r_color}}; box-sizing: border-box;">{{r_amt}}</div>
+            </div>`
         };
 
         // --- UI & Helper Functions ---
@@ -770,7 +775,6 @@
                 const tops = Object.entries(uByC).map(([id, amt]) => ({ name: state.clients.find(c=>c.id===id)?.name||'Unknown', amt })).sort((a,b)=>b.amt-a.amt).slice(0,5);
                 document.getElementById('dash-top-clients').innerHTML = tops.length ? tops.map(t => `<tr class="border-b border-slate-50"><td class="py-3 font-medium">${t.name}</td><td class="py-3 text-right font-bold text-amber-600">${window.ui.fmtMoney(t.amt)}</td></tr>`).join('') : `<tr><td colspan="2" class="py-4 text-center text-slate-400">No unbilled work.</td></tr>`;
 
-                // Charts
                 if(state.charts.rev) state.charts.rev.destroy();
                 if(state.charts.cat) state.charts.cat.destroy();
                 
@@ -915,7 +919,7 @@
                 });
                 
                 window.ui.renderCatList();
-                window.ui.gbFiltersChanged(); // update clerkage pct dynamically in modal if open
+                window.ui.gbFiltersChanged();
             },
             
             renderCatList: () => {
@@ -961,7 +965,6 @@
                 window.ui.showToast('Syncing category updates...', 'info');
                 await window.api.saveSettingsCore({ categories: cats }, true);
                 
-                // Batch update past work logs
                 const q = query(collection(db, `saas_tenants/${state.uid}/workItems`));
                 const snap = await getDocs(q);
                 const batch = writeBatch(db);
@@ -1004,7 +1007,7 @@
                 window.api.saveSettingsCore({ tpl });
             },
             resetTemplates: () => {
-                window.ui.confirm('Reset all templates to Boidik defaults?', () => {
+                window.ui.confirm('Reset all templates to Boidik Flexbox Defaults?', () => {
                     document.getElementById('tpl-base').value = defaultTpls.base;
                     document.getElementById('tpl-row-inv').value = defaultTpls.rowInv;
                     document.getElementById('tpl-row-st').value = defaultTpls.rowSt;
@@ -1018,7 +1021,6 @@
                 document.getElementById('gb-case-wrapper').style.display = t === 'IND' ? 'block' : 'none';
                 document.getElementById('gb-rebill-wrapper').style.display = t === 'ST' ? 'none' : 'flex';
                 
-                // Clerkage Visibility logic
                 const cPct = parseFloat(state.settings.clerk_pct) || 0;
                 const canClerkage = (t === 'MI' || t === 'IND') && cPct > 0;
                 document.getElementById('gb-clerkage-wrapper').style.display = canClerkage ? 'flex' : 'none';
@@ -1269,7 +1271,6 @@
                         payment_ref: document.getElementById('pay-ref').value, linked_invoice_id: invId || null
                     };
 
-                    // Handle Screenshot Compression
                     const fileInput = document.getElementById('pay-proof-file');
                     if(fileInput && fileInput.files.length > 0) {
                         const file = fileInput.files[0];
@@ -1285,7 +1286,7 @@
                                     else if (h > MAX_H) { w *= MAX_H / h; h = MAX_H; }
                                     canvas.width = w; canvas.height = h;
                                     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                                    resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compressing down to keep DB fast
+                                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
                                 };
                                 img.src = e.target.result;
                             };
@@ -1401,12 +1402,10 @@
                 const tpl = s.tpl?.base || defaultTpls.base;
                 let rows = '', runBal = 0;
 
-                // Smart Title Generation
                 let docTitle = 'Invoice';
                 if(inv.type === 'ST') docTitle = 'Statement of Account';
                 if(inv.type === 'REC') docTitle = 'Payment Receipt';
 
-                // Client Contact Formatting
                 let cContact = [];
                 if(c.phone) cContact.push(c.phone);
                 if(c.email) cContact.push(c.email);
@@ -1441,7 +1440,7 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    rows = `<tr class="pdf-page-break" style="page-break-inside: avoid;"><td colspan="4" style="padding:40px; text-align:center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></td></tr>`;
+                    rows = `<div class="pdf-page-break" style="page-break-inside: avoid; text-align: center; padding: 40px;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></div>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
@@ -1453,7 +1452,6 @@
                         rows += invTpl.replace('{{r_date}}',window.ui.fmtDate(w.date)).replace('{{r_case}}',caName).replace('{{r_desc}}',formattedDesc).replace('{{r_amt}}',window.ui.fmtMoney(w.amount));
                     });
 
-                    // Add Clerkage Rows if applicable
                     if (inv.clerkage_amt > 0) {
                         rows += invTpl.replace('{{r_date}}','').replace('{{r_case}}','').replace('{{r_desc}}','<div style="text-align:right; font-weight:700;">Professional Fees Subtotal</div>').replace('{{r_amt}}', window.ui.fmtMoney(inv.subtotal));
                         rows += invTpl.replace('{{r_date}}','').replace('{{r_case}}','').replace('{{r_desc}}',`<div style="text-align:right; font-weight:700;">Clerkage @ ${inv.clerkage_pct}%</div>`).replace('{{r_amt}}', window.ui.fmtMoney(inv.clerkage_amt));
@@ -1465,12 +1463,12 @@
                     const str = `upi://pay?pa=${s.upi}&pn=${encodeURIComponent(s.name)}&tn=${encodeURIComponent(inv.invoice_no)}&am=${inv.total}&cu=INR`;
                     const qD = document.createElement('div');
                     qD.style.display = 'none';
-                    document.body.appendChild(qD); // Temporarily attach to DOM for safe canvas rendering
+                    document.body.appendChild(qD); 
                     new QRCode(qD, { text: str, width: 200, height: 200, correctLevel: QRCode.CorrectLevel.L });
                     await new Promise(res => setTimeout(res, 250)); 
                     const cNode = qD.querySelector('canvas');
                     if(cNode) qrUri = cNode.toDataURL();
-                    document.body.removeChild(qD); // Clean up
+                    document.body.removeChild(qD); 
                 }
 
                 const map = {
@@ -1506,10 +1504,9 @@
                 
                 await new Promise(r => setTimeout(r, 400)); // allow DOM to paint and web fonts to process
 
-                // Tightly controlled A4 margins. Zero width margins force true centering on the 800px width.
-                // 15mm top prevents header overlap. 20mm bottom provides safe space.
+                // Increased top margin to 22mm to allow drawing the repeating header cleanly above content
                 const opt = {
-                    margin: [15, 0, 20, 0],
+                    margin: [22, 0, 20, 0],
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
@@ -1524,7 +1521,7 @@
                         backgroundColor: '#ffffff'
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.pdf-page-break'] }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['.pdf-page-break'] }
                 };
 
                 try {
@@ -1533,14 +1530,36 @@
                         const totalPages = pdf.internal.getNumberOfPages();
                         for (let i = 1; i <= totalPages; i++) {
                             pdf.setPage(i);
+                            
+                            // Bottom Page Numbers
                             pdf.setFontSize(8);
                             pdf.setTextColor(150);
                             pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 20, pdf.internal.pageSize.getHeight() - 10, { align: 'right' });
                             
-                            // Multi-page continuing header logic placed at y=10mm (comfortably inside the 15mm top margin)
+                            // Top Headers for Continued Pages
                             if (i > 1) {
                                 const cName = state.clients.find(c=>c.id===inv.client_id)?.name || '';
-                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 10, 10);
+                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 13.125, 8); // Align left with padding
+                                
+                                // Draw visually identical repeating table header
+                                if (inv.type !== 'REC') {
+                                    pdf.setFillColor(59, 130, 246); // bg-blue-500
+                                    pdf.rect(13.125, 11, 183.75, 7, 'F');
+                                    pdf.setTextColor(255, 255, 255);
+                                    pdf.setFontSize(9);
+                                    pdf.setFont("helvetica", "bold");
+                                    
+                                    pdf.text("Date", 17, 15.5);
+                                    if (inv.type === 'ST') {
+                                        pdf.text("Description", 44.5, 15.5);
+                                    } else {
+                                        pdf.text("Case / Ref", 44.5, 15.5);
+                                        pdf.text("Description", 90.5, 15.5);
+                                    }
+                                    pdf.text("Amount", 193, 15.5, { align: 'right' });
+                                    
+                                    pdf.setFont("helvetica", "normal"); // reset safety
+                                }
                             }
                         }
                     }).output('blob').then((blob) => {
