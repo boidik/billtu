@@ -607,43 +607,50 @@
             pdfBlobUrl: null, currentPdfInv: null
         };
 
-        // NEW: Flexbox-Based Resilient PDF Templates to completely stop rows from slicing in half
+        // NEW: Enforced Block-Level Page Breaking (Solves Flexbox Slicing Bug)
         const defaultTpls = {
             base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 40px 50px; background: #fff; width: 800px; margin: 0 auto; box-sizing: border-box;">
-            <div class="pdf-page-break" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
-                <div style="width: 50%;">
-                    <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700; line-height: 1.2;">{{pro_name}}</h1>
-                    <p style="margin: 2px 0; color: #64748b; font-size: 13px;">{{pro_phone}} | {{pro_email}}</p>
-                    <p style="margin: 2px 0; color: #64748b; font-size: 13px;">PAN: {{pro_pan}}</p>
+            <div class="pdf-page-break" style="page-break-inside: avoid !important; break-inside: avoid !important; display: block; width: 100%; margin-bottom: 40px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px;">
+                    <div style="width: 50%;">
+                        <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700; line-height: 1.2;">{{pro_name}}</h1>
+                        <p style="margin: 2px 0; color: #64748b; font-size: 13px;">{{pro_phone}} | {{pro_email}}</p>
+                        <p style="margin: 2px 0; color: #64748b; font-size: 13px;">PAN: {{pro_pan}}</p>
+                    </div>
+                    <div style="text-align: right; width: 40%;">
+                        <h2 style="font-size: 28px; margin: 0 0 5px 0; color: #3b82f6; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">{{doc_title}}</h2>
+                        <table style="width: 100%; text-align: right; font-size: 13px; border-collapse: collapse;">
+                            <tr><td style="padding: 3px 0; color: #64748b;">Ref No:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{inv_no}}</td></tr>
+                            <tr><td style="padding: 3px 0; color: #64748b;">Date:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{date}}</td></tr>
+                        </table>
+                    </div>
                 </div>
-                <div style="text-align: right; width: 40%;">
-                    <h2 style="font-size: 28px; margin: 0 0 5px 0; color: #3b82f6; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">{{doc_title}}</h2>
-                    <table style="width: 100%; text-align: right; font-size: 13px; border-collapse: collapse;">
-                        <tr><td style="padding: 3px 0; color: #64748b;">Ref No:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{inv_no}}</td></tr>
-                        <tr><td style="padding: 3px 0; color: #64748b;">Date:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{date}}</td></tr>
-                    </table>
-                </div>
-            </div>
-            <div class="pdf-page-break" style="margin-bottom: 40px; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%; page-break-inside: avoid; break-inside: avoid;">
-                <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">{{billed_to_label}}</p>
-                <h3 style="margin: 0 0 3px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
-                <p style="margin: 0 0 6px 0; color: #475569; font-size: 12px; font-weight: 500;">{{client_contact}}</p>
-                <p style="margin: 0; color: #475569; font-size: 12px;">Period: {{period_str}}</p>
             </div>
             
-            <div style="width: 100%; margin-bottom: 40px; display: flex; flex-direction: column;">
-                <div class="pdf-page-break" style="display: flex; background: #3b82f6; color: white; text-align: left; border-radius: 8px; page-break-inside: avoid; break-inside: avoid;">
-                    <div style="padding: 12px 15px; width: 15%; font-weight: 600; box-sizing: border-box;">Date</div>
-                    <div style="padding: 12px 15px; width: 25%; font-weight: 600; box-sizing: border-box;">Case / Ref</div>
-                    <div style="padding: 12px 15px; width: 40%; font-weight: 600; box-sizing: border-box;">Description</div>
-                    <div style="padding: 12px 15px; text-align: right; width: 20%; font-weight: 600; box-sizing: border-box;">Amount</div>
+            <div class="pdf-page-break" style="page-break-inside: avoid !important; break-inside: avoid !important; display: block; width: 100%; margin-bottom: 40px;">
+                <div style="background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%;">
+                    <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">{{billed_to_label}}</p>
+                    <h3 style="margin: 0 0 3px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
+                    <p style="margin: 0 0 6px 0; color: #475569; font-size: 12px; font-weight: 500;">{{client_contact}}</p>
+                    <p style="margin: 0; color: #475569; font-size: 12px;">Period: {{period_str}}</p>
                 </div>
-                <div style="color: #334155; display: flex; flex-direction: column;">
+            </div>
+            
+            <div style="width: 100%; margin-bottom: 40px; display: block;">
+                <div class="pdf-page-break" style="page-break-inside: avoid !important; break-inside: avoid !important; display: block; width: 100%;">
+                    <div style="display: flex; background: #3b82f6; color: white; text-align: left; border-radius: 8px;">
+                        <div style="padding: 12px 15px; width: 15%; font-weight: 600; box-sizing: border-box;">Date</div>
+                        <div style="padding: 12px 15px; width: 25%; font-weight: 600; box-sizing: border-box;">Case / Ref</div>
+                        <div style="padding: 12px 15px; width: 40%; font-weight: 600; box-sizing: border-box;">Description</div>
+                        <div style="padding: 12px 15px; text-align: right; width: 20%; font-weight: 600; box-sizing: border-box;">Amount</div>
+                    </div>
+                </div>
+                <div style="color: #334155; display: block;">
                     {{table_rows}}
                 </div>
             </div>
 
-            <div class="pdf-page-break" style="page-break-inside: avoid; break-inside: avoid; page-break-before: auto;">
+            <div class="pdf-page-break" style="page-break-inside: avoid !important; break-inside: avoid !important; display: block; width: 100%;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 20px;">
                     <div style="width: 60%; display: flex; gap: 20px;">
                         <div style="flex: 1;">
@@ -685,16 +692,20 @@
                 </div>
             </div>
         </div>`,
-            rowInv: `<div class="pdf-page-break" style="display: flex; border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid; width: 100%;">
-                <div style="padding: 12px 15px; width: 15%; box-sizing: border-box;">{{r_date}}</div>
-                <div style="padding: 12px 15px; width: 25%; font-weight: 500; color: #0f172a; word-wrap: break-word; box-sizing: border-box;">{{r_case}}</div>
-                <div style="padding: 12px 15px; width: 40%; color: #475569; word-wrap: break-word; box-sizing: border-box;">{{r_desc}}</div>
-                <div style="padding: 12px 15px; width: 20%; text-align: right; font-weight: 700; color: #0f172a; box-sizing: border-box;">{{r_amt}}</div>
+            rowInv: `<div class="pdf-page-break" style="page-break-inside: avoid !important; break-inside: avoid !important; display: block; width: 100%; border-bottom: 1px solid #e2e8f0;">
+                <div style="display: flex; width: 100%;">
+                    <div style="padding: 12px 15px; width: 15%; box-sizing: border-box;">{{r_date}}</div>
+                    <div style="padding: 12px 15px; width: 25%; font-weight: 500; color: #0f172a; word-wrap: break-word; box-sizing: border-box;">{{r_case}}</div>
+                    <div style="padding: 12px 15px; width: 40%; color: #475569; word-wrap: break-word; box-sizing: border-box;">{{r_desc}}</div>
+                    <div style="padding: 12px 15px; width: 20%; text-align: right; font-weight: 700; color: #0f172a; box-sizing: border-box;">{{r_amt}}</div>
+                </div>
             </div>`,
-            rowSt: `<div class="pdf-page-break" style="display: flex; border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; page-break-inside: avoid; break-inside: avoid; width: 100%;">
-                <div style="padding: 12px 15px; width: 15%; box-sizing: border-box;">{{r_date}}</div>
-                <div style="padding: 12px 15px; width: 65%; color: #475569; word-wrap: break-word; box-sizing: border-box;">{{r_desc}}</div>
-                <div style="padding: 12px 15px; width: 20%; text-align: right; font-weight: 700; color: {{r_color}}; box-sizing: border-box;">{{r_amt}}</div>
+            rowSt: `<div class="pdf-page-break" style="page-break-inside: avoid !important; break-inside: avoid !important; display: block; width: 100%; border-bottom: 1px solid #e2e8f0; background: {{r_bg}};">
+                <div style="display: flex; width: 100%;">
+                    <div style="padding: 12px 15px; width: 15%; box-sizing: border-box;">{{r_date}}</div>
+                    <div style="padding: 12px 15px; width: 65%; color: #475569; word-wrap: break-word; box-sizing: border-box;">{{r_desc}}</div>
+                    <div style="padding: 12px 15px; width: 20%; text-align: right; font-weight: 700; color: {{r_color}}; box-sizing: border-box;">{{r_amt}}</div>
+                </div>
             </div>`
         };
 
