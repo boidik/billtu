@@ -424,25 +424,15 @@
             <p class="text-slate-500 text-xs mb-4">Past work logs using this category will be automatically updated.</p>
             <input type="hidden" id="edit-cat-old">
             <input type="text" id="edit-cat-new" class="w-full bg-slate-50 border-none p-3 rounded-2xl text-sm font-medium outline-none mb-6">
-            <div class="flex flex-col sm:flex-row gap-3 justify-end">
+            <div class="flex gap-3 justify-end">
                 <button onclick="document.getElementById('modal-cat-edit').classList.add('hidden')" class="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Cancel</button>
                 <button onclick="window.ui.saveEditedCategory()" class="px-5 py-2.5 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition shadow-sm">Update</button>
             </div>
         </div>
     </div>
-    
-    <!-- View Image Modal -->
-    <div id="modal-view-img" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[1000] hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-[2rem] p-4 max-w-2xl w-full max-h-[90vh] flex flex-col relative animate-fade-in-up">
-            <button onclick="window.ui.closeModal('modal-view-img')" class="absolute top-4 right-4 w-10 h-10 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 flex items-center justify-center transition z-10"><i class="fa-solid fa-times"></i></button>
-            <div class="overflow-y-auto hide-scrollbar flex-1 rounded-xl bg-slate-100 flex items-center justify-center p-2 min-h-[300px]">
-                <img id="view-img-src" src="" class="max-w-full h-auto object-contain rounded-lg shadow-sm">
-            </div>
-        </div>
-    </div>
 
     <!-- PDF Generation Root (Absolute & Visible to prevent Viewport Clipping) -->
-    <div id="pdf-wrapper" style="position: absolute; top: -9999px; left: -9999px; width: 800px; height: auto; z-index: -9999; margin: 0; padding: 0; overflow: visible; background: white; box-sizing: border-box;">
+    <div id="pdf-wrapper" style="position: absolute; top: 0; left: 0; width: 800px; height: auto; z-index: -9999; visibility: hidden; margin: 0; padding: 0; overflow: visible; background: white; box-sizing: border-box;">
         <div id="pdf-root-container" style="width: 800px; max-width: 800px; box-sizing: border-box; background: white; margin: 0; padding: 0; text-align: left;"></div>
     </div>
 
@@ -591,6 +581,7 @@
             pdfBlobUrl: null, currentPdfInv: null
         };
 
+        // Visually Sticking & Professional Templates
         const defaultTpls = {
             base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 0; background: #fff; width: 100%; box-sizing: border-box;">
             <!-- Header -->
@@ -697,6 +688,7 @@
             </div>`
         };
 
+        // --- UI & Helper Functions ---
         window.ui = {
             showToast: (msg, type = 'success') => {
                 const colors = type === 'success' ? 'bg-emerald-500 text-white' : type === 'error' ? 'bg-rose-500 text-white' : 'bg-slate-800 text-white';
@@ -1498,18 +1490,19 @@
                 
                 await new Promise(r => setTimeout(r, 400)); // allow DOM to paint and web fonts to process
 
-                // Unbreakable Engine Config
+                // Strict Margins + Avoid Clipping bounds
                 const opt = {
-                    margin: [15, 10, 20, 10], // Top, Right, Bottom, Left margins cleanly set for A4
+                    margin: [15, 10, 15, 10], // mm (Top, Right, Bottom, Left) - 10mm side margins lock the content safely on the page.
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
                         scale: 2, 
                         useCORS: true, 
-                        scrollY: 0
+                        windowWidth: 800,
+                        backgroundColor: '#ffffff'
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: 'css', avoid: '.pdf-page-break' }
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['.pdf-page-break'] }
                 };
 
                 try {
