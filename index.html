@@ -122,7 +122,7 @@
     </nav>
 
     <main class="flex-1 h-full overflow-y-auto hide-scrollbar relative bg-brand">
-        <!-- 1. Dashboard -->
+        <!-- Dashboard -->
         <section id="tab-dashboard" class="tab-content p-4 md:p-8 w-full max-w-7xl mx-auto block animate-fade-in-up">
             <header class="mb-8">
                 <h2 class="text-3xl font-serif font-bold text-slate-800">Overview</h2>
@@ -395,7 +395,7 @@
                         <button type="button" onclick="window.ui.resetTemplates()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg font-bold transition">Reset Defaults</button>
                     </div>
                     <div class="space-y-4">
-                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Base Layout & CSS (Float Block Version)</label><textarea id="tpl-base" rows="4" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Base Layout & CSS (Unbreakable Inline-Block Version)</label><textarea id="tpl-base" rows="4" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Invoice Data Rows</label><textarea id="tpl-row-inv" rows="2" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Statement Ledger Rows</label><textarea id="tpl-row-st" rows="2" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                     </div>
@@ -441,8 +441,8 @@
         </div>
     </div>
 
-    <!-- PDF Generation Root -->
-    <div id="pdf-wrapper" style="position: fixed; top: 0; left: 0; width: 800px; height: auto; z-index: -9999; opacity: 0.001; pointer-events: none; margin: 0; padding: 0; overflow: hidden; background: white; box-sizing: border-box;">
+    <!-- PDF Generation Root (Absolute & Visible to prevent Viewport Clipping) -->
+    <div id="pdf-wrapper" style="position: absolute; top: -9999px; left: -9999px; width: 800px; height: auto; z-index: -9999; margin: 0; padding: 0; overflow: visible; background: white; box-sizing: border-box;">
         <div id="pdf-root-container" style="width: 800px; max-width: 800px; box-sizing: border-box; background: white; margin: 0; padding: 0; text-align: left;"></div>
     </div>
 
@@ -562,7 +562,6 @@
         </div>
     </div>
 
-    <!-- Javascript Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, signInAnonymously, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -592,11 +591,10 @@
             pdfBlobUrl: null, currentPdfInv: null
         };
 
-        // NEW: Unbreakable Float-Block Architecture
         const defaultTpls = {
-            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 40px 50px; background: #fff; width: 800px; margin: 0 auto; box-sizing: border-box;">
+            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; padding: 0; background: #fff; width: 100%; box-sizing: border-box;">
             <!-- Header -->
-            <div class="pdf-page-break" style="display: block; width: 100%; margin-bottom: 40px; overflow: hidden; page-break-inside: avoid; break-inside: avoid;">
+            <div class="pdf-page-break" style="display: inline-block; width: 100%; margin-bottom: 40px; page-break-inside: avoid; break-inside: avoid;">
                 <div style="float: left; width: 50%; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; box-sizing: border-box;">
                     <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700; line-height: 1.2;">{{pro_name}}</h1>
                     <p style="margin: 2px 0; color: #64748b; font-size: 13px;">{{pro_phone}} | {{pro_email}}</p>
@@ -615,7 +613,7 @@
             </div>
             
             <!-- Billed To -->
-            <div class="pdf-page-break" style="display: block; width: 100%; margin-bottom: 40px; overflow: hidden; page-break-inside: avoid; break-inside: avoid;">
+            <div class="pdf-page-break" style="display: inline-block; width: 100%; margin-bottom: 40px; page-break-inside: avoid; break-inside: avoid;">
                 <div style="background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; width: 50%; box-sizing: border-box;">
                     <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">{{billed_to_label}}</p>
                     <h3 style="margin: 0 0 3px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
@@ -627,11 +625,11 @@
             <!-- Table Container -->
             <div style="display: block; width: 100%; margin-bottom: 40px;">
                 <!-- Table Header -->
-                <div class="pdf-page-break" style="display: block; width: 100%; background: #3b82f6; color: white; border-radius: 8px; overflow: hidden; page-break-inside: avoid; break-inside: avoid;">
-                    <div style="float: left; width: 15%; padding: 12px 15px; box-sizing: border-box; font-weight: 600;">Date</div>
-                    <div style="float: left; width: 25%; padding: 12px 15px; box-sizing: border-box; font-weight: 600;">Case / Ref</div>
-                    <div style="float: left; width: 40%; padding: 12px 15px; box-sizing: border-box; font-weight: 600;">Description</div>
-                    <div style="float: left; width: 20%; padding: 12px 15px; box-sizing: border-box; font-weight: 600; text-align: right;">Amount</div>
+                <div class="pdf-page-break" style="display: inline-block; width: 100%; background: #3b82f6; color: white; border-radius: 8px; page-break-inside: avoid; break-inside: avoid;">
+                    <div style="float: left; width: 15%; padding: 12px 10px; box-sizing: border-box; font-weight: 600;">Date</div>
+                    <div style="float: left; width: 25%; padding: 12px 10px; box-sizing: border-box; font-weight: 600;">Case / Ref</div>
+                    <div style="float: left; width: 40%; padding: 12px 10px; box-sizing: border-box; font-weight: 600;">Description</div>
+                    <div style="float: left; width: 20%; padding: 12px 10px; box-sizing: border-box; font-weight: 600; text-align: right;">Amount</div>
                     <div style="clear: both;"></div>
                 </div>
                 
@@ -642,8 +640,8 @@
             </div>
 
             <!-- Footer / Payments -->
-            <div class="pdf-page-break" style="display: block; width: 100%; overflow: hidden; page-break-inside: avoid; break-inside: avoid;">
-                <div style="display: block; width: 100%; margin-top: 20px; overflow: hidden;">
+            <div class="pdf-page-break" style="display: inline-block; width: 100%; page-break-inside: avoid; break-inside: avoid;">
+                <div style="display: block; width: 100%; margin-top: 20px;">
                     <div style="float: left; width: 33%; padding-right: 15px; box-sizing: border-box;">
                         <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</p>
                         <p style="margin: 2px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 50px;">Name:</span> <span style="font-weight: 600; color: #0f172a;">{{pro_name}}</span></p>
@@ -684,17 +682,17 @@
                 </div>
             </div>
         </div>`,
-            rowInv: `<div class="pdf-page-break" style="display: block; width: 100%; border-bottom: 1px solid #e2e8f0; overflow: hidden; page-break-inside: avoid; break-inside: avoid;">
-                <div style="float: left; width: 15%; padding: 12px 15px; box-sizing: border-box;">{{r_date}}</div>
-                <div style="float: left; width: 25%; padding: 12px 15px; box-sizing: border-box; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</div>
-                <div style="float: left; width: 40%; padding: 12px 15px; box-sizing: border-box; color: #475569; word-wrap: break-word;">{{r_desc}}</div>
-                <div style="float: left; width: 20%; padding: 12px 15px; box-sizing: border-box; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</div>
+            rowInv: `<div class="pdf-page-break" style="display: inline-block; width: 100%; border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid; vertical-align: top;">
+                <div style="float: left; width: 15%; padding: 12px 10px; box-sizing: border-box;">{{r_date}}</div>
+                <div style="float: left; width: 25%; padding: 12px 10px; box-sizing: border-box; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</div>
+                <div style="float: left; width: 40%; padding: 12px 10px; box-sizing: border-box; color: #475569; word-wrap: break-word;">{{r_desc}}</div>
+                <div style="float: left; width: 20%; padding: 12px 10px; box-sizing: border-box; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</div>
                 <div style="clear: both;"></div>
             </div>`,
-            rowSt: `<div class="pdf-page-break" style="display: block; width: 100%; border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; overflow: hidden; page-break-inside: avoid; break-inside: avoid;">
-                <div style="float: left; width: 15%; padding: 12px 15px; box-sizing: border-box;">{{r_date}}</div>
-                <div style="float: left; width: 65%; padding: 12px 15px; box-sizing: border-box; color: #475569; word-wrap: break-word;">{{r_desc}}</div>
-                <div style="float: left; width: 20%; padding: 12px 15px; box-sizing: border-box; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</div>
+            rowSt: `<div class="pdf-page-break" style="display: inline-block; width: 100%; border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; page-break-inside: avoid; break-inside: avoid; vertical-align: top;">
+                <div style="float: left; width: 15%; padding: 12px 10px; box-sizing: border-box;">{{r_date}}</div>
+                <div style="float: left; width: 65%; padding: 12px 10px; box-sizing: border-box; color: #475569; word-wrap: break-word;">{{r_desc}}</div>
+                <div style="float: left; width: 20%; padding: 12px 10px; box-sizing: border-box; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</div>
                 <div style="clear: both;"></div>
             </div>`
         };
@@ -897,7 +895,6 @@
                 }
             },
 
-            // Settings Sync
             populateSettingsForm: () => {
                 const s = state.settings;
                 ['name','phone','email','pan','bank','ac','ifsc','upi','clerk_name','clerk_pan','clerk_bank','clerk_ac','clerk_ifsc','clerk_pct'].forEach(k => { 
@@ -1007,7 +1004,7 @@
                 window.api.saveSettingsCore({ tpl });
             },
             resetTemplates: () => {
-                window.ui.confirm('Reset all templates to Boidik Default (Float Block Version)?', () => {
+                window.ui.confirm('Reset all templates to Boidik Default (Unbreakable Block Version)?', () => {
                     document.getElementById('tpl-base').value = defaultTpls.base;
                     document.getElementById('tpl-row-inv').value = defaultTpls.rowInv;
                     document.getElementById('tpl-row-st').value = defaultTpls.rowSt;
@@ -1015,7 +1012,6 @@
                 });
             },
 
-            // Generate Bill Logic
             gbFiltersChanged: () => {
                 const t = document.getElementById('gb-type').value;
                 document.getElementById('gb-case-wrapper').style.display = t === 'IND' ? 'block' : 'none';
@@ -1101,7 +1097,6 @@
             }
         };
 
-        // --- Core API / Firebase ---
         window.api = {
             logError: (msg) => {
                 try {
@@ -1180,7 +1175,7 @@
             saveSettingsCore: async (data, silent = false) => {
                 try {
                     const r = doc(db, `saas_tenants/${state.uid}/settings`, 'global');
-                    await setDoc(r, data, { merge: true }); // using merge so it never crashes if doc is fresh
+                    await setDoc(r, data, { merge: true });
                     if(!silent) window.ui.showToast('Settings saved successfully!');
                 } catch(e) { window.ui.showToast(e.message, 'error'); window.api.logError(e.message); }
             },
@@ -1394,7 +1389,6 @@
             }
         };
 
-        // --- PDF Generation Engine ---
         window.docsHelper = {
             generateHTML: async (inv) => {
                 const s = state.settings;
@@ -1440,8 +1434,7 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    // Force the single block structure for receipt
-                    rows = `<div class="pdf-page-break" style="display: block; width: 100%; overflow: hidden; page-break-inside: avoid; break-inside: avoid; padding: 40px; text-align: center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></div>`;
+                    rows = `<div class="pdf-page-break" style="display: block; width: 100%; page-break-inside: avoid; break-inside: avoid; padding: 40px; text-align: center;"><h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a;">Payment Received with Thanks</h2><p style="font-size:18px; margin: 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p><p style="color:#64748b;">Reference: ${inv.payment_ref||'N/A'}</p></div>`;
                 } else {
                     const invTpl = s.tpl?.row_inv || defaultTpls.rowInv;
                     let wItems = state.work.filter(w => inv.items.includes(w.id));
@@ -1505,20 +1498,18 @@
                 
                 await new Promise(r => setTimeout(r, 400)); // allow DOM to paint and web fonts to process
 
-                // Unbreakable PDF Engine Configuration with float blocks
+                // Unbreakable Engine Config
                 const opt = {
-                    margin: [15, 0, 20, 0], // Top, Right, Bottom, Left.
+                    margin: [15, 10, 20, 10], // Top, Right, Bottom, Left margins cleanly set for A4
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
                         scale: 2, 
                         useCORS: true, 
-                        windowWidth: 800,
-                        width: 800,
-                        backgroundColor: '#ffffff'
+                        scrollY: 0
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['.pdf-page-break'] }
+                    pagebreak: { mode: 'css', avoid: '.pdf-page-break' }
                 };
 
                 try {
@@ -1533,11 +1524,10 @@
                             pdf.setTextColor(150);
                             pdf.text(`Page ${i} of ${totalPages}`, pdf.internal.pageSize.getWidth() - 20, pdf.internal.pageSize.getHeight() - 10, { align: 'right' });
                             
-                            // Top Headers for Continued Pages
-                            // Removed the manual table header drawing that was overlapping the text
+                            // Top Header for Continued Pages (Tucked safely into the 15mm top margin)
                             if (i > 1) {
                                 const cName = state.clients.find(c=>c.id===inv.client_id)?.name || '';
-                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 15, 10);
+                                pdf.text(`${inv.invoice_no} — ${cName} (Continued)`, 10, 10);
                             }
                         }
                     }).output('blob').then((blob) => {
