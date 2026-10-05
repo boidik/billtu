@@ -602,10 +602,10 @@
 
         // Visually Sticking & Professional Templates (Unbreakable Float-Based Architecture)
         const defaultTpls = {
-            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; background: #fff; width: 794px; margin: 0; padding: 0; box-sizing: border-box;">
+            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; background: #fff; width: 794px; margin: 0; padding: 0 40px; box-sizing: border-box;">
             
             <!-- Header (Unbreakable Float Block) -->
-            <div class="pdf-no-break" style="width: 100%; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; overflow: hidden; display: block;">
+            <div class="pdf-no-break" style="width: 100%; border-bottom: 2px solid #e2e8f0; padding-top: 15px; padding-bottom: 20px; margin-bottom: 30px; overflow: hidden; display: block;">
                 <div style="float: left; width: 50%;">
                     <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700;">{{pro_name}}</h1>
                     <p style="margin: 2px 0; color: #64748b; font-size: 13px;">{{pro_phone}} | {{pro_email}}</p>
@@ -1518,7 +1518,7 @@
                 await new Promise(r => setTimeout(r, 400)); // DOM paint
 
                 const opt = {
-                    margin: [15, 10, 15, 10], // Strict bounds inside A4 (top, right, bottom, left)
+                    margin: [15, 0, 15, 0], // FIXED: Top 15, Right 0, Bottom 15, Left 0. Zero side margins prevents right-hanging!
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
@@ -1526,6 +1526,8 @@
                         useCORS: true, 
                         width: 794,          // Hardcode exactly A4 Width
                         windowWidth: 794,   // Ignore Mobile Screen Width
+                        scrollY: 0,
+                        scrollX: 0,
                         onclone: (clonedDoc) => {
                             // OVERRIDE: Strip overflow constraints causing the mobile "Half-Page" bug
                             clonedDoc.body.style.overflow = 'visible';
@@ -1533,7 +1535,7 @@
                             
                             const wrapper = clonedDoc.getElementById('pdf-wrapper');
                             if(wrapper) {
-                                wrapper.style.position = 'relative';
+                                wrapper.style.position = 'absolute';
                                 wrapper.style.left = '0';
                                 wrapper.style.top = '0';
                                 wrapper.style.zIndex = '1';
