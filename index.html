@@ -39,7 +39,7 @@
         
         /* Strict PDF resets */
         #pdf-wrapper * { box-sizing: border-box !important; }
-        .pdf-no-break { page-break-inside: avoid !important; break-inside: avoid !important; }
+        .pdf-page-break { page-break-inside: avoid !important; break-inside: avoid !important; }
     </style>
 </head>
 <body class="h-[100dvh] w-full flex flex-col md:flex-row antialiased">
@@ -403,7 +403,7 @@
                         <button type="button" onclick="window.ui.resetTemplates()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 px-3 py-1.5 rounded-lg font-bold transition">Reset Defaults</button>
                     </div>
                     <div class="space-y-4">
-                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Base Layout & CSS (Float Unbreakable Blocks)</label><textarea id="tpl-base" rows="4" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
+                        <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Base Layout & CSS (A4 Optimized Table)</label><textarea id="tpl-base" rows="4" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Invoice Data Rows</label><textarea id="tpl-row-inv" rows="2" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                         <div><label class="block text-xs font-bold text-slate-500 mb-1 ml-2">Statement Ledger Rows</label><textarea id="tpl-row-st" rows="2" class="w-full bg-slate-900 text-green-400 font-mono text-xs p-3 rounded-2xl border-none outline-none resize-y"></textarea></div>
                     </div>
@@ -441,9 +441,9 @@
         </div>
     </div>
 
-    <!-- PDF Generation Root (Absolute invisible bounds to ensure FULL 794px Capture width) -->
-    <div id="pdf-wrapper" style="position: absolute; top: 0; left: -9999px; width: 794px; background: white; z-index: -9999; margin: 0; padding: 0;">
-        <div id="pdf-root-container" style="width: 794px; max-width: 794px; background: white; margin: 0; padding: 0; text-align: left;"></div>
+    <!-- PDF Generation Root (Absolute invisible bounds to ensure FULL width capture without mobile cutoff) -->
+    <div id="pdf-wrapper" style="position: absolute; top: 0; left: 0; width: 800px; z-index: -9999; opacity: 0; pointer-events: none; margin: 0; padding: 0;">
+        <div id="pdf-root-container" style="width: 800px; max-width: 800px; background: white; margin: 0; padding: 0; text-align: left;"></div>
     </div>
 
     <!-- PDF Preview Modal -->
@@ -600,66 +600,67 @@
             pdfBlobUrl: null, currentPdfInv: null
         };
 
-        // Visually Sticking & Professional Templates (Unbreakable Float-Based Architecture)
+        // Bulletproof Table Architecture for PDF Engine (Internal Padding instead of external JS Margin)
         const defaultTpls = {
-            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; background: #fff; width: 794px; margin: 0; padding: 0 40px; box-sizing: border-box;">
+            base: `<div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: #334155; background: #fff; width: 800px; padding: 40px 50px; margin: 0 auto; box-sizing: border-box;">
             
-            <!-- Header (Unbreakable Float Block) -->
-            <div class="pdf-no-break" style="width: 100%; border-bottom: 2px solid #e2e8f0; padding-top: 15px; padding-bottom: 20px; margin-bottom: 30px; overflow: hidden; display: block;">
-                <div style="float: left; width: 50%;">
+            <div style="width: 100%; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; display: table;">
+                <div style="display: table-cell; width: 50%; vertical-align: top;">
                     <h1 style="font-family: 'Playfair Display', serif; font-size: 32px; color: #0f172a; margin: 0 0 5px 0; font-weight: 700;">{{pro_name}}</h1>
                     <p style="margin: 2px 0; color: #64748b; font-size: 13px;">{{pro_phone}} | {{pro_email}}</p>
                     <p style="margin: 2px 0; color: #64748b; font-size: 13px;">PAN: {{pro_pan}}</p>
                 </div>
-                <div style="float: right; width: 45%; text-align: right;">
+                <div style="display: table-cell; width: 50%; text-align: right; vertical-align: top;">
                     <h2 style="font-size: 28px; margin: 0 0 10px 0; color: #3b82f6; text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">{{doc_title}}</h2>
-                    <div style="display: inline-block; text-align: left;">
-                        <p style="margin: 3px 0; color: #64748b; font-size: 13px;"><span style="display: inline-block; width: 60px;">Ref No:</span> <span style="font-weight: 700; color: #0f172a;">{{inv_no}}</span></p>
-                        <p style="margin: 3px 0; color: #64748b; font-size: 13px;"><span style="display: inline-block; width: 60px;">Date:</span> <span style="font-weight: 700; color: #0f172a;">{{date}}</span></p>
-                    </div>
+                    <table style="width: 100%; text-align: right; font-size: 13px; border-collapse: collapse;">
+                        <tr><td style="padding: 3px 0; color: #64748b;">Ref No:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{inv_no}}</td></tr>
+                        <tr><td style="padding: 3px 0; color: #64748b;">Date:</td><td style="padding: 3px 0; font-weight: 700; color: #0f172a;">{{date}}</td></tr>
+                    </table>
                 </div>
-                <div style="clear: both;"></div>
             </div>
             
-            <!-- Billed To (Unbreakable Float Block) -->
-            <div class="pdf-no-break" style="width: 50%; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 30px; box-sizing: border-box; display: block;">
+            <div style="width: 50%; background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 12px; margin-bottom: 30px; box-sizing: border-box;">
                 <p style="margin: 0 0 5px 0; font-weight: 700; text-transform: uppercase; font-size: 11px; color: #94a3b8; letter-spacing: 0.5px;">{{billed_to_label}}</p>
                 <h3 style="margin: 0 0 5px 0; font-size: 18px; color: #0f172a; font-family: 'Playfair Display', serif;">{{client_name}}</h3>
                 <p style="margin: 0 0 5px 0; color: #475569; font-size: 12px; font-weight: 500;">{{client_contact}}</p>
                 <p style="margin: 0; color: #475569; font-size: 12px;">Period: {{period_str}}</p>
             </div>
 
-            <!-- Table Header is dynamic to hide for receipts -->
-            {{table_header}}
-            
-            <!-- Rows (Generated by Javascript) -->
-            {{table_rows}}
+            <table style="width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 30px; page-break-inside: auto;">
+                {{table_header}}
+                <tbody style="page-break-inside: auto;">
+                    {{table_rows}}
+                </tbody>
+            </table>
 
-            <!-- Footer (Unbreakable Float Block) -->
-            <div class="pdf-no-break" style="width: 100%; margin-top: 30px; overflow: hidden; display: block;">
-                <div style="float: left; width: 33%; box-sizing: border-box; padding-right: 15px;">
+            <div class="pdf-page-break" style="width: 100%; display: table; page-break-inside: avoid; break-inside: avoid;">
+                <div style="display: table-cell; width: 33%; vertical-align: top; padding-right: 15px;">
                     <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase;">Payment Details</p>
-                    <p style="margin: 3px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 45px;">Bank:</span> <span style="font-weight: 600; color: #0f172a;">{{bank}}</span></p>
-                    <p style="margin: 3px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 45px;">A/C:</span> <span style="font-weight: 600; color: #0f172a;">{{ac}}</span></p>
-                    <p style="margin: 3px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 45px;">IFSC:</span> <span style="font-weight: 600; color: #0f172a;">{{ifsc}}</span></p>
-                    <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px; margin-top: 15px;">
+                    <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
+                        <tr><td style="color: #64748b; padding: 2px 0;">Bank:</td><td style="font-weight: 600;">{{bank}}</td></tr>
+                        <tr><td style="color: #64748b; padding: 2px 0;">A/C:</td><td style="font-weight: 600;">{{ac}}</td></tr>
+                        <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{ifsc}}</td></tr>
+                    </table>
+                    <div style="{{qr_display}} border: 1px solid #e2e8f0; padding: 5px; border-radius: 8px;">
                         <img src="{{qr}}" style="width: 80px; height: 80px; display: block;" alt="UPI QR">
                     </div>
                 </div>
                 
-                <div style="float: left; width: 32%; box-sizing: border-box; padding-right: 15px;">
+                <div style="display: table-cell; width: 32%; vertical-align: top; padding-right: 15px;">
                     <div style="{{clerk_display}}">
                         <p style="margin: 0 0 10px 0; font-weight: 700; color: #0f172a; font-size: 13px; text-transform: uppercase;">Clerk Details</p>
-                        <p style="margin: 3px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 45px;">Name:</span> <span style="font-weight: 600; color: #0f172a;">{{clerk_name}}</span></p>
-                        <p style="margin: 3px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 45px;">Bank:</span> <span style="font-weight: 600; color: #0f172a;">{{clerk_bank}}</span></p>
-                        <p style="margin: 3px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 45px;">A/C:</span> <span style="font-weight: 600; color: #0f172a;">{{clerk_ac}}</span></p>
-                        <p style="margin: 3px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 45px;">IFSC:</span> <span style="font-weight: 600; color: #0f172a;">{{clerk_ifsc}}</span></p>
-                        <p style="margin: 3px 0; font-size: 12px; color: #64748b;"><span style="display: inline-block; width: 45px;">PAN:</span> <span style="font-weight: 600; color: #0f172a;">{{clerk_pan}}</span></p>
+                        <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
+                            <tr><td style="color: #64748b; padding: 2px 0;">Name:</td><td style="font-weight: 600;">{{clerk_name}}</td></tr>
+                            <tr><td style="color: #64748b; padding: 2px 0;">Bank:</td><td style="font-weight: 600;">{{clerk_bank}}</td></tr>
+                            <tr><td style="color: #64748b; padding: 2px 0;">A/C:</td><td style="font-weight: 600;">{{clerk_ac}}</td></tr>
+                            <tr><td style="color: #64748b; padding: 2px 0;">IFSC:</td><td style="font-weight: 600;">{{clerk_ifsc}}</td></tr>
+                            <tr><td style="color: #64748b; padding: 2px 0;">PAN:</td><td style="font-weight: 600;">{{clerk_pan}}</td></tr>
+                        </table>
                     </div>
                 </div>
 
-                <div style="float: right; width: 35%; box-sizing: border-box;">
-                    <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 30px; text-align: right;">
+                <div style="display: table-cell; width: 35%; vertical-align: top; text-align: right;">
+                    <div style="background: #eff6ff; padding: 20px; border-radius: 12px; margin-bottom: 30px;">
                         <p style="margin: 0; font-size: 14px; color: #1e3a8a; font-weight: 600;">{{total_label}}</p>
                         <p style="margin: 5px 0 0 0; font-size: 26px; font-weight: 800; color: #1e3a8a;">{{total}}</p>
                     </div>
@@ -671,39 +672,35 @@
                         </div>
                     </div>
                 </div>
-                <div style="clear: both;"></div>
             </div>
             
             </div>`,
             
             rowInv: `
-            <!-- Unbreakable Float Block -->
-            <div class="pdf-no-break" style="width: 100%; border-bottom: 1px solid #e2e8f0; overflow: hidden; padding: 10px 0; display: block;">
-                <div style="float: left; width: 15%; padding: 0 15px; box-sizing: border-box;">{{r_date}}</div>
-                <div style="float: left; width: 25%; padding: 0 15px; box-sizing: border-box; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</div>
-                <div style="float: left; width: 40%; padding: 0 15px; box-sizing: border-box; color: #475569; word-wrap: break-word;">{{r_desc}}</div>
-                <div style="float: left; width: 20%; padding: 0 15px; box-sizing: border-box; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</div>
-                <div style="clear: both;"></div>
-            </div>`,
+            <tr class="pdf-no-break" style="border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid;">
+                <td style="width: 15%; padding: 10px 15px; vertical-align: top;">{{r_date}}</td>
+                <td style="width: 25%; padding: 10px 15px; vertical-align: top; font-weight: 500; color: #0f172a; word-wrap: break-word;">{{r_case}}</td>
+                <td style="width: 40%; padding: 10px 15px; vertical-align: top; color: #475569; word-wrap: break-word;">{{r_desc}}</td>
+                <td style="width: 20%; padding: 10px 15px; vertical-align: top; text-align: right; font-weight: 700; color: #0f172a;">{{r_amt}}</td>
+            </tr>`,
             
             rowSt: `
-            <!-- Unbreakable Float Block -->
-            <div class="pdf-no-break" style="width: 100%; border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; overflow: hidden; padding: 10px 0; display: block;">
-                <div style="float: left; width: 15%; padding: 0 15px; box-sizing: border-box;">{{r_date}}</div>
-                <div style="float: left; width: 65%; padding: 0 15px; box-sizing: border-box; color: #475569; word-wrap: break-word;">{{r_desc}}</div>
-                <div style="float: left; width: 20%; padding: 0 15px; box-sizing: border-box; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</div>
-                <div style="clear: both;"></div>
-            </div>`
+            <tr class="pdf-no-break" style="border-bottom: 1px solid #e2e8f0; background: {{r_bg}}; page-break-inside: avoid; break-inside: avoid;">
+                <td style="width: 15%; padding: 10px 15px; vertical-align: top;">{{r_date}}</td>
+                <td style="width: 65%; padding: 10px 15px; vertical-align: top; color: #475569; word-wrap: break-word;" colspan="2">{{r_desc}}</td>
+                <td style="width: 20%; padding: 10px 15px; vertical-align: top; text-align: right; font-weight: 700; color: {{r_color}};">{{r_amt}}</td>
+            </tr>`
         };
 
         const dynTableHeader = `
-            <div class="pdf-no-break" style="width: 100%; background: #3b82f6; color: white; border-radius: 8px; overflow: hidden; font-weight: 600; margin-bottom: 5px; display: block;">
-                <div style="float: left; width: 15%; padding: 12px 15px; box-sizing: border-box;">Date</div>
-                <div style="float: left; width: 25%; padding: 12px 15px; box-sizing: border-box;">Case / Ref</div>
-                <div style="float: left; width: 40%; padding: 12px 15px; box-sizing: border-box;">Description</div>
-                <div style="float: left; width: 20%; padding: 12px 15px; box-sizing: border-box; text-align: right;">Amount</div>
-                <div style="clear: both;"></div>
-            </div>`;
+            <thead style="display: table-header-group; page-break-inside: avoid; break-inside: avoid;">
+                <tr style="background: #3b82f6; color: white; text-align: left;">
+                    <th style="width: 15%; padding: 12px 15px; border-top-left-radius: 8px; border-bottom-left-radius: 8px;">Date</th>
+                    <th style="width: 25%; padding: 12px 15px;">Case / Ref</th>
+                    <th style="width: 40%; padding: 12px 15px;">Description</th>
+                    <th style="width: 20%; padding: 12px 15px; text-align: right; border-top-right-radius: 8px; border-bottom-right-radius: 8px;">Amount</th>
+                </tr>
+            </thead>`;
 
         // --- UI & Helper Functions ---
         window.ui = {
@@ -1013,7 +1010,7 @@
                 window.api.saveSettingsCore({ tpl });
             },
             resetTemplates: () => {
-                window.ui.confirm('Reset all templates to Boidik Default (Unbreakable Float Blocks)?', () => {
+                window.ui.confirm('Reset all templates to Boidik Default (A4 Optimized Tables)?', () => {
                     document.getElementById('tpl-base').value = defaultTpls.base;
                     document.getElementById('tpl-row-inv').value = defaultTpls.rowInv;
                     document.getElementById('tpl-row-st').value = defaultTpls.rowSt;
@@ -1445,13 +1442,12 @@
                     });
                     rows += stTpl.replace('{{r_bg}}','#f1f5f9').replace('{{r_color}}','#0f172a').replace('{{r_date}}','-').replace('{{r_desc}}','<b>Closing Balance</b>').replace('{{r_amt}}', `<b>${runBal<0 ? window.ui.fmtMoney(Math.abs(runBal))+' (Cr)' : window.ui.fmtMoney(runBal)}</b>`);
                 } else if(inv.type === 'REC') {
-                    // Stripping table headers for Receipts
                     tpl = tpl.replace('{{table_header}}', '');
-                    rows = `<div class="pdf-no-break" style="width: 100%; padding: 40px; text-align: center; border: 1px dashed #cbd5e1; border-radius: 12px; background: #f8fafc; margin-top: 20px; box-sizing: border-box; display: block; overflow: hidden;">
+                    rows = `<tr><td colspan="4" style="padding: 40px; text-align: center; border: 1px dashed #cbd5e1; border-radius: 12px; background: #f8fafc;">
                         <h2 style="font-family:'Playfair Display', serif; font-size:24px; color:#1e3a8a; margin: 0 0 15px 0;">Payment Received with Thanks</h2>
                         <p style="font-size:18px; margin: 0 0 10px 0;">Amount: <b>${window.ui.fmtMoney(inv.total)}</b></p>
                         <p style="color:#64748b; margin:0;">Reference: ${inv.payment_ref||'N/A'}</p>
-                    </div>`;
+                    </td></tr>`;
                 } else {
                     tpl = tpl.replace('{{table_header}}', dynTableHeader);
                     
@@ -1517,38 +1513,32 @@
                 
                 await new Promise(r => setTimeout(r, 400)); // DOM paint
 
+                // ULTIMATE PDF CONFIGURATION
                 const opt = {
-                    margin: [15, 0, 15, 0], // FIXED: Top 15, Right 0, Bottom 15, Left 0. Zero side margins prevents right-hanging!
+                    margin: [15, 0, 15, 0], // Margin inside the jsPDF object (0 on sides because HTML handles padding)
                     filename: `${inv.invoice_no}.pdf`,
                     image: { type: 'jpeg', quality: 1 },
                     html2canvas: { 
                         scale: 2, 
                         useCORS: true, 
-                        width: 794,          // Hardcode exactly A4 Width
-                        windowWidth: 794,   // Ignore Mobile Screen Width
+                        windowWidth: 1024, // VERY IMPORTANT: Tricks the browser into capturing a full desktop-width canvas!
+                        width: 800,        // Match the HTML template width
+                        x: 0,
+                        y: 0,
                         scrollY: 0,
                         scrollX: 0,
-                        onclone: (clonedDoc) => {
-                            // OVERRIDE: Strip overflow constraints causing the mobile "Half-Page" bug
-                            clonedDoc.body.style.overflow = 'visible';
-                            clonedDoc.documentElement.style.overflow = 'visible';
-                            
-                            const wrapper = clonedDoc.getElementById('pdf-wrapper');
-                            if(wrapper) {
-                                wrapper.style.position = 'absolute';
-                                wrapper.style.left = '0';
-                                wrapper.style.top = '0';
-                                wrapper.style.zIndex = '1';
-                                wrapper.style.opacity = '1';
-                                wrapper.style.transform = 'none';
-                            }
-                        }
+                        backgroundColor: '#ffffff'
                     },
                     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                    pagebreak: { mode: ['css', 'legacy'], avoid: ['.pdf-no-break'] } // Strict rule to stop slicing
+                    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.pdf-no-break'] } // Strict rules to stop table row slicing
                 };
 
                 try {
+                    // Momentarily make the pdf-wrapper accessible to html2canvas safely
+                    const wrapper = document.getElementById('pdf-wrapper');
+                    wrapper.style.opacity = '1';
+                    wrapper.style.zIndex = '1';
+
                     const worker = html2pdf().set(opt).from(container);
                     worker.toPdf().get('pdf').then((pdf) => {
                         const totalPages = pdf.internal.getNumberOfPages();
@@ -1565,6 +1555,10 @@
                             }
                         }
                     }).output('blob').then((blob) => {
+                        // Restore hidden state
+                        wrapper.style.opacity = '0';
+                        wrapper.style.zIndex = '-9999';
+
                         if(state.pdfBlobUrl) URL.revokeObjectURL(state.pdfBlobUrl);
                         state.pdfBlobUrl = URL.createObjectURL(blob);
                         
@@ -1579,7 +1573,12 @@
                             link.click();
                         }
                     });
-                } catch(e) { window.ui.showToast('PDF Engine Error: ' + e.message, 'error'); window.api.logError(e.message); }
+                } catch(e) { 
+                    window.ui.showToast('PDF Engine Error: ' + e.message, 'error'); 
+                    window.api.logError(e.message); 
+                    document.getElementById('pdf-wrapper').style.opacity = '0';
+                    document.getElementById('pdf-wrapper').style.zIndex = '-9999';
+                }
             },
 
             downloadPDF: () => {
